@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="key_height">46dp</dimen>
+    <dimen name="candidate_height">48dp</dimen>
+    <dimen name="key_text_size">16sp</dimen>
+    <dimen name="key_label_size">12sp</dimen>
+</resources>

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Row proportions follow the Apache-2.0 layouts of amirisback/keyboard,
+  rewritten for android.inputmethodservice.Keyboard. A number row sits
+  above the letters so suggestions can stay above the digits.
+-->
+<Keyboard xmlns:android="http://schemas.android.com/apk/res/android"
+    android:horizontalGap="0px"
+    android:keyHeight="@dimen/key_height"
+    android:keyWidth="10%p"
+    android:verticalGap="0px">
+    <Row>
+        <Key android:keyEdgeFlags="left" android:keyLabel="1" />
+        <Key android:keyLabel="2" />
+        <Key android:keyLabel="3" />
+        <Key android:keyLabel="4" />
+        <Key android:keyLabel="5" />
+        <Key android:keyLabel="6" />
+        <Key android:keyLabel="7" />
+        <Key android:keyLabel="8" />
+        <Key android:keyLabel="9" />
+        <Key android:keyEdgeFlags="right" android:keyLabel="0" />
+    </Row>
+    <Row>
+        <Key android:keyEdgeFlags="left" android:keyLabel="q" />
+        <Key android:keyLabel="w" />
+        <Key android:keyLabel="e" android:popupCharacters="éèêëēę" />
+        <Key android:keyLabel="r" android:popupCharacters="řŕ" />
+        <Key android:keyLabel="t" android:popupCharacters="ťþ" />
+        <Key android:keyLabel="y" android:popupCharacters="ýÿ" />
+        <Key android:keyLabel="u" android:popupCharacters="úùûüū" />
+        <Key android:keyLabel="i" android:popupCharacters="íìîïī" />
+        <Key android:keyLabel="o" android:popupCharacters="óòôöõō" />
+        <Key android:keyEdgeFlags="right" android:keyLabel="p" />
+    </Row>
+    <Row>
+        <Key
+            android:horizontalGap="5%p"
+            android:keyEdgeFlags="left"
+            android:keyLabel="a"
+            android:popupCharacters="áàâãäåæ" />
+        <Key android:keyLabel="s" android:popupCharacters="ßśš" />
+        <Key android:keyLabel="d" android:popupCharacters="đď" />
+        <Key android:keyLabel="f" />
+        <Key android:keyLabel="g" />
+        <Key android:keyLabel="h" />
+        <Key android:keyLabel="j" />
+        <Key android:keyLabel="k" />
+        <Key
+            android:keyEdgeFlags="right"
+            android:keyLabel="l"
+            android:popupCharacters="ł" />
+    </Row>
+    <Row>
+        <Key
+            android:codes="-1"
+            android:isModifier="true"
+            android:isSticky="true"
+            android:keyEdgeFlags="left"
+            android:keyLabel="Aa"
+            android:keyWidth="15%p" />
+        <Key android:keyLabel="z" android:popupCharacters="źžż" />
+        <Key android:keyLabel="x" />
+        <Key android:keyLabel="c" android:popupCharacters="çćč" />
+        <Key android:keyLabel="v" />
+        <Key android:keyLabel="b" />
+        <Key android:keyLabel="n" android:popupCharacters="ñń" />
+        <Key android:keyLabel="m" />
+        <Key
+            android:codes="-5"
+            android:isRepeatable="true"
+            android:keyEdgeFlags="right"
+            android:keyLabel="Del"
+            android:keyWidth="15%p" />
+    </Row>
+    <Row>
+        <Key
+            android:codes="-2"
+            android:keyEdgeFlags="left"
+            android:keyLabel="\?123"
+            android:keyWidth="15%p" />
+        <Key
+            android:keyLabel=","
+            android:keyWidth="10%p"
+            android:popupCharacters="\'&quot;" />
+        <Key
+            android:codes="-6"
+            android:keyLabel="☺"
+            android:keyWidth="10%p" />
+        <Key
+            android:codes="32"
+            android:isRepeatable="true"
+            android:keyLabel="English"
+            android:keyWidth="40%p" />
+        <Key
+            android:keyLabel="."
+            android:keyWidth="10%p"
+            android:popupCharacters="…/;:!?" />
+        <Key
+            android:codes="-4"
+            android:keyEdgeFlags="right"
+            android:keyLabel="↵"
+            android:keyWidth="15%p" />
+    </Row>
+</Keyboard>

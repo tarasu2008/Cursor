@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Keyboard xmlns:android="http://schemas.android.com/apk/res/android"
+    android:horizontalGap="0px"
+    android:keyHeight="@dimen/key_height"
+    android:keyWidth="10%p"
+    android:verticalGap="0px">
+    <Row>
+        <Key android:keyEdgeFlags="left" android:keyLabel="~" />
+        <Key android:keyLabel="±" />
+        <Key android:keyLabel="×" />
+        <Key android:keyLabel="÷" />
+        <Key android:keyLabel="•" />
+        <Key android:keyLabel="°" />
+        <Key android:keyLabel="`" />
+        <Key android:keyLabel="´" />
+        <Key android:keyLabel="{" />
+        <Key android:keyEdgeFlags="right" android:keyLabel="}" />
+    </Row>
+    <Row>
+        <Key android:keyEdgeFlags="left" android:keyLabel="©" />
+        <Key android:keyLabel="£" />
+        <Key android:keyLabel="€" />
+        <Key android:keyLabel="^" />
+        <Key android:keyLabel="®" />
+        <Key android:keyLabel="¥" />
+        <Key android:keyLabel="_" />
+        <Key android:keyLabel="+" />
+        <Key android:keyLabel="[" />
+        <Key android:keyEdgeFlags="right" android:keyLabel="]" />
+    </Row>
+    <Row>
+        <Key
+            android:codes="-1"
+            android:keyEdgeFlags="left"
+            android:keyLabel="123"
+            android:keyWidth="15%p" />
+        <Key android:keyLabel="¡" />
+        <Key android:keyLabel="&lt;" />
+        <Key android:keyLabel="&gt;" />
+        <Key android:keyLabel="¢" />
+        <Key android:keyLabel="|" />
+        <Key android:keyLabel="\\" />
+        <Key android:keyLabel="¿" />
+        <Key
+            android:codes="-5"
+            android:isRepeatable="true"
+            android:keyEdgeFlags="right"
+            android:keyLabel="Del"
+            android:keyWidth="15%p" />
+    </Row>
+    <Row>
+        <Key
+            android:codes="-2"
+            android:keyEdgeFlags="left"
+            android:keyLabel="ABC"
+            android:keyWidth="15%p" />
+        <Key android:keyLabel="," android:keyWidth="10%p" />
+        <Key
+            android:codes="32"
+            android:isRepeatable="true"
+            android:keyLabel="English"
+            android:keyWidth="50%p" />
+        <Key android:keyLabel="." android:keyWidth="10%p" />
+        <Key
+            android:codes="-4"
+            android:keyEdgeFlags="right"
+            android:keyLabel="↵"
+            android:keyWidth="15%p" />
+    </Row>
+</Keyboard>
