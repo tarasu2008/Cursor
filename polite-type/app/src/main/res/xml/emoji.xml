@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Keyboard xmlns:android="http://schemas.android.com/apk/res/android"
+    android:horizontalGap="0px"
+    android:keyHeight="@dimen/key_height"
+    android:keyWidth="12.5%p"
+    android:verticalGap="0px">
+    <Row>
+        <Key android:keyEdgeFlags="left" android:keyLabel="😀" android:keyOutputText="😀" />
+        <Key android:keyLabel="😂" android:keyOutputText="😂" />
+        <Key android:keyLabel="😊" android:keyOutputText="😊" />
+        <Key android:keyLabel="😍" android:keyOutputText="😍" />
+        <Key android:keyLabel="😘" android:keyOutputText="😘" />
+        <Key android:keyLabel="😎" android:keyOutputText="😎" />
+        <Key android:keyLabel="🤔" android:keyOutputText="🤔" />
+        <Key android:keyEdgeFlags="right" android:keyLabel="😢" android:keyOutputText="😢" />
+    </Row>
+    <Row>
+        <Key android:keyEdgeFlags="left" android:keyLabel="👍" android:keyOutputText="👍" />
+        <Key android:keyLabel="🙏" android:keyOutputText="🙏" />
+        <Key android:keyLabel="👏" android:keyOutputText="👏" />
+        <Key android:keyLabel="🔥" android:keyOutputText="🔥" />
+        <Key android:keyLabel="🎉" android:keyOutputText="🎉" />
+        <Key android:keyLabel="✅" android:keyOutputText="✅" />
+        <Key android:keyLabel="⭐" android:keyOutputText="⭐" />
+        <Key android:keyEdgeFlags="right" android:keyLabel="💯" android:keyOutputText="💯" />
+    </Row>
+    <Row>
+        <Key android:keyEdgeFlags="left" android:keyLabel="😉" android:keyOutputText="😉" />
+        <Key android:keyLabel="🤣" android:keyOutputText="🤣" />
+        <Key android:keyLabel="😭" android:keyOutputText="😭" />
+        <Key android:keyLabel="😅" android:keyOutputText="😅" />
+        <Key android:keyLabel="😇" android:keyOutputText="😇" />
+        <Key android:keyLabel="🥰" android:keyOutputText="🥰" />
+        <Key android:keyLabel="😴" android:keyOutputText="😴" />
+        <Key android:keyEdgeFlags="right" android:keyLabel="🤗" android:keyOutputText="🤗" />
+    </Row>
+    <Row>
+        <Key android:keyEdgeFlags="left" android:keyLabel="👋" android:keyOutputText="👋" />
+        <Key android:keyLabel="💪" android:keyOutputText="💪" />
+        <Key android:keyLabel="💡" android:keyOutputText="💡" />
+        <Key android:keyLabel="📌" android:keyOutputText="📌" />
+        <Key android:keyLabel="📝" android:keyOutputText="📝" />
+        <Key android:keyLabel="⏰" android:keyOutputText="⏰" />
+        <Key android:keyLabel="❤" android:keyOutputText="❤" />
+        <Key android:keyEdgeFlags="right" android:keyLabel="✨" android:keyOutputText="✨" />
+    </Row>
+    <Row>
+        <Key
+            android:codes="-2"
+            android:keyEdgeFlags="left"
+            android:keyLabel="ABC"
+            android:keyWidth="20%p" />
+        <Key
+            android:codes="32"
+            android:isRepeatable="true"
+            android:keyLabel="English"
+            android:keyWidth="45%p" />
+        <Key
+            android:codes="-5"
+            android:isRepeatable="true"
+            android:keyLabel="Del"
+            android:keyWidth="17.5%p" />
+        <Key
+            android:codes="-4"
+            android:keyEdgeFlags="right"
+            android:keyLabel="↵"
+            android:keyWidth="17.5%p" />
+    </Row>
+</Keyboard>

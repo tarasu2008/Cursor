@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PoliteType</string>
+    <string name="ime_name">PoliteType</string>
+    <string name="subtype_label">English (US)</string>
+    <string name="intro">Offline English keyboard. As you type or paste, improved versions of the message appear above the keys. Tap one to use it. Hold a top-row letter for its number.</string>
+    <string name="enable">Enable PoliteType</string>
+    <string name="choose">Choose keyboard</string>
+    <string name="status_off">PoliteType is not enabled. Open Language and input settings, turn it on, then choose it as your keyboard.</string>
+    <string name="status_on">PoliteType is enabled. Choose it as the keyboard you are using.</string>
+    <string name="status_current">PoliteType is the keyboard you are using.</string>
+    <string name="try_hint">Type here after you switch to PoliteType</string>
+    <string name="polite">Polite mode</string>
+    <string name="pro">Professional mode</string>
+    <string name="autocorrect">Autocorrect when you press space</string>
+    <string name="haptic">Vibrate on keypress</string>
+    <string name="double_space">Double-space inserts a period</string>
+    <string name="privacy">Spelling, grammar, and tone run on this phone. Nothing you type is sent to a server. This app has no account and no internet permission.</string>
+    <string name="polite_key">Polite</string>
+    <string name="pro_key">Pro</string>
+    <string name="clip_key">Clip</string>
+    <string name="switch_key">Next</string>
+    <string name="clip_empty">Clipboard is empty</string>
+    <string name="open_settings">Settings</string>
+</resources>

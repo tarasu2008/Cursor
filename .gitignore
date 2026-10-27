@@ -43,3 +43,7 @@ projects/*/*
 !rules/
 !rules/**
 # <<< CURSOR MANAGED BLOCK <<<
+
+# PoliteType offline keyboard
+!polite-type/
+!polite-type/**

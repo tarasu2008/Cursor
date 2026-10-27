@@ -1,0 +1,28 @@
+PoliteType
+Copyright 2026 PoliteType contributors
+
+This software is released under the Apache License, Version 2.0.
+See the Apache License 2.0 text at http://www.apache.org/licenses/LICENSE-2.0
+
+English word list
+The file app/src/main/assets/lexicon.txt is derived from the English
+frequency list in hermitdave/FrequencyWords (OpenSubtitles). It is stored
+in the app as a plain word list. Words that this keyboard treats as
+misspellings or text-speak were removed so they are not offered as valid
+spellings.
+
+Grammar verb forms
+app/src/main/assets/grammar-words.txt and the verb table in the engine are
+principal parts taken from George Lyman Kittredge and Frank Edgar Farley,
+An Advanced English Grammar with Exercises (1913), Project Gutenberg
+eBook 45814, public domain. The book text itself is not included.
+
+Keyboard layout
+Row widths, the symbol pages, and the long-press accent letters follow the
+layout of https://github.com/amirisback/keyboard (Apache License 2.0).
+Those layouts were rewritten for android.inputmethodservice.Keyboard.
+No source files from that project are included.
+
+Not included
+PoliteType does not contain code, patches, or assets from Gboard,
+PixelBoard, gboard-gifs-extended, or Keybee Keyboard.
