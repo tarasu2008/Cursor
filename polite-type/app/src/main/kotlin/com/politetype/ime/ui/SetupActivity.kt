@@ -7,11 +7,11 @@ import android.os.Bundle
 import android.provider.Settings
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
-import android.widget.EditText
 import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
 import com.politetype.ime.R
+import com.politetype.ime.data.CrashLog
 import com.politetype.ime.data.Preferences
 import com.politetype.ime.ime.PoliteTypeService
 
@@ -41,7 +41,7 @@ class SetupActivity : android.app.Activity() {
         wire(R.id.autocorrect_switch) { prefs.autocorrect = it }
         wire(R.id.haptic_switch) { prefs.haptic = it }
         wire(R.id.double_space_switch) { prefs.doubleSpacePeriod = it }
-        findViewById<EditText>(R.id.try_field).requestFocus()
+        CrashLog.note(this, "setup screen opened")
     }
 
     override fun onResume() {
@@ -74,5 +74,11 @@ class SetupActivity : android.app.Activity() {
                 else -> R.string.status_off
             }
         )
+        val crash = CrashLog.read(this)
+        findViewById<TextView>(R.id.crash_log).text = if (crash.isBlank()) {
+            getString(R.string.crash_empty) + "\n" + CrashLog.path(this)
+        } else {
+            CrashLog.path(this) + "\n\n" + crash
+        }
     }
 }

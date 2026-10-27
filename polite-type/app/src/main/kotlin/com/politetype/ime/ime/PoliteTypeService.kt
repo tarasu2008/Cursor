@@ -5,7 +5,6 @@ import android.content.ClipboardManager
 import android.content.Intent
 import android.inputmethodservice.InputMethodService
 import android.inputmethodservice.Keyboard
-import android.inputmethodservice.KeyboardView
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
@@ -26,6 +25,7 @@ import com.politetype.engine.Suggestion
 import com.politetype.engine.Text
 import com.politetype.ime.R
 import com.politetype.ime.data.ClipHistory
+import com.politetype.ime.data.CrashLog
 import com.politetype.ime.data.LexiconLoader
 import com.politetype.ime.data.Preferences
 import com.politetype.ime.ui.SetupActivity
@@ -33,7 +33,7 @@ import java.util.Locale
 import java.util.concurrent.Executors
 
 @Suppress("DEPRECATION")
-class PoliteTypeService : InputMethodService(), KeyboardView.OnKeyboardActionListener {
+class PoliteTypeService : InputMethodService() {
 
     private enum class Layer { LETTERS, SYMBOLS, SYMBOLS_MORE, NUMBERS, EMOJI }
 
@@ -70,17 +70,23 @@ class PoliteTypeService : InputMethodService(), KeyboardView.OnKeyboardActionLis
 
     override fun onCreate() {
         super.onCreate()
-        prefs = Preferences(this)
-        clips = ClipHistory(this)
-        LexiconLoader.ensure(applicationContext) { scheduleSuggestions() }
+        CrashLog.note(this, "keyboard service started")
+        try {
+            prefs = Preferences(this)
+            clips = ClipHistory(this)
+            LexiconLoader.ensure(applicationContext) { scheduleSuggestions() }
+        } catch (error: Throwable) {
+            CrashLog.record(this, "service start", error)
+        }
     }
 
     override fun onCreateInputView(): View {
         return try {
             buildInputView()
-        } catch (_: Throwable) {
+        } catch (error: Throwable) {
+            CrashLog.record(this, "open keyboard", error)
             TextView(this).apply {
-                setText(R.string.keyboard_failed)
+                text = error.javaClass.simpleName + "\n" + (error.message ?: "")
                 setPadding(dp(16), dp(16), dp(16), dp(16))
             }
         }
@@ -94,10 +100,21 @@ class PoliteTypeService : InputMethodService(), KeyboardView.OnKeyboardActionLis
         clipButton = root.findViewById(R.id.clip)
         val globe = root.findViewById<ImageView>(R.id.globe)
 
-        board.setOnKeyboardActionListener(this)
-        board.isPreviewEnabled = false
-        board.setProximityCorrectionEnabled(false)
-        board.onPopupText = { text -> commit(text, honorShift = true) }
+        board.onKey = { code -> guardedKey(code) }
+        board.onText = { text ->
+            try {
+                commit(text.toString(), honorShift = false)
+            } catch (error: Throwable) {
+                CrashLog.record(this, "insert text", error)
+            }
+        }
+        board.onPopupText = { text ->
+            try {
+                commit(text, honorShift = true)
+            } catch (error: Throwable) {
+                CrashLog.record(this, "popup text", error)
+            }
+        }
         board.onShiftLock = { lockShift() }
         board.onWidthChanged = { width -> rebuildKeyboards(width) }
 
@@ -124,17 +141,22 @@ class PoliteTypeService : InputMethodService(), KeyboardView.OnKeyboardActionLis
 
     override fun onStartInput(attribute: EditorInfo, restarting: Boolean) {
         super.onStartInput(attribute, restarting)
-        field = fieldKind(attribute)
-        editorAction = attribute.imeOptions and EditorInfo.IME_MASK_ACTION
-        noEnterAction = attribute.imeOptions and EditorInfo.IME_FLAG_NO_ENTER_ACTION != 0
-        revert = null
-        capsLock = false
-        manualShiftAt = 0L
+        try {
+            field = fieldKind(attribute)
+            editorAction = attribute.imeOptions and EditorInfo.IME_MASK_ACTION
+            noEnterAction = attribute.imeOptions and EditorInfo.IME_FLAG_NO_ENTER_ACTION != 0
+            revert = null
+            capsLock = false
+            manualShiftAt = 0L
+        } catch (error: Throwable) {
+            CrashLog.record(this, "start input", error)
+        }
     }
 
     override fun onStartInputView(attribute: EditorInfo, restarting: Boolean) {
         super.onStartInputView(attribute, restarting)
         try {
+            CrashLog.note(this, "keyboard shown")
             clipMode = false
             clipButton?.setImageResource(R.drawable.ic_clipboard)
             val next = if (field == FieldKind.NUMBER) Layer.NUMBERS else Layer.LETTERS
@@ -143,13 +165,12 @@ class PoliteTypeService : InputMethodService(), KeyboardView.OnKeyboardActionLis
             applyAutoShift(respectManual = false)
             LexiconLoader.ensure(this) { scheduleSuggestions() }
             scheduleSuggestions()
-        } catch (_: Throwable) {
-            // Keep the current app open if the keyboard cannot refresh.
+        } catch (error: Throwable) {
+            CrashLog.record(this, "show keyboard", error)
         }
     }
 
     override fun onFinishInputView(finishingInput: Boolean) {
-        keyboardView?.closing()
         keyboardView?.dismissPopup()
         super.onFinishInputView(finishingInput)
     }
@@ -176,11 +197,11 @@ class PoliteTypeService : InputMethodService(), KeyboardView.OnKeyboardActionLis
         }
     }
 
-    override fun onKey(primaryCode: Int, keyCodes: IntArray?) {
+    private fun guardedKey(primaryCode: Int) {
         try {
             handleKey(primaryCode)
-        } catch (_: Throwable) {
-            // A bad key must not close every app that is using the keyboard.
+        } catch (error: Throwable) {
+            CrashLog.record(this, "key $primaryCode", error)
         }
     }
 
@@ -197,30 +218,9 @@ class PoliteTypeService : InputMethodService(), KeyboardView.OnKeyboardActionLis
         }
     }
 
-    override fun onText(text: CharSequence?) {
-        if (text.isNullOrEmpty()) return
-        try {
-            commit(text.toString(), honorShift = false)
-        } catch (_: Throwable) {
-            // Keep the editor open if one character cannot be committed.
-        }
-    }
-
-    override fun onPress(primaryCode: Int) {}
-
-    override fun onRelease(primaryCode: Int) {}
-
-    override fun swipeLeft() {}
-
-    override fun swipeRight() {}
-
-    override fun swipeDown() {}
-
-    override fun swipeUp() {}
-
     override fun onDestroy() {
         executor.shutdownNow()
-        keyboardView?.closing()
+        keyboardView?.dismissPopup()
         super.onDestroy()
     }
 
@@ -234,14 +234,18 @@ class PoliteTypeService : InputMethodService(), KeyboardView.OnKeyboardActionLis
             val nextNumbers = Keyboard(this, R.xml.numbers, 0, width, height)
             val nextEmoji = Keyboard(this, R.xml.emoji, 0, width, height)
             builtWidth = width
+            CrashLog.note(
+                this,
+                "keys ready ${nextLetters.keys?.size ?: 0} letters, height ${nextLetters.height}"
+            )
             letters = nextLetters
             symbols = nextSymbols
             symbolsMore = nextSymbolsMore
             numbers = nextNumbers
             emoji = nextEmoji
             showLayer(layer)
-        } catch (_: Throwable) {
-            // Keep the previous layout if a keyboard page cannot be read.
+        } catch (error: Throwable) {
+            CrashLog.record(this, "build keyboard", error)
         }
     }
 
@@ -325,7 +329,7 @@ class PoliteTypeService : InputMethodService(), KeyboardView.OnKeyboardActionLis
                 }
             }
         }
-        keyboardView?.invalidateAllKeys()
+        keyboardView?.invalidateKeys()
     }
 
     private fun updateEnterKey() {
@@ -336,7 +340,7 @@ class PoliteTypeService : InputMethodService(), KeyboardView.OnKeyboardActionLis
                 if (code == Keyboard.KEYCODE_DONE || code == KeyEvent.KEYCODE_ENTER) key.label = label
             }
         }
-        keyboardView?.invalidateAllKeys()
+        keyboardView?.invalidateKeys()
     }
 
     private fun enterLabel(): String {
