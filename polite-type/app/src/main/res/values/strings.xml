@@ -22,4 +22,5 @@
     <string name="switch_key">Next</string>
     <string name="clip_empty">Clipboard is empty</string>
     <string name="open_settings">Settings</string>
+    <string name="keyboard_failed">PoliteType could not open. Switch to another keyboard, then open PoliteType again.</string>
 </resources>
