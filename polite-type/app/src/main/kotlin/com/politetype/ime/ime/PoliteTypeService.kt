@@ -76,6 +76,17 @@ class PoliteTypeService : InputMethodService(), KeyboardView.OnKeyboardActionLis
     }
 
     override fun onCreateInputView(): View {
+        return try {
+            buildInputView()
+        } catch (_: Throwable) {
+            TextView(this).apply {
+                setText(R.string.keyboard_failed)
+                setPadding(dp(16), dp(16), dp(16), dp(16))
+            }
+        }
+    }
+
+    private fun buildInputView(): View {
         val root = layoutInflater.inflate(R.layout.input, null)
         val board = root.findViewById<PoliteKeyboardView>(R.id.keyboard)
         keyboardView = board
@@ -84,7 +95,7 @@ class PoliteTypeService : InputMethodService(), KeyboardView.OnKeyboardActionLis
         val globe = root.findViewById<ImageView>(R.id.globe)
 
         board.setOnKeyboardActionListener(this)
-        board.isPreviewEnabled = true
+        board.isPreviewEnabled = false
         board.setProximityCorrectionEnabled(false)
         board.onPopupText = { text -> commit(text, honorShift = true) }
         board.onShiftLock = { lockShift() }
@@ -123,14 +134,18 @@ class PoliteTypeService : InputMethodService(), KeyboardView.OnKeyboardActionLis
 
     override fun onStartInputView(attribute: EditorInfo, restarting: Boolean) {
         super.onStartInputView(attribute, restarting)
-        clipMode = false
-        clipButton?.setImageResource(R.drawable.ic_clipboard)
-        val next = if (field == FieldKind.NUMBER) Layer.NUMBERS else Layer.LETTERS
-        if (letters == null) rebuildKeyboards(resources.displayMetrics.widthPixels)
-        showLayer(next)
-        applyAutoShift(respectManual = false)
-        LexiconLoader.ensure(this) { scheduleSuggestions() }
-        scheduleSuggestions()
+        try {
+            clipMode = false
+            clipButton?.setImageResource(R.drawable.ic_clipboard)
+            val next = if (field == FieldKind.NUMBER) Layer.NUMBERS else Layer.LETTERS
+            if (letters == null) rebuildKeyboards(resources.displayMetrics.widthPixels)
+            showLayer(next)
+            applyAutoShift(respectManual = false)
+            LexiconLoader.ensure(this) { scheduleSuggestions() }
+            scheduleSuggestions()
+        } catch (_: Throwable) {
+            // Keep the current app open if the keyboard cannot refresh.
+        }
     }
 
     override fun onFinishInputView(finishingInput: Boolean) {
@@ -162,6 +177,14 @@ class PoliteTypeService : InputMethodService(), KeyboardView.OnKeyboardActionLis
     }
 
     override fun onKey(primaryCode: Int, keyCodes: IntArray?) {
+        try {
+            handleKey(primaryCode)
+        } catch (_: Throwable) {
+            // A bad key must not close every app that is using the keyboard.
+        }
+    }
+
+    private fun handleKey(primaryCode: Int) {
         keyboardView?.dismissPopup()
         when (primaryCode) {
             Keyboard.KEYCODE_SHIFT -> onShiftKey()
@@ -175,7 +198,12 @@ class PoliteTypeService : InputMethodService(), KeyboardView.OnKeyboardActionLis
     }
 
     override fun onText(text: CharSequence?) {
-        if (!text.isNullOrEmpty()) commit(text.toString(), honorShift = false)
+        if (text.isNullOrEmpty()) return
+        try {
+            commit(text.toString(), honorShift = false)
+        } catch (_: Throwable) {
+            // Keep the editor open if one character cannot be committed.
+        }
     }
 
     override fun onPress(primaryCode: Int) {}
@@ -198,14 +226,23 @@ class PoliteTypeService : InputMethodService(), KeyboardView.OnKeyboardActionLis
 
     private fun rebuildKeyboards(width: Int) {
         if (width < 100 || (width == builtWidth && letters != null)) return
-        builtWidth = width
-        val height = resources.displayMetrics.heightPixels
-        letters = Keyboard(this, R.xml.qwerty, 0, width, height)
-        symbols = Keyboard(this, R.xml.symbols, 0, width, height)
-        symbolsMore = Keyboard(this, R.xml.symbols_shift, 0, width, height)
-        numbers = Keyboard(this, R.xml.numbers, 0, width, height)
-        emoji = Keyboard(this, R.xml.emoji, 0, width, height)
-        showLayer(layer)
+        try {
+            val height = resources.displayMetrics.heightPixels
+            val nextLetters = Keyboard(this, R.xml.qwerty, 0, width, height)
+            val nextSymbols = Keyboard(this, R.xml.symbols, 0, width, height)
+            val nextSymbolsMore = Keyboard(this, R.xml.symbols_shift, 0, width, height)
+            val nextNumbers = Keyboard(this, R.xml.numbers, 0, width, height)
+            val nextEmoji = Keyboard(this, R.xml.emoji, 0, width, height)
+            builtWidth = width
+            letters = nextLetters
+            symbols = nextSymbols
+            symbolsMore = nextSymbolsMore
+            numbers = nextNumbers
+            emoji = nextEmoji
+            showLayer(layer)
+        } catch (_: Throwable) {
+            // Keep the previous layout if a keyboard page cannot be read.
+        }
     }
 
     private fun showLayer(next: Layer) {
@@ -316,6 +353,7 @@ class PoliteTypeService : InputMethodService(), KeyboardView.OnKeyboardActionLis
     }
 
     private fun commitCode(code: Int) {
+        if (code <= 0 || code > 0x10FFFF || code in 0xD800..0xDFFF) return
         val chars = Character.toChars(code)
         var text = String(chars)
         if ((shifted || capsLock) && text.length == 1 && text[0].isLetter()) {
@@ -475,15 +513,26 @@ class PoliteTypeService : InputMethodService(), KeyboardView.OnKeyboardActionLis
         val gen = ++generation
         val kind = field
         executor.execute {
-            val list = LexiconLoader.engine?.suggest(before, after, kind).orEmpty()
+            val list = try {
+                LexiconLoader.engine?.suggest(before, after, kind).orEmpty()
+            } catch (_: Throwable) {
+                emptyList()
+            }
             handler.post {
-                if (gen == generation && !clipMode) renderSuggestions(list)
+                if (gen == generation && !clipMode) {
+                    try {
+                        renderSuggestions(list)
+                    } catch (_: Throwable) {
+                        // Leave the previous chips in place.
+                    }
+                }
             }
         }
     }
 
     private fun renderSuggestions(suggestions: List<Suggestion>) {
         val row = chipRow ?: return
+        if (row.layoutParams == null) return
         row.removeAllViews()
         clipButton?.setImageResource(R.drawable.ic_clipboard)
         val weighted = suggestions.size in 1..3
@@ -573,14 +622,18 @@ class PoliteTypeService : InputMethodService(), KeyboardView.OnKeyboardActionLis
     @SuppressLint("MissingPermission")
     private fun haptic() {
         if (!prefs.haptic) return
-        val vibrator = getSystemService(VIBRATOR_SERVICE) as android.os.Vibrator
-        if (!vibrator.hasVibrator()) return
-        if (Build.VERSION.SDK_INT >= 26) {
-            vibrator.vibrate(
-                android.os.VibrationEffect.createOneShot(12, android.os.VibrationEffect.DEFAULT_AMPLITUDE)
-            )
-        } else {
-            vibrator.vibrate(12)
+        try {
+            val vibrator = getSystemService(VIBRATOR_SERVICE) as android.os.Vibrator
+            if (!vibrator.hasVibrator()) return
+            if (Build.VERSION.SDK_INT >= 26) {
+                vibrator.vibrate(
+                    android.os.VibrationEffect.createOneShot(12, android.os.VibrationEffect.DEFAULT_AMPLITUDE)
+                )
+            } else {
+                vibrator.vibrate(12)
+            }
+        } catch (_: Throwable) {
+            // Missing vibrator hardware should not close the keyboard.
         }
     }
 

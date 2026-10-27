@@ -11,7 +11,9 @@ import android.graphics.drawable.ColorDrawable
 import android.inputmethodservice.Keyboard
 import android.inputmethodservice.KeyboardView
 import android.util.AttributeSet
+import android.util.TypedValue
 import android.view.Gravity
+import android.view.MotionEvent
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.PopupWindow
@@ -43,7 +45,8 @@ class PoliteKeyboardView @JvmOverloads constructor(
     private val iconPath = Path()
 
     init {
-        isPreviewEnabled = true
+        // The framework preview and buffer draw crash on current Android versions.
+        isPreviewEnabled = false
         setProximityCorrectionEnabled(false)
         setBackgroundColor(color(R.color.keyboard_bg))
     }
@@ -51,11 +54,47 @@ class PoliteKeyboardView @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas) {
         val board = keyboard
         if (board == null) {
-            super.onDraw(canvas)
+            canvas.drawColor(color(R.color.keyboard_bg))
             return
         }
         canvas.drawColor(color(R.color.keyboard_bg))
-        for (key in board.keys) drawKey(canvas, key, board.isShifted)
+        val keys = board.keys ?: return
+        val shifted = board.isShifted
+        for (key in keys) {
+            try {
+                drawKey(canvas, key, shifted)
+            } catch (_: Throwable) {
+                // One bad key must not close the keyboard.
+            }
+        }
+    }
+
+    override fun invalidateKey(keyIndex: Int) {
+        // KeyboardView.invalidateKey draws through a private buffer that crashes
+        // when this view paints the keys itself.
+        invalidate()
+    }
+
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        return try {
+            super.onTouchEvent(event)
+        } catch (_: Throwable) {
+            if (event.actionMasked == MotionEvent.ACTION_UP) dispatchAt(event.x, event.y)
+            true
+        }
+    }
+
+    private fun dispatchAt(x: Float, y: Float) {
+        val board = keyboard ?: return
+        val key = board.keys?.firstOrNull { it.isInside(x.toInt(), y.toInt()) } ?: return
+        val listener = onKeyboardActionListener ?: return
+        val output = key.text?.toString()
+        if (!output.isNullOrEmpty()) {
+            listener.onText(output)
+            return
+        }
+        val code = key.codes?.firstOrNull() ?: return
+        listener.onKey(code, key.codes)
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
@@ -64,15 +103,19 @@ class PoliteKeyboardView @JvmOverloads constructor(
     }
 
     override fun onLongPress(key: Keyboard.Key): Boolean {
-        val code = key.codes.firstOrNull() ?: 0
-        if (code == Keyboard.KEYCODE_SHIFT) {
-            onShiftLock?.invoke()
-            return true
+        return try {
+            val code = key.codes?.firstOrNull() ?: 0
+            if (code == Keyboard.KEYCODE_SHIFT) {
+                onShiftLock?.invoke()
+                return true
+            }
+            val chars = key.popupCharacters?.toString().orEmpty()
+            if (chars.isEmpty()) return false
+            showChoices(key, chars)
+            true
+        } catch (_: Throwable) {
+            true
         }
-        val chars = key.popupCharacters?.toString().orEmpty()
-        if (chars.isEmpty()) return false
-        showChoices(key, chars)
-        return true
     }
 
     fun dismissPopup() {
@@ -121,8 +164,12 @@ class PoliteKeyboardView @JvmOverloads constructor(
         getLocationInWindow(origin)
         val x = origin[0] + key.x
         val y = (origin[1] + key.y - key.height).coerceAtLeast(0)
-        window.showAtLocation(this, Gravity.NO_GRAVITY, x, y)
-        popup = window
+        try {
+            window.showAtLocation(this, Gravity.NO_GRAVITY, x, y)
+            popup = window
+        } catch (_: Throwable) {
+            window.dismiss()
+        }
     }
 
     private fun drawKey(canvas: Canvas, key: Keyboard.Key, shifted: Boolean) {
@@ -264,5 +311,7 @@ class PoliteKeyboardView @JvmOverloads constructor(
 
     private fun dp(value: Float): Float = value * resources.displayMetrics.density
 
-    private fun sp(value: Float): Float = value * resources.displayMetrics.scaledDensity
+    private fun sp(value: Float): Float {
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, value, resources.displayMetrics)
+    }
 }
