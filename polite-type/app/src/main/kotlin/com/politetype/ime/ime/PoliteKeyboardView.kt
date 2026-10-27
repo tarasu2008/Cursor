@@ -8,29 +8,48 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
 import android.graphics.drawable.ColorDrawable
-import android.inputmethodservice.Keyboard
-import android.inputmethodservice.KeyboardView
+import android.os.Handler
+import android.os.Looper
 import android.util.AttributeSet
+import android.util.TypedValue
 import android.view.Gravity
+import android.view.MotionEvent
+import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.TextView
 import com.politetype.ime.R
+import com.politetype.ime.data.CrashLog
 
-@SuppressLint("Deprecated")
-@Suppress("DEPRECATION")
+/**
+ * Draws the keys itself. It does not use Android's Keyboard or KeyboardView,
+ * which close the app on some Samsung phones.
+ */
 class PoliteKeyboardView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : KeyboardView(context, attrs, defStyleAttr) {
+) : View(context, attrs, defStyleAttr) {
 
+    var onKey: ((Int) -> Unit)? = null
+    var onText: ((CharSequence) -> Unit)? = null
     var onPopupText: ((String) -> Unit)? = null
     var onShiftLock: (() -> Unit)? = null
-    var onWidthChanged: ((Int) -> Unit)? = null
 
+    var board: KeyBoard? = null
+        set(value) {
+            field = value
+            requestLayout()
+            invalidate()
+        }
+
+    private val handler = Handler(Looper.getMainLooper())
     private var popup: PopupWindow? = null
+    private var active: SoftKey? = null
+    private var repeated = false
+    private var longFired = false
+    private var drawLogged = false
     private val fill = Paint(Paint.ANTI_ALIAS_FLAG)
     private val labelPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { textAlign = Paint.Align.CENTER }
     private val hintPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { textAlign = Paint.Align.CENTER }
@@ -42,63 +61,175 @@ class PoliteKeyboardView @JvmOverloads constructor(
     private val keyRect = RectF()
     private val iconPath = Path()
 
+    private val longPress: Runnable = Runnable {
+        val key = active ?: return@Runnable
+        longFired = true
+        try {
+            if (key.code == KeyCodes.SHIFT) {
+                onShiftLock?.invoke()
+                return@Runnable
+            }
+            if (key.popup.isNotEmpty()) showChoices(key)
+        } catch (error: Throwable) {
+            CrashLog.record(context, "long press", error)
+        }
+    }
+
+    private val repeatKey: Runnable = Runnable {
+        val key = active ?: return@Runnable
+        send(key)
+        repeated = true
+        handler.postDelayed(repeatKey, 50)
+    }
+
     init {
-        isPreviewEnabled = true
-        setProximityCorrectionEnabled(false)
+        isClickable = true
         setBackgroundColor(color(R.color.keyboard_bg))
     }
 
-    override fun onDraw(canvas: Canvas) {
-        val board = keyboard
-        if (board == null) {
-            super.onDraw(canvas)
-            return
-        }
-        canvas.drawColor(color(R.color.keyboard_bg))
-        for (key in board.keys) drawKey(canvas, key, board.isShifted)
-    }
-
-    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        super.onSizeChanged(w, h, oldw, oldh)
-        if (w > 0 && w != oldw) onWidthChanged?.invoke(w)
-    }
-
-    override fun onLongPress(key: Keyboard.Key): Boolean {
-        val code = key.codes.firstOrNull() ?: 0
-        if (code == Keyboard.KEYCODE_SHIFT) {
-            onShiftLock?.invoke()
-            return true
-        }
-        val chars = key.popupCharacters?.toString().orEmpty()
-        if (chars.isEmpty()) return false
-        showChoices(key, chars)
-        return true
+    fun invalidateKeys() {
+        invalidate()
     }
 
     fun dismissPopup() {
-        popup?.dismiss()
+        try {
+            popup?.dismiss()
+        } catch (_: Throwable) {
+            // The window may already be gone.
+        }
         popup = null
     }
 
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val width = MeasureSpec.getSize(widthMeasureSpec).coerceAtLeast(1)
+        val keyHeight = dp(52f).toInt().coerceAtLeast(1)
+        val page = board
+        val height = try {
+            page?.layout(width, keyHeight)
+            page?.height?.takeIf { it > 0 } ?: keyHeight * 4
+        } catch (error: Throwable) {
+            CrashLog.record(context, "measure keys", error)
+            keyHeight * 4
+        }
+        setMeasuredDimension(width, height + paddingTop + paddingBottom)
+    }
+
+    override fun onDraw(canvas: Canvas) {
+        canvas.drawColor(color(R.color.keyboard_bg))
+        val page = board ?: return
+        val shifted = page.shifted
+        for (key in page.keys) {
+            try {
+                drawKey(canvas, key, shifted)
+            } catch (error: Throwable) {
+                if (!drawLogged) {
+                    drawLogged = true
+                    CrashLog.record(context, "draw key", error)
+                }
+            }
+        }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        try {
+            when (event.actionMasked) {
+                MotionEvent.ACTION_DOWN -> press(event.x, event.y)
+                MotionEvent.ACTION_MOVE -> move(event.x, event.y)
+                MotionEvent.ACTION_UP -> release(event.x, event.y, send = true)
+                MotionEvent.ACTION_CANCEL -> release(event.x, event.y, send = false)
+            }
+        } catch (error: Throwable) {
+            CrashLog.record(context, "touch", error)
+            clearPress()
+        }
+        return true
+    }
+
     override fun onDetachedFromWindow() {
+        clearPress()
         dismissPopup()
         super.onDetachedFromWindow()
     }
 
-    private fun showChoices(key: Keyboard.Key, chars: String) {
+    private fun press(x: Float, y: Float) {
+        clearPress()
+        val key = keyAt(x, y) ?: return
+        active = key
+        repeated = false
+        longFired = false
+        key.pressed = true
+        invalidate()
+        if (key.repeatable) {
+            send(key)
+            repeated = true
+            handler.postDelayed(repeatKey, 400)
+        } else {
+            handler.postDelayed(longPress, 350)
+        }
+    }
+
+    private fun move(x: Float, y: Float) {
+        val key = keyAt(x, y)
+        if (key === active) return
+        handler.removeCallbacks(longPress)
+        handler.removeCallbacks(repeatKey)
+        active?.pressed = false
+        active = key
+        longFired = false
+        repeated = false
+        key?.pressed = true
+        if (key != null && !key.repeatable) handler.postDelayed(longPress, 350)
+        invalidate()
+    }
+
+    private fun release(x: Float, y: Float, send: Boolean) {
+        handler.removeCallbacks(longPress)
+        handler.removeCallbacks(repeatKey)
+        val key = active
+        active?.pressed = false
+        active = null
+        if (send && key != null && !longFired && !repeated && keyAt(x, y) === key) {
+            send(key)
+        }
+        invalidate()
+    }
+
+    private fun clearPress() {
+        handler.removeCallbacks(longPress)
+        handler.removeCallbacks(repeatKey)
+        active?.pressed = false
+        active = null
+    }
+
+    private fun send(key: SoftKey) {
+        val output = key.output
+        if (!output.isNullOrEmpty()) {
+            onText?.invoke(output)
+            return
+        }
+        if (key.code != 0) onKey?.invoke(key.code)
+    }
+
+    private fun keyAt(x: Float, y: Float): SoftKey? {
+        val keys = board?.keys ?: return null
+        return keys.lastOrNull { it.contains(x.toInt(), y.toInt()) }
+    }
+
+    private fun showChoices(key: SoftKey) {
         dismissPopup()
         val row = LinearLayout(context).apply {
             orientation = LinearLayout.HORIZONTAL
             setBackgroundColor(0xFF2C333A.toInt())
             setPadding(6, 6, 6, 6)
         }
-        chars.forEach { character ->
+        key.popup.forEach { character ->
             val choice = TextView(context).apply {
                 text = character.toString()
                 setTextColor(Color.WHITE)
                 textSize = 20f
                 gravity = Gravity.CENTER
-                val pad = (12 * resources.displayMetrics.density).toInt()
+                val pad = dp(12f).toInt()
                 setPadding(pad, pad / 2, pad, pad / 2)
                 setOnClickListener {
                     onPopupText?.invoke(character.toString())
@@ -119,13 +250,13 @@ class PoliteKeyboardView @JvmOverloads constructor(
         window.inputMethodMode = PopupWindow.INPUT_METHOD_NOT_NEEDED
         val origin = IntArray(2)
         getLocationInWindow(origin)
-        val x = origin[0] + key.x
-        val y = (origin[1] + key.y - key.height).coerceAtLeast(0)
-        window.showAtLocation(this, Gravity.NO_GRAVITY, x, y)
+        val popupX = origin[0] + key.x
+        val popupY = (origin[1] + key.y - key.height).coerceAtLeast(0)
+        window.showAtLocation(this, Gravity.NO_GRAVITY, popupX, popupY)
         popup = window
     }
 
-    private fun drawKey(canvas: Canvas, key: Keyboard.Key, shifted: Boolean) {
+    private fun drawKey(canvas: Canvas, key: SoftKey, shifted: Boolean) {
         val insetX = dp(3f)
         val insetY = dp(5f)
         keyRect.set(
@@ -134,30 +265,29 @@ class PoliteKeyboardView @JvmOverloads constructor(
             key.x + key.width - insetX,
             key.y + key.height - insetY
         )
-        val code = key.codes?.firstOrNull() ?: 0
-        val special = code < 0 || code == 32
+        val code = key.code
         fill.color = when {
             key.pressed -> color(R.color.key_pressed)
-            special -> color(R.color.key_special)
+            key.special || code == KeyCodes.SPACE -> color(R.color.key_special)
             else -> color(R.color.key_face)
         }
         canvas.drawRoundRect(keyRect, dp(6f), dp(6f), fill)
         val cx = keyRect.centerX()
         val cy = keyRect.centerY()
         when (code) {
-            Keyboard.KEYCODE_SHIFT -> drawShift(canvas, cx, cy, key.on || shifted)
-            Keyboard.KEYCODE_DELETE -> drawDelete(canvas, cx, cy)
-            Keyboard.KEYCODE_DONE -> {
-                val label = key.label?.toString().orEmpty()
+            KeyCodes.SHIFT -> drawShift(canvas, cx, cy, shifted)
+            KeyCodes.DELETE -> drawDelete(canvas, cx, cy)
+            KeyCodes.DONE -> {
+                val label = key.label
                 if (label.length > 1 && label != "↵") drawLabel(canvas, label, cx, cy, false) else drawReturn(canvas, cx, cy)
             }
-            Keyboard.KEYCODE_ALT -> drawEmoji(canvas, cx, cy)
-            32 -> drawLabel(canvas, "English", cx, cy, hint = true)
+            KeyCodes.EMOJI -> drawEmoji(canvas, cx, cy)
+            KeyCodes.SPACE -> drawLabel(canvas, "English", cx, cy, hint = true)
             else -> {
-                val raw = key.label?.toString().orEmpty()
+                val raw = key.output ?: key.label
                 val shown = if (shifted && raw.length == 1 && raw[0].isLowerCase()) raw.uppercase() else raw
                 drawLabel(canvas, shown, cx, cy + dp(2f), false)
-                digitFor(raw)?.let { digit ->
+                digitFor(key.label)?.let { digit ->
                     hintPaint.color = color(R.color.key_hint)
                     hintPaint.textSize = sp(10f)
                     canvas.drawText(digit.toString(), cx, keyRect.top + dp(12f), hintPaint)
@@ -167,6 +297,7 @@ class PoliteKeyboardView @JvmOverloads constructor(
     }
 
     private fun drawLabel(canvas: Canvas, text: String, x: Float, y: Float, hint: Boolean) {
+        if (text.isEmpty()) return
         val paint = if (hint) hintPaint else labelPaint
         paint.color = color(if (hint) R.color.key_hint else R.color.key_text)
         paint.textSize = sp(if (text.length > 1) 13f else 20f)
@@ -264,5 +395,7 @@ class PoliteKeyboardView @JvmOverloads constructor(
 
     private fun dp(value: Float): Float = value * resources.displayMetrics.density
 
-    private fun sp(value: Float): Float = value * resources.displayMetrics.scaledDensity
+    private fun sp(value: Float): Float {
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, value, resources.displayMetrics)
+    }
 }

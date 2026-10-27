@@ -9,10 +9,10 @@ android {
 
     defaultConfig {
         applicationId = "com.politetype.ime"
-        minSdk = 21
-        targetSdk = 35
-        versionCode = 2
-        versionName = "1.1.0"
+        minSdk = 29
+        targetSdk = 34
+        versionCode = 5
+        versionName = "1.3.0"
     }
 
     buildTypes {

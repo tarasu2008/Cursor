@@ -57,12 +57,5 @@
         android:id="@+id/keyboard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/keyboard_bg"
-        android:keyBackground="@drawable/key_bg"
-        android:keyPreviewHeight="64dp"
-        android:keyPreviewLayout="@layout/key_preview"
-        android:keyPreviewOffset="8dp"
-        android:keyTextColor="@color/key_text"
-        android:keyTextSize="@dimen/key_text_size"
-        android:labelTextSize="@dimen/key_label_size" />
+        android:background="@color/keyboard_bg" />
 </LinearLayout>
