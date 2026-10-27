@@ -11,6 +11,12 @@ in the app as a plain word list. Words that this keyboard treats as
 misspellings or text-speak were removed so they are not offered as valid
 spellings.
 
+Grammar verb forms
+app/src/main/assets/grammar-words.txt and the verb table in the engine are
+principal parts taken from George Lyman Kittredge and Frank Edgar Farley,
+An Advanced English Grammar with Exercises (1913), Project Gutenberg
+eBook 45814, public domain. The book text itself is not included.
+
 Keyboard layout
 Row widths, the symbol pages, and the long-press accent letters follow the
 layout of https://github.com/amirisback/keyboard (Apache License 2.0).

@@ -37,7 +37,8 @@ object LexiconLoader {
         thread(name = "politetype-lexicon", isDaemon = true) {
             try {
                 val words = app.assets.open("lexicon.txt").bufferedReader().use { it.readLines() }
-                val loaded = Lexicon(words)
+                val grammarWords = app.assets.open("grammar-words.txt").bufferedReader().use { it.readLines() }
+                val loaded = Lexicon(words + grammarWords)
                 lexicon = loaded
                 engine = SuggestionEngine(loaded)
             } catch (_: Throwable) {

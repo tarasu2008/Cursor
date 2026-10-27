@@ -2,7 +2,7 @@
 
 PoliteType is an offline English keyboard for Android. It is a normal system keyboard, so it works in any app. Spelling, grammar, polite wording, and professional wording all run on the phone. The app does not use a server, an account, or a database, and it does not request internet access.
 
-Suggestions appear in a strip above the number row. Tap a suggestion to replace the word or the current sentence. Polite and Pro are switches on that strip. Space autocorrects a single obvious mistake, and the next backspace can undo that correction.
+The keys follow the usual phone layout: QWERTY, a gray shift and delete, and `?123` for symbols. Hold a top-row letter for its number. There is no Polite or Pro switch. When a message is typed or pasted, improved versions of that text appear in the bar above the keys. Tap one to replace what you wrote. Space still corrects one obvious mistake, and the next backspace can undo that correction.
 
 ## Install
 
@@ -18,7 +18,7 @@ The APK is signed with a debug key so it can be installed directly. It is not a 
 
 ## Keys
 
-- The top letter-key row is `1`–`0`. Suggestions sit above it.
+- Suggestions sit above the keys. Hold Q through P for 1 through 0.
 - `Aa` shifts the next letter. Tap it twice for caps lock, or hold it. Tap again to leave caps lock.
 - `?123` opens symbols. **More** opens the second symbol page.
 - `☺` opens emoji. These are characters in the keyboard, not an online GIF search.

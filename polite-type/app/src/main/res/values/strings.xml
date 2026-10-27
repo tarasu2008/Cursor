@@ -3,7 +3,7 @@
     <string name="app_name">PoliteType</string>
     <string name="ime_name">PoliteType</string>
     <string name="subtype_label">English (US)</string>
-    <string name="intro">Offline English keyboard. Suggestions sit above the numbers. Tap a suggestion to apply spelling, grammar, or tone.</string>
+    <string name="intro">Offline English keyboard. As you type or paste, improved versions of the message appear above the keys. Tap one to use it. Hold a top-row letter for its number.</string>
     <string name="enable">Enable PoliteType</string>
     <string name="choose">Choose keyboard</string>
     <string name="status_off">PoliteType is not enabled. Open Language and input settings, turn it on, then choose it as your keyboard.</string>

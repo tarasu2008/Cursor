@@ -38,8 +38,6 @@ class SetupActivity : android.app.Activity() {
             imm.showInputMethodPicker()
         }
 
-        wire(R.id.polite_switch) { prefs.polite = it }
-        wire(R.id.pro_switch) { prefs.professional = it }
         wire(R.id.autocorrect_switch) { prefs.autocorrect = it }
         wire(R.id.haptic_switch) { prefs.haptic = it }
         wire(R.id.double_space_switch) { prefs.doubleSpacePeriod = it }
@@ -59,8 +57,6 @@ class SetupActivity : android.app.Activity() {
 
     private fun render() {
         binding = true
-        findViewById<Switch>(R.id.polite_switch).isChecked = prefs.polite
-        findViewById<Switch>(R.id.pro_switch).isChecked = prefs.professional
         findViewById<Switch>(R.id.autocorrect_switch).isChecked = prefs.autocorrect
         findViewById<Switch>(R.id.haptic_switch).isChecked = prefs.haptic
         findViewById<Switch>(R.id.double_space_switch).isChecked = prefs.doubleSpacePeriod

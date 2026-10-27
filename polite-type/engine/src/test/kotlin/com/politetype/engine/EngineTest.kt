@@ -71,6 +71,13 @@ class GrammarTest {
         assertEquals("Let's go", fix("lets go"))
         assertEquals("We're going home", fix("were going home"))
         assertEquals("Going to send it", fix("gonna send it"))
+        assertEquals("He went", fix("he goed"))
+        assertEquals("I saw it", fix("I seen it"))
+        assertEquals("She has gone", fix("she have went"))
+        assertEquals("Better than that", fix("better then that"))
+        assertEquals("I used to go", fix("I use to go"))
+        assertEquals("He doesn't know. She has a car", fix("he don't know. she have a car"))
+        assertEquals("I didn't use to go", fix("I didn't use to go"))
     }
 
     @Test
@@ -156,21 +163,15 @@ class SuggestionEngineTest {
 
     @Test
     fun offersGrammarChipAndWordFixes() {
-        val suggestions = engine.suggest("he go", "", polite = false, professional = false, field = FieldKind.TEXT)
+        val suggestions = engine.suggest("he go", "", field = FieldKind.TEXT)
         assertEquals("He goes", suggestions.first { it.kind == SuggestionKind.GRAMMAR }.text)
-        val hello = engine.suggest("helo", "", polite = false, professional = false, field = FieldKind.TEXT)
+        val hello = engine.suggest("helo", "", field = FieldKind.TEXT)
         assertTrue(hello.any { it.text.equals("hello", true) })
     }
 
     @Test
     fun politeChipRewritesTheSentence() {
-        val suggestions = engine.suggest(
-            "send the file",
-            "",
-            polite = true,
-            professional = false,
-            field = FieldKind.TEXT
-        )
+        val suggestions = engine.suggest("send the file", "", field = FieldKind.TEXT)
         val polite = suggestions.first { it.kind == SuggestionKind.POLITE }
         assertEquals("Could you please send the file?", polite.text)
         assertEquals("send the file".length, polite.replaceBefore)
@@ -179,19 +180,19 @@ class SuggestionEngineTest {
     @Test
     fun hidesSuggestionsInPasswordFields() {
         assertTrue(
-            engine.suggest("helo", "", false, false, FieldKind.PASSWORD).isEmpty()
+            engine.suggest("helo", "", FieldKind.PASSWORD).isEmpty()
         )
     }
 
     @Test
     fun predictsTheNextWordAfterASpace() {
-        val suggestions = engine.suggest("thank ", "", false, false, FieldKind.TEXT)
+        val suggestions = engine.suggest("thank ", "", FieldKind.TEXT)
         assertTrue(suggestions.any { it.kind == SuggestionKind.NEXT_WORD && it.label == "you" })
     }
 
     @Test
     fun keepsTheTrailingSpaceWhenReplacing() {
-        val suggestions = engine.suggest("he go ", "", false, false, FieldKind.TEXT)
+        val suggestions = engine.suggest("he go ", "", FieldKind.TEXT)
         val grammar = suggestions.first { it.kind == SuggestionKind.GRAMMAR }
         assertEquals("He goes ", grammar.text)
         assertEquals("he go ".length, grammar.replaceBefore)

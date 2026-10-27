@@ -3,7 +3,6 @@ package com.politetype.ime.ime
 import android.annotation.SuppressLint
 import android.content.ClipboardManager
 import android.content.Intent
-import android.content.SharedPreferences
 import android.inputmethodservice.InputMethodService
 import android.inputmethodservice.Keyboard
 import android.inputmethodservice.KeyboardView
@@ -17,6 +16,7 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputConnection
 import android.view.inputmethod.InputMethodManager
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.politetype.engine.FieldKind
@@ -47,9 +47,7 @@ class PoliteTypeService : InputMethodService(), KeyboardView.OnKeyboardActionLis
 
     private var keyboardView: PoliteKeyboardView? = null
     private var chipRow: LinearLayout? = null
-    private var politeButton: TextView? = null
-    private var proButton: TextView? = null
-    private var clipButton: TextView? = null
+    private var clipButton: ImageView? = null
 
     private var letters: Keyboard? = null
     private var symbols: Keyboard? = null
@@ -70,11 +68,6 @@ class PoliteTypeService : InputMethodService(), KeyboardView.OnKeyboardActionLis
     private var generation = 0
     private var revert: Revert? = null
 
-    private val prefListener = SharedPreferences.OnSharedPreferenceChangeListener { _, _ ->
-        paintToggles()
-        if (!clipMode) scheduleSuggestions()
-    }
-
     override fun onCreate() {
         super.onCreate()
         prefs = Preferences(this)
@@ -87,10 +80,8 @@ class PoliteTypeService : InputMethodService(), KeyboardView.OnKeyboardActionLis
         val board = root.findViewById<PoliteKeyboardView>(R.id.keyboard)
         keyboardView = board
         chipRow = root.findViewById(R.id.chips)
-        politeButton = root.findViewById(R.id.polite)
-        proButton = root.findViewById(R.id.pro)
         clipButton = root.findViewById(R.id.clip)
-        val globe = root.findViewById<TextView>(R.id.globe)
+        val globe = root.findViewById<ImageView>(R.id.globe)
 
         board.setOnKeyboardActionListener(this)
         board.isPreviewEnabled = true
@@ -99,21 +90,10 @@ class PoliteTypeService : InputMethodService(), KeyboardView.OnKeyboardActionLis
         board.onShiftLock = { lockShift() }
         board.onWidthChanged = { width -> rebuildKeyboards(width) }
 
-        politeButton?.setOnClickListener {
-            prefs.polite = !prefs.polite
-            clipMode = false
-            paintToggles()
-            scheduleSuggestions()
-        }
-        proButton?.setOnClickListener {
-            prefs.professional = !prefs.professional
-            clipMode = false
-            paintToggles()
-            scheduleSuggestions()
-        }
         clipButton?.setOnClickListener {
             if (clipMode) {
                 clipMode = false
+                clipButton?.setImageResource(R.drawable.ic_clipboard)
                 scheduleSuggestions()
             } else {
                 showClipboard()
@@ -126,7 +106,6 @@ class PoliteTypeService : InputMethodService(), KeyboardView.OnKeyboardActionLis
         }
 
         rebuildKeyboards(resources.displayMetrics.widthPixels)
-        paintToggles()
         return root
     }
 
@@ -144,8 +123,8 @@ class PoliteTypeService : InputMethodService(), KeyboardView.OnKeyboardActionLis
 
     override fun onStartInputView(attribute: EditorInfo, restarting: Boolean) {
         super.onStartInputView(attribute, restarting)
-        prefs.listen(prefListener)
         clipMode = false
+        clipButton?.setImageResource(R.drawable.ic_clipboard)
         val next = if (field == FieldKind.NUMBER) Layer.NUMBERS else Layer.LETTERS
         if (letters == null) rebuildKeyboards(resources.displayMetrics.widthPixels)
         showLayer(next)
@@ -155,7 +134,6 @@ class PoliteTypeService : InputMethodService(), KeyboardView.OnKeyboardActionLis
     }
 
     override fun onFinishInputView(finishingInput: Boolean) {
-        prefs.unlisten(prefListener)
         keyboardView?.closing()
         keyboardView?.dismissPopup()
         super.onFinishInputView(finishingInput)
@@ -492,14 +470,12 @@ class PoliteTypeService : InputMethodService(), KeyboardView.OnKeyboardActionLis
 
     private fun collectSuggestions() {
         val ic = currentInputConnection
-        val before = ic?.getTextBeforeCursor(500, 0)?.toString().orEmpty()
-        val after = ic?.getTextAfterCursor(80, 0)?.toString().orEmpty()
+        val before = ic?.getTextBeforeCursor(800, 0)?.toString().orEmpty()
+        val after = ic?.getTextAfterCursor(200, 0)?.toString().orEmpty()
         val gen = ++generation
-        val polite = prefs.polite
-        val professional = prefs.professional
         val kind = field
         executor.execute {
-            val list = LexiconLoader.engine?.suggest(before, after, polite, professional, kind).orEmpty()
+            val list = LexiconLoader.engine?.suggest(before, after, kind).orEmpty()
             handler.post {
                 if (gen == generation && !clipMode) renderSuggestions(list)
             }
@@ -509,9 +485,14 @@ class PoliteTypeService : InputMethodService(), KeyboardView.OnKeyboardActionLis
     private fun renderSuggestions(suggestions: List<Suggestion>) {
         val row = chipRow ?: return
         row.removeAllViews()
-        clipButton?.text = getString(R.string.clip_key)
-        for (suggestion in suggestions) {
-            row.addView(chip(suggestion.label) { applySuggestion(suggestion) })
+        clipButton?.setImageResource(R.drawable.ic_clipboard)
+        val weighted = suggestions.size in 1..3
+        row.layoutParams = row.layoutParams.apply {
+            width = if (weighted) LinearLayout.LayoutParams.MATCH_PARENT else LinearLayout.LayoutParams.WRAP_CONTENT
+        }
+        suggestions.forEachIndexed { index, suggestion ->
+            if (index > 0) row.addView(divider())
+            row.addView(chip(suggestion.label, weighted) { applySuggestion(suggestion) })
         }
     }
 
@@ -527,7 +508,10 @@ class PoliteTypeService : InputMethodService(), KeyboardView.OnKeyboardActionLis
         if (live.isNotBlank()) clips.add(live)
         val row = chipRow ?: return
         row.removeAllViews()
-        clipButton?.text = "Back"
+        clipButton?.setImageResource(R.drawable.ic_back)
+        row.layoutParams = row.layoutParams.apply {
+            width = LinearLayout.LayoutParams.WRAP_CONTENT
+        }
         val items = clips.recent()
         if (items.isEmpty()) {
             row.addView(chip(getString(R.string.clip_empty), clickable = false) {})
@@ -544,39 +528,35 @@ class PoliteTypeService : InputMethodService(), KeyboardView.OnKeyboardActionLis
         }
     }
 
-    private fun chip(label: String, clickable: Boolean = true, click: () -> Unit): TextView {
+    private fun chip(label: String, weighted: Boolean = false, clickable: Boolean = true, click: () -> Unit): TextView {
         val view = TextView(this)
         view.text = label.replace('\n', ' ')
         view.setTextColor(colorOf(R.color.chip_text))
-        view.textSize = 15f
+        view.textSize = 16f
         view.maxLines = 1
         view.ellipsize = TextUtils.TruncateAt.END
-        view.maxWidth = (resources.displayMetrics.widthPixels * 0.7f).toInt()
-        val padH = dp(12)
-        val padV = dp(6)
-        view.setPadding(padH, padV, padH, padV)
-        view.setBackgroundResource(R.drawable.chip_bg)
+        view.gravity = android.view.Gravity.CENTER
+        view.setPadding(dp(8), 0, dp(8), 0)
         view.isClickable = clickable
         if (clickable) view.setOnClickListener { click() }
-        val params = LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.WRAP_CONTENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
-        )
-        params.marginEnd = dp(6)
-        params.gravity = android.view.Gravity.CENTER_VERTICAL
-        view.layoutParams = params
+        view.layoutParams = if (weighted) {
+            LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1f)
+        } else {
+            LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.MATCH_PARENT
+            ).apply { marginEnd = dp(8) }
+        }
         return view
     }
 
-    private fun paintToggles() {
-        paintToggle(politeButton, prefs.polite)
-        paintToggle(proButton, prefs.professional)
-    }
-
-    private fun paintToggle(view: TextView?, on: Boolean) {
-        view ?: return
-        view.setBackgroundResource(if (on) R.drawable.chip_on else R.drawable.chip_bg)
-        view.setTextColor(colorOf(if (on) R.color.on_accent else R.color.chip_text))
+    private fun divider(): View {
+        return View(this).apply {
+            setBackgroundColor(colorOf(R.color.divider))
+            layoutParams = LinearLayout.LayoutParams(dp(1), dp(22)).apply {
+                gravity = android.view.Gravity.CENTER_VERTICAL
+            }
+        }
     }
 
     private fun switchKeyboard() {

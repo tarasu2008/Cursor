@@ -83,9 +83,11 @@ object Grammar {
         fixArticles(tokens, protected)
         fixHomophones(tokens, protected)
         fixAgreement(tokens, protected)
+        fixVerbs(tokens, protected, isWord)
+        fixUsage(tokens, protected)
         fixRepeats(tokens)
         fixPronounI(tokens)
-        return Text.capitalizeFirst(Text.detokenize(tokens))
+        return capitalizeSentences(Text.detokenize(tokens))
     }
 
     private fun incomplete(token: String, isWord: (String) -> Boolean): Boolean {
@@ -94,6 +96,7 @@ object Grammar {
         val lower = core.lowercase()
         if (lower == "i" || lower == "a") return false
         if (Misspellings.fix(lower) != null) return false
+        if (Verbs.isRecognized(lower)) return false
         if (isWord(lower)) return false
         return true
     }
@@ -327,6 +330,93 @@ object Grammar {
                 index++
             }
         }
+    }
+
+    private fun fixVerbs(tokens: MutableList<String>, protected: String?, isWord: (String) -> Boolean) {
+        for (index in tokens.indices) {
+            if (isProtected(tokens, index, protected)) continue
+            val core = letterCore(tokens[index])
+            if (core.isEmpty() || !core[0].isLetter()) continue
+            val previous = tokens.getOrNull(index - 1)?.let { letterCore(it) }
+            val replacement = Verbs.fix(core, previous, isWord) ?: continue
+            if (!replacement.equals(core, ignoreCase = true)) {
+                tokens[index] = Text.matchCase(core, replacement)
+            }
+        }
+    }
+
+    private val comparatives = setOf(
+        "better", "worse", "more", "less", "rather", "other", "later", "earlier", "bigger",
+        "smaller", "higher", "lower", "faster", "slower", "easier", "harder", "stronger",
+        "weaker", "older", "younger", "greater", "fewer", "closer", "farther", "further",
+        "nicer", "larger", "smaller", "sooner", "longer", "shorter"
+    )
+    private val didNot = setOf("did", "didn't", "do", "don't", "does", "doesn't", "to", "will", "would")
+    private val abbreviations = setOf(
+        "mr", "mrs", "ms", "dr", "prof", "sr", "jr", "st", "ie", "eg", "vs", "am", "pm",
+        "etc", "vol", "fig", "no", "pp", "ave"
+    )
+
+    private fun fixUsage(tokens: MutableList<String>, protected: String?) {
+        for (index in tokens.indices) {
+            if (isProtected(tokens, index, protected)) continue
+            val core = letterCore(tokens[index]).lowercase()
+            val previous = tokens.getOrNull(index - 1)?.let { letterCore(it).lowercase() }
+            val next = tokens.getOrNull(index + 1)?.let { letterCore(it).lowercase() }
+            if (core == "then" && previous in comparatives) {
+                tokens[index] = Text.matchCase(letterCore(tokens[index]), "than")
+            }
+            if ((core == "suppose" || core == "use") && next == "to" && previous !in didNot) {
+                val replacement = if (core == "suppose") "supposed" else "used"
+                tokens[index] = Text.matchCase(letterCore(tokens[index]), replacement)
+            }
+            if (core == "i" && previous == "and" &&
+                index >= 3 && letterCore(tokens[index - 2]).equals("you", true) &&
+                letterCore(tokens[index - 3]).equals("between", true)
+            ) {
+                tokens[index] = "me"
+            }
+        }
+    }
+
+    private fun capitalizeSentences(text: String): String {
+        val chars = text.toCharArray()
+        var capitalize = true
+        var index = 0
+        while (index < chars.size) {
+            val char = chars[index]
+            if (char.isWhitespace()) {
+                index++
+                continue
+            }
+            if (capitalize && char.isLetter()) {
+                val next = chars.getOrNull(index + 1)
+                if (char.isLowerCase() && (next == null || !next.isLetter() || next.isLowerCase())) {
+                    chars[index] = char.uppercaseChar()
+                }
+                capitalize = false
+            } else if (!char.isLetter() && char != '\'') {
+                capitalize = false
+            }
+            if (char == '.' || char == '!' || char == '?') {
+                val prev = chars.getOrNull(index - 1)
+                val next = chars.getOrNull(index + 1)
+                val decimal = char == '.' && prev?.isDigit() == true && next?.isDigit() == true
+                val boundary = next == null || next.isWhitespace()
+                if (!decimal && boundary && !abbreviationBefore(chars, index)) capitalize = true
+            }
+            index++
+        }
+        return String(chars)
+    }
+
+    private fun abbreviationBefore(chars: CharArray, period: Int): Boolean {
+        var end = period
+        var start = period - 1
+        while (start >= 0 && chars[start].isLetter()) start--
+        start++
+        if (start >= end) return false
+        return chars.concatToString(start, end).lowercase() in abbreviations
     }
 
     private fun fixPronounI(tokens: MutableList<String>) {

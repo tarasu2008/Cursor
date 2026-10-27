@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="keyboard_bg">#FF1F1F1F</color>
-    <color name="candidate_bg">#FF1F1F1F</color>
-    <color name="key_face">#FF3C4043</color>
-    <color name="key_pressed">#FF5F6368</color>
+    <color name="keyboard_bg">#FF1C1C1E</color>
+    <color name="candidate_bg">#FF2C2C2E</color>
+    <color name="key_face">#FF3A3A3C</color>
+    <color name="key_special">#FF636366</color>
+    <color name="key_pressed">#FF5A5A5E</color>
     <color name="key_checked">#FF3D4F6F</color>
-    <color name="key_text">#FFE8EAED</color>
+    <color name="key_text">#FFF2F2F7</color>
+    <color name="key_hint">#FFAEAEB2</color>
+    <color name="divider">#FF3A3A3C</color>
     <color name="accent">#FF8AB4F8</color>
     <color name="on_accent">#FF202124</color>
     <color name="chip_bg">#FF3C4043</color>

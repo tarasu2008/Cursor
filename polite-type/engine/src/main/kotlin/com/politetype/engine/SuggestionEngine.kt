@@ -4,8 +4,6 @@ class SuggestionEngine(private val lexicon: Lexicon) {
     fun suggest(
         beforeCursor: String,
         afterCursor: String,
-        polite: Boolean,
-        professional: Boolean,
         field: FieldKind
     ): List<Suggestion> {
         if (field == FieldKind.PASSWORD || field == FieldKind.NUMBER) return emptyList()
@@ -14,14 +12,16 @@ class SuggestionEngine(private val lexicon: Lexicon) {
         val suffix = Sentences.wordSuffix(afterCursor)
         val insideWord = prefix.isNotEmpty()
         val cursorSplitsWord = suffix.isNotEmpty() && afterCursor.firstOrNull()?.isLetter() == true
+        val current = (prefix + suffix).lowercase()
+        val currentComplete = insideWord && !cursorSplitsWord && (
+            lexicon.isWord(current) || Misspellings.fix(current) != null || Verbs.isRecognized(current)
+        )
 
-        if (field == FieldKind.TEXT && !cursorSplitsWord) {
-            sentenceSuggestion(beforeCursor, polite, professional)?.let { results.add(it) }
-        }
-        if (insideWord) {
+        if (insideWord && !currentComplete) {
             results.addAll(wordSuggestions(prefix + suffix, prefix.length, suffix.length))
-        } else if (field == FieldKind.TEXT) {
-            results.addAll(nextWordSuggestions(beforeCursor))
+        } else if (field == FieldKind.TEXT && !cursorSplitsWord) {
+            results.addAll(rewriteSuggestions(beforeCursor, afterCursor))
+            if (results.isEmpty() && !insideWord) results.addAll(nextWordSuggestions(beforeCursor))
         }
         if (field == FieldKind.EMAIL) {
             results.addAll(emailSuggestions(beforeCursor, prefix))
@@ -30,35 +30,67 @@ class SuggestionEngine(private val lexicon: Lexicon) {
             results.add(Suggestion("https://", "https://", 0, 0, SuggestionKind.COMPLETION))
             results.add(Suggestion("www.", "www.", 0, 0, SuggestionKind.COMPLETION))
         }
-        return results.distinctBy { it.text to it.replaceBefore }.take(6)
+        return results.distinctBy { it.text to it.replaceBefore }.take(3)
     }
 
-    private fun sentenceSuggestion(before: String, polite: Boolean, professional: Boolean): Suggestion? {
-        val start = Sentences.contentStart(before)
+    /** Improved versions of the draft. No mode switch: every real improvement is offered. */
+    private fun rewriteSuggestions(before: String, after: String): List<Suggestion> {
+        val atEnd = after.isBlank()
+        val sentenceBreaks = before.count { it == '.' || it == '!' || it == '?' || it == '\n' }
+        val wholeDraft = atEnd && (before.length >= 48 || sentenceBreaks >= 2)
+        val start = if (wholeDraft) {
+            before.indexOfFirst { !it.isWhitespace() }.let { if (it < 0) return emptyList() else it }
+        } else {
+            Sentences.contentStart(before)
+        }
         val raw = before.substring(start)
         val core = raw.trim()
-        if (core.isEmpty() || !lastWordReady(core)) return null
+        if (core.isEmpty() || core.length > 700 || !lastWordReady(core)) return emptyList()
         val grammar = Grammar.correct(core) { lexicon.isWord(it) }
-        val toned = Tone.apply(grammar, polite, professional)
-        if (Text.normalize(toned) == Text.normalize(core)) return null
-        if (onlyCapitalized(core, toned) && core.split(Regex("\\s+")).size < 2 &&
-            !core.equals("i", true)
-        ) {
-            return null
-        }
-        val kind = when {
-            polite && toned != grammar -> SuggestionKind.POLITE
-            professional && toned != grammar -> SuggestionKind.PROFESSIONAL
-            else -> SuggestionKind.GRAMMAR
-        }
-        val keepSpace = raw.lastOrNull()?.isWhitespace() == true && !toned.endsWith(" ")
-        return Suggestion(
-            label = toned,
-            text = if (keepSpace) "$toned " else toned,
-            replaceBefore = raw.length,
-            replaceAfter = 0,
-            kind = kind
+        val polite = Tone.polite(grammar)
+        val professional = Tone.professional(grammar)
+        val both = Tone.professional(polite)
+        val ranked = listOf(
+            grammar to SuggestionKind.GRAMMAR,
+            polite to SuggestionKind.POLITE,
+            professional to SuggestionKind.PROFESSIONAL,
+            both to SuggestionKind.POLITE
         )
+        val meaningful = ranked.filter { (text, _) ->
+            Text.normalize(text) != Text.normalize(core) && !onlyCapitalized(core, text)
+        }
+        val chosen = if (meaningful.isNotEmpty()) {
+            meaningful
+        } else {
+            ranked.filter { (text, _) ->
+                Text.normalize(text) != Text.normalize(core) && !onlyTrivial(core, text)
+            }
+        }
+        val keepSpace = raw.lastOrNull()?.isWhitespace() == true
+        val seen = LinkedHashSet<String>()
+        val out = ArrayList<Suggestion>(3)
+        for ((text, kind) in chosen) {
+            val normalized = Text.normalize(text)
+            if (!seen.add(normalized)) continue
+            val shown = if (keepSpace && !text.endsWith(" ")) "$text " else text
+            out.add(
+                Suggestion(
+                    label = shown.trim(),
+                    text = shown,
+                    replaceBefore = raw.length,
+                    replaceAfter = 0,
+                    kind = if (text == grammar) SuggestionKind.GRAMMAR else kind
+                )
+            )
+            if (out.size == 3) break
+        }
+        return out
+    }
+
+    private fun onlyTrivial(original: String, fixed: String): Boolean {
+        return onlyCapitalized(original, fixed) &&
+            original.split(Regex("\\s+")).size < 2 &&
+            !original.equals("i", true)
     }
 
     private fun lastWordReady(core: String): Boolean {
@@ -68,6 +100,7 @@ class SuggestionEngine(private val lexicon: Lexicon) {
         val lower = last.lowercase()
         if (lower == "i" || lower == "a") return true
         if (Misspellings.fix(lower) != null) return true
+        if (Verbs.isRecognized(lower)) return true
         return lexicon.isWord(lower)
     }
 
