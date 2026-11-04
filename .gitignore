@@ -47,3 +47,7 @@ projects/*/*
 # PoliteType offline keyboard
 !polite-type/
 !polite-type/**
+
+# BTC paper trading automation
+!btc-paper-bot/
+!btc-paper-bot/**
