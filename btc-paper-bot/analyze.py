@@ -390,7 +390,7 @@ def print_report(report: dict[str, Any]) -> None:
         print(f"- {n}")
     if report.get("blocked_reason"):
         print(f"ORDER GUARD: {report['blocked_reason']}")
-    print("\nTradingView tickets ($10k each):")
+    print(f"\nTradingView tickets (${int(NOTIONAL_USD)} each):")
     for t in report.get("tv_ticket", []):
         print(
             f"  {t['side']} LIMIT {t['price']} | qty {t['units']} | "

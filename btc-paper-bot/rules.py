@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-NOTIONAL_USD = 10_000.0
+NOTIONAL_USD = 1_000.0  # user request: $1000 for all paper trades (was 10000)
 
 # Do not sell/buy the middle of the day range.
 MIDRANGE_NO_TRADE = True
