@@ -19,6 +19,9 @@ NO_REENTRY_SAME_IDEA = True
 # Check existing orders before ending them.
 PROTECT_OPEN_ORDERS = True
 
+# EVERY analysis must review the previous signal first, score it, and adjust.
+REVIEW_PREVIOUS_SIGNAL = True
+
 # --- Lessons from this chat (mistakes to never repeat) ---
 # 1) 29 Oct: shorted mid-range into demand without daily break close → stopped.
 # 2) 11 Nov US: bounce short entry correct but SL too tight (0.8%) under next
@@ -27,8 +30,9 @@ PROTECT_OPEN_ORDERS = True
 # 4) Stale proposed orders (81180/81261) were "protected" after structure broke.
 # 5) Indicators alone (EMA/RSI) without swing/trendline confluence = weak tickets.
 
-# Risk model
+# Risk model (ATR_STOP_MULT can be raised at runtime after a stop-out review)
 ATR_STOP_MULT = 1.0          # stop at least 1 ATR beyond structure
+ATR_STOP_MULT_AFTER_STOPOUT = 1.25
 MIN_RR = 1.5                 # reject tickets with reward/risk < this
 MIN_CONFLUENCE = 3           # need at least 3 confirming factors
 DEFAULT_STOP_BUFFER_PCT = 0.008

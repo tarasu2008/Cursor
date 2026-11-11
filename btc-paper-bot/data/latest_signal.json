@@ -1,10 +1,36 @@
 {
-  "timestamp_ist": "2026-11-11T23:56:59.899733+05:30",
-  "price": 74431.6,
+  "timestamp_ist": "2026-11-12T00:00:45.005507+05:30",
+  "price": 74407.0,
   "bias": "bearish",
+  "previous_review": {
+    "had_previous": true,
+    "previous_timestamp_ist": "2026-11-11T23:56:59.899733+05:30",
+    "previous_price": 74431.6,
+    "result": "not_filled",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "atr_stop_mult_now": 1.0,
+    "reviews": [
+      {
+        "side": "SHORT",
+        "entry": 74754.0,
+        "stop_loss": 77230.0,
+        "take_profit": 71040.0,
+        "filled": false,
+        "hit_sl": false,
+        "hit_tp": false,
+        "result": "not_filled",
+        "mistake": null,
+        "path_high": 74482.5,
+        "path_low": 74319.3
+      }
+    ],
+    "detail": "SHORT entry 74754.0 \u2192 not_filled"
+  },
   "signals": [
     {
-      "side": "SELL",
+      "side": "SHORT",
       "entry": 74754.0,
       "stop_loss": 77230.0,
       "take_profit": 71040.0,

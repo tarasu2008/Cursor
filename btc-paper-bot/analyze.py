@@ -13,6 +13,7 @@ from typing import Any
 
 from rules import (
     ATR_STOP_MULT,
+    ATR_STOP_MULT_AFTER_STOPOUT,
     FALLBACK,
     MIDRANGE_NO_TRADE,
     MIN_CONFLUENCE,
@@ -21,11 +22,17 @@ from rules import (
     PREFER_SHORT_AT_SUPPLY,
     PROTECT_OPEN_ORDERS,
     REQUIRE_BREAK_CLOSE_FOR_BREAKDOWN,
+    REVIEW_PREVIOUS_SIGNAL,
 )
 
 ROOT = Path(__file__).resolve().parent
 STATE_PATH = ROOT / "data" / "orders_state.json"
+LATEST_SIGNAL_PATH = ROOT / "data" / "latest_signal.json"
+HISTORY_PATH = ROOT / "data" / "signal_history.json"
 LOG_DIR = ROOT / "logs"
+
+# Runtime risk mult — raised if last signal was a stop-out (too-tight stop lesson).
+_active_atr_stop_mult = ATR_STOP_MULT
 IST = timezone(timedelta(hours=5, minutes=30))
 KRAKEN_OHLC = "https://api.kraken.com/0/public/OHLC?pair=XBTUSD&interval={interval}"
 KRAKEN_TICKER = "https://api.kraken.com/0/public/Ticker?pair=XBTUSD"
@@ -177,11 +184,147 @@ def risk_reward(side: str, entry: float, stop: float, tp: float) -> float:
 
 
 def structure_stop(side: str, entry: float, structure: float, atr14: float) -> float:
-    """Stop beyond structure by at least 1 ATR (lesson: 11 Nov stop too tight)."""
-    pad = max(atr14 * ATR_STOP_MULT, entry * 0.004)
+    """Stop beyond structure by at least N ATR (lesson: 11 Nov stop too tight)."""
+    pad = max(atr14 * _active_atr_stop_mult, entry * 0.004)
     if side == "sell":
         return round(max(structure, entry) + pad, 0)
     return round(min(structure, entry) - pad, 0)
+
+
+def side_label(side: str) -> str:
+    s = side.lower()
+    if s in {"sell", "short"}:
+        return "SHORT"
+    if s in {"buy", "long"}:
+        return "LONG"
+    return side.upper()
+
+
+def review_previous_signal(h1: list[dict], px: float) -> dict[str, Any]:
+    """Score the last saved signal against price path since it was issued."""
+    global _active_atr_stop_mult
+    _active_atr_stop_mult = ATR_STOP_MULT
+    empty = {
+        "had_previous": False,
+        "result": "none",
+        "mistake": None,
+        "lesson": None,
+        "adjustment": None,
+        "detail": "No previous signal file.",
+    }
+    if not REVIEW_PREVIOUS_SIGNAL or not LATEST_SIGNAL_PATH.exists():
+        return empty
+
+    prev = json.loads(LATEST_SIGNAL_PATH.read_text())
+    signals = prev.get("signals") or []
+    if not signals:
+        return {**empty, "detail": "Previous file had no signals (was FLAT)."}
+
+    ts = prev.get("timestamp_ist")
+    try:
+        issued = datetime.fromisoformat(ts)
+        if issued.tzinfo is None:
+            issued = issued.replace(tzinfo=IST)
+    except Exception:
+        issued = ist_now() - timedelta(hours=6)
+
+    # Price extremes since signal (from 1H bars at/after issue hour)
+    bars = [b for b in h1 if b["dt"] >= issued - timedelta(minutes=30)]
+    if not bars:
+        bars = h1[-12:]
+    hi = max(b["h"] for b in bars)
+    lo = min(b["l"] for b in bars)
+
+    reviews = []
+    worst_mistake = None
+    lesson = None
+    adjustment = None
+
+    for sig in signals:
+        side = sig["side"].lower()
+        entry = float(sig["entry"])
+        stop = float(sig["stop_loss"])
+        tp = float(sig["take_profit"])
+        is_short = side in {"sell", "short"}
+
+        filled = hi >= entry if is_short else lo <= entry
+        hit_sl = hi >= stop if is_short else lo <= stop
+        hit_tp = lo <= tp if is_short else hi >= tp
+
+        # Path order approximation: if both SL and TP tagged, assume adverse first if
+        # stop is closer to first extreme in direction of entry fill.
+        result = "pending"
+        mistake = None
+        if not filled:
+            result = "not_filled"
+        elif hit_sl and hit_tp:
+            result = "stopped_before_or_with_tp"
+            mistake = "stop_too_tight_or_choppy"
+        elif hit_sl:
+            result = "stopped_out"
+            mistake = "stop_too_tight" if abs(stop - entry) < atr(h1) * 1.2 else "thesis_wrong"
+        elif hit_tp:
+            result = "take_profit_hit"
+        else:
+            result = "open_in_profit" if (
+                (is_short and px < entry) or ((not is_short) and px > entry)
+            ) else "open_underwater"
+
+        if mistake == "stop_too_tight" or mistake == "stop_too_tight_or_choppy":
+            worst_mistake = mistake
+            lesson = "Widen stop to >= 1.25 ATR beyond structure; do not place SL under obvious liquidity high/low."
+            adjustment = f"ATR_STOP_MULT -> {ATR_STOP_MULT_AFTER_STOPOUT}"
+            _active_atr_stop_mult = ATR_STOP_MULT_AFTER_STOPOUT
+        elif result == "not_filled" and is_short and hi < entry and (entry - hi) > atr(h1):
+            worst_mistake = worst_mistake or "entry_too_far"
+            lesson = lesson or "Entry was unrealistic above market; place supply closer to price or wait."
+        elif result == "take_profit_hit":
+            lesson = lesson or "Prior signal worked — keep same confluence rules."
+
+        reviews.append(
+            {
+                "side": side_label(side),
+                "entry": entry,
+                "stop_loss": stop,
+                "take_profit": tp,
+                "filled": filled,
+                "hit_sl": hit_sl,
+                "hit_tp": hit_tp,
+                "result": result,
+                "mistake": mistake,
+                "path_high": round(hi, 1),
+                "path_low": round(lo, 1),
+            }
+        )
+
+    detail = "; ".join(
+        f"{r['side']} entry {r['entry']} → {r['result']}" + (f" ({r['mistake']})" if r["mistake"] else "")
+        for r in reviews
+    )
+    out = {
+        "had_previous": True,
+        "previous_timestamp_ist": ts,
+        "previous_price": prev.get("price"),
+        "result": reviews[0]["result"] if len(reviews) == 1 else "mixed",
+        "mistake": worst_mistake,
+        "lesson": lesson,
+        "adjustment": adjustment,
+        "atr_stop_mult_now": _active_atr_stop_mult,
+        "reviews": reviews,
+        "detail": detail,
+    }
+
+    # Persist review trail
+    history = []
+    if HISTORY_PATH.exists():
+        try:
+            history = json.loads(HISTORY_PATH.read_text())
+        except Exception:
+            history = []
+    history.append({"reviewed_at_ist": ist_now().isoformat(), "current_price": px, **out})
+    HISTORY_PATH.parent.mkdir(parents=True, exist_ok=True)
+    HISTORY_PATH.write_text(json.dumps(history[-50:], indent=2))
+    return out
 
 
 def valid_ticket(side: str, entry: float, stop: float, tp: float) -> bool:
@@ -239,6 +382,9 @@ def analyze(session: str) -> dict[str, Any]:
     h1 = load_ohlc(60)
     h4 = load_ohlc(240)
     px = ticker_price()
+
+    # Step 0 (required): review previous analysis before making a new one.
+    review = review_previous_signal(h1, px)
 
     d_closes = [r["c"] for r in daily]
     h1_closes = [r["c"] for r in h1]
@@ -506,11 +652,19 @@ def analyze(session: str) -> dict[str, Any]:
     stale_notes = invalidate_stale(state, px, daily_atr)
     notes.extend(stale_notes)
 
+    if review.get("had_previous"):
+        notes.insert(0, f"PREV REVIEW: {review.get('detail')}")
+        if review.get("lesson"):
+            notes.insert(1, f"LESSON: {review['lesson']}")
+        if review.get("adjustment"):
+            notes.insert(2, f"ADJUSTED: {review['adjustment']}")
+
     return {
         "session": session,
         "timestamp_ist": ist_now().isoformat(),
         "price": px,
         "bias": bias,
+        "previous_review": review,
         "levels": {
             "ema20": round(e20, 1),
             "ema50": round(e50, 1),
@@ -607,29 +761,35 @@ def confirm_placed(state: dict[str, Any]) -> None:
 
 
 def print_simple(report: dict[str, Any]) -> None:
-    """User-facing format: Buy/Sell + entry + SL + TP only."""
+    """User-facing format: LONG/SHORT + entry + SL + TP only."""
+    review = report.get("previous_review") or {}
+    if review.get("had_previous"):
+        print(f"PREV: {review.get('detail')}")
+        if review.get("lesson"):
+            print(f"LESSON: {review['lesson']}")
     tickets = report.get("tv_ticket") or []
     print(f"Price ${report['price']:.2f} | {report['timestamp_ist']}")
     if not tickets:
-        print("FLAT — no Buy/Sell setup")
+        print("FLAT — no LONG/SHORT setup")
         return
     for t in tickets:
         print(
-            f"{t['side']} | Entry {t['price']} | Stop Loss {t['stop_loss']} | "
+            f"{side_label(t['side'])} | Entry {t['price']} | Stop Loss {t['stop_loss']} | "
             f"Take Profit {t['take_profit']} | Qty {t['units']}"
         )
 
 
 def save_latest_signal(report: dict[str, Any]) -> Path:
-    path = ROOT / "data" / "latest_signal.json"
+    path = LATEST_SIGNAL_PATH
     path.parent.mkdir(parents=True, exist_ok=True)
     simple = {
         "timestamp_ist": report["timestamp_ist"],
         "price": report["price"],
         "bias": report["bias"],
+        "previous_review": report.get("previous_review"),
         "signals": [
             {
-                "side": t["side"],
+                "side": side_label(t["side"]),
                 "entry": t["price"],
                 "stop_loss": t["stop_loss"],
                 "take_profit": t["take_profit"],
