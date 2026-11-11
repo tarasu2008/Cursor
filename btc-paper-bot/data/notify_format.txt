@@ -1,0 +1,14 @@
+BTC ALERT (<India|UK|US|Now>)
+PREV: <result of last signal>
+LONG | SHORT | FLAT
+Entry: <price>
+Stop Loss: <price>
+Take Profit: <price>
+If TP: +$<amt> (~2%) | If SL: -$<amt> (~1%)
+
+Rules remembered from chat:
+- Size ~$1000
+- Stop 1% / Take profit 2% (raise later)
+- Review previous analysis every time
+- Use LONG/SHORT labels
+- No mid-range chase; protect open ideas unless invalidated
