@@ -51,3 +51,7 @@ projects/*/*
 # Diwali greeting cards
 !diwali-cards/
 !diwali-cards/**
+
+# CRE declarations
+!cre-declarations/
+!cre-declarations/**
