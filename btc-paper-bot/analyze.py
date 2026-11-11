@@ -23,6 +23,9 @@ from rules import (
     PROTECT_OPEN_ORDERS,
     REQUIRE_BREAK_CLOSE_FOR_BREAKDOWN,
     REVIEW_PREVIOUS_SIGNAL,
+    STOP_LOSS_PCT,
+    TAKE_PROFIT_PCT,
+    USE_FIXED_PCT_RISK,
 )
 
 ROOT = Path(__file__).resolve().parent
@@ -189,6 +192,23 @@ def structure_stop(side: str, entry: float, structure: float, atr14: float) -> f
     if side == "sell":
         return round(max(structure, entry) + pad, 0)
     return round(min(structure, entry) - pad, 0)
+
+
+def pct_stop_tp(side: str, entry: float) -> tuple[float, float]:
+    """Fixed % risk: 1% SL / 2% TP (user request 12 Nov)."""
+    if side == "sell":
+        stop = round(entry * (1 + STOP_LOSS_PCT), 0)
+        tp = round(entry * (1 - TAKE_PROFIT_PCT), 0)
+    else:
+        stop = round(entry * (1 - STOP_LOSS_PCT), 0)
+        tp = round(entry * (1 + TAKE_PROFIT_PCT), 0)
+    return stop, tp
+
+
+def apply_ticket_risk(side: str, entry: float, stop: float, tp: float) -> tuple[float, float]:
+    if USE_FIXED_PCT_RISK:
+        return pct_stop_tp(side, entry)
+    return stop, tp
 
 
 def side_label(side: str) -> str:
@@ -476,13 +496,12 @@ def analyze(session: str) -> dict[str, Any]:
             factors.append("vol_sell_day")
 
         stop = structure_stop("sell", entry, max(day_high, entry), daily_atr)
-        # Target: next swing low or 1.5R, whichever is farther but sane
         swing_tp = min(day_low, swing_low_30)
-        r_dist = stop - entry
-        tp_rr = round(entry - MIN_RR * r_dist, 0)
-        tp = round(min(swing_tp, tp_rr), 0)
+        r_dist = max(stop - entry, 1)
+        tp = round(min(swing_tp, entry - MIN_RR * r_dist), 0)
         if tp >= entry:
             tp = round(entry - MIN_RR * r_dist, 0)
+        stop, tp = apply_ticket_risk("sell", entry, stop, tp)
 
         rr = risk_reward("sell", entry, stop, tp)
         if (
@@ -521,7 +540,8 @@ def analyze(session: str) -> dict[str, Any]:
     if REQUIRE_BREAK_CLOSE_FOR_BREAKDOWN and last_h1["c"] < break_level:
         entry = round(break_level * 0.999, 0)
         stop = structure_stop("sell", entry, max(day_high, last_h1["h"]), daily_atr)
-        tp = round(min(FALLBACK["deep_target"], entry - MIN_RR * (stop - entry)), 0)
+        tp = round(min(FALLBACK["deep_target"], entry - MIN_RR * max(stop - entry, 1)), 0)
+        stop, tp = apply_ticket_risk("sell", entry, stop, tp)
         factors = ["break_close_1h", "below_swing_low"]
         if bias == "bearish":
             factors.append("daily_bearish")
@@ -552,7 +572,8 @@ def analyze(session: str) -> dict[str, Any]:
     elif bias == "bearish":
         entry = round(break_level * 0.999, 0)
         stop = structure_stop("sell", entry, day_high, daily_atr)
-        tp = round(min(FALLBACK["deep_target"], entry - MIN_RR * (stop - entry)), 0)
+        tp = round(min(FALLBACK["deep_target"], entry - MIN_RR * max(stop - entry, 1)), 0)
+        stop, tp = apply_ticket_risk("sell", entry, stop, tp)
         notes.append(
             f"Pending breakdown under {break_level:.0f} → limit {entry} SL {stop} TP {tp} "
             f"(wait for 1H close; not active yet)"
@@ -563,7 +584,8 @@ def analyze(session: str) -> dict[str, Any]:
     if last_h1["c"] > h1_e20 and (bias != "bearish" or px > e200):
         entry = round(reclaim * 1.001, 0)
         stop = structure_stop("buy", entry, day_low, daily_atr)
-        tp = round(max(e50, entry + MIN_RR * (entry - stop)), 0)
+        tp = round(max(e50, entry + MIN_RR * max(entry - stop, 1)), 0)
+        stop, tp = apply_ticket_risk("buy", entry, stop, tp)
         factors = []
         if last_h1["c"] > h1_e20:
             factors.append("h1_above_ema20")
@@ -602,6 +624,7 @@ def analyze(session: str) -> dict[str, Any]:
         entry = dip
         stop = structure_stop("buy", entry, dip, daily_atr)
         tp = round(min(day_high, e20), 0)
+        stop, tp = apply_ticket_risk("buy", entry, stop, tp)
         factors = ["swing_demand"]
         if daily_rsi < 35:
             factors.append("rsi_oversold")
@@ -773,10 +796,22 @@ def print_simple(report: dict[str, Any]) -> None:
         print("FLAT — no LONG/SHORT setup")
         return
     for t in tickets:
+        entry = float(t["price"])
+        sl = float(t["stop_loss"])
+        tp = float(t["take_profit"])
+        qty = float(t["units"])
+        side = t["side"].lower()
+        if side in {"sell", "short"}:
+            profit = (entry - tp) * qty
+            loss = (sl - entry) * qty
+        else:
+            profit = (tp - entry) * qty
+            loss = (entry - sl) * qty
         print(
             f"{side_label(t['side'])} | Entry {t['price']} | Stop Loss {t['stop_loss']} | "
             f"Take Profit {t['take_profit']} | Qty {t['units']}"
         )
+        print(f"  If TP: +${profit:.2f} (~{TAKE_PROFIT_PCT*100:.0f}%) | If SL: -${loss:.2f} (~{STOP_LOSS_PCT*100:.0f}%)")
 
 
 def save_latest_signal(report: dict[str, Any]) -> Path:

@@ -1,12 +1,12 @@
 {
-  "timestamp_ist": "2026-11-12T00:00:45.005507+05:30",
-  "price": 74407.0,
+  "timestamp_ist": "2026-11-12T00:07:23.714417+05:30",
+  "price": 74546.4,
   "bias": "bearish",
   "previous_review": {
     "had_previous": true,
-    "previous_timestamp_ist": "2026-11-11T23:56:59.899733+05:30",
-    "previous_price": 74431.6,
-    "result": "not_filled",
+    "previous_timestamp_ist": "2026-11-12T00:00:45.005507+05:30",
+    "previous_price": 74407.0,
+    "result": "open_in_profit",
     "mistake": null,
     "lesson": null,
     "adjustment": null,
@@ -17,24 +17,16 @@
         "entry": 74754.0,
         "stop_loss": 77230.0,
         "take_profit": 71040.0,
-        "filled": false,
+        "filled": true,
         "hit_sl": false,
         "hit_tp": false,
-        "result": "not_filled",
+        "result": "open_in_profit",
         "mistake": null,
-        "path_high": 74482.5,
-        "path_low": 74319.3
+        "path_high": 74754.1,
+        "path_low": 73303.9
       }
     ],
-    "detail": "SHORT entry 74754.0 \u2192 not_filled"
+    "detail": "SHORT entry 74754.0 \u2192 open_in_profit"
   },
-  "signals": [
-    {
-      "side": "SHORT",
-      "entry": 74754.0,
-      "stop_loss": 77230.0,
-      "take_profit": 71040.0,
-      "qty": 0.013
-    }
-  ]
+  "signals": []
 }
