@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-NOTIONAL_USD = 1_000.0  # user request: $1000 for all paper trades (was 10000)
+NOTIONAL_USD = 1_000.0
 
 # Do not sell/buy the middle of the day range.
 MIDRANGE_NO_TRADE = True
@@ -19,15 +19,23 @@ NO_REENTRY_SAME_IDEA = True
 # Check existing orders before ending them.
 PROTECT_OPEN_ORDERS = True
 
-# Hard invalidation distances used when structure levels are missing.
+# --- Lessons from this chat (mistakes to never repeat) ---
+# 1) 29 Oct: shorted mid-range into demand without daily break close → stopped.
+# 2) 11 Nov US: bounce short entry correct but SL too tight (0.8%) under next
+#    liquidity high → stopped before thesis played. Use ATR + structure stop.
+# 3) Bot bug: breakdown tickets used stale FALLBACK TP above entry for shorts.
+# 4) Stale proposed orders (81180/81261) were "protected" after structure broke.
+# 5) Indicators alone (EMA/RSI) without swing/trendline confluence = weak tickets.
+
+# Risk model
+ATR_STOP_MULT = 1.0          # stop at least 1 ATR beyond structure
+MIN_RR = 1.5                 # reject tickets with reward/risk < this
+MIN_CONFLUENCE = 3           # need at least 3 confirming factors
 DEFAULT_STOP_BUFFER_PCT = 0.008
 DEFAULT_REWARD_R = 2.0
 
-# Session names → run labels
 SESSIONS = ("india", "uk", "us")
 
-# Key structural references (updated by analyzer from live data; these are fallbacks)
 FALLBACK = {
-    "ema200_exit_zone": 76_450.0,
-    "sept_swing_low": 74_892.0,
+    "deep_target": 71_000.0,  # extension below current swing shelf
 }

@@ -5,16 +5,18 @@ from __future__ import annotations
 
 import argparse
 import json
-import math
 import urllib.request
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from typing import Any
 
 from rules import (
+    ATR_STOP_MULT,
     FALLBACK,
     MIDRANGE_NO_TRADE,
+    MIN_CONFLUENCE,
+    MIN_RR,
     NOTIONAL_USD,
     PREFER_SHORT_AT_SUPPLY,
     PROTECT_OPEN_ORDERS,
@@ -32,8 +34,8 @@ KRAKEN_TICKER = "https://api.kraken.com/0/public/Ticker?pair=XBTUSD"
 @dataclass
 class OrderProposal:
     idea_id: str
-    side: str  # buy | sell
-    order_type: str  # limit
+    side: str
+    order_type: str
     entry: float
     stop: float
     take_profit: float
@@ -41,7 +43,10 @@ class OrderProposal:
     notional_usd: float
     reason: str
     session: str
-    status: str = "proposed"  # proposed | working | filled | closed | cancelled
+    confluence: int = 0
+    factors: list[str] = field(default_factory=list)
+    rr: float = 0.0
+    status: str = "proposed"
 
 
 def ist_now() -> datetime:
@@ -53,7 +58,7 @@ def fetch_json(url: str) -> dict[str, Any]:
         return json.loads(resp.read().decode())
 
 
-def load_ohlc(interval: int) -> list[dict[str, float | datetime]]:
+def load_ohlc(interval: int) -> list[dict[str, Any]]:
     data = fetch_json(KRAKEN_OHLC.format(interval=interval))
     if data.get("error"):
         raise RuntimeError(data["error"])
@@ -121,8 +126,73 @@ def atr(rows: list[dict], n: int = 14) -> float:
     return sum(trs[-n:]) / n if trs else 0.0
 
 
+def macd_hist(vals: list[float]) -> float:
+    if len(vals) < 35:
+        return 0.0
+    e12 = ema(vals, 12)
+    e26 = ema(vals, 26)
+    macd_line = [a - b for a, b in zip(e12, e26)]
+    signal = ema(macd_line, 9)
+    return macd_line[-1] - signal[-1]
+
+
+def pivots(rows: list[dict], left: int = 2, right: int = 2) -> tuple[list[dict], list[dict]]:
+    ph, pl = [], []
+    for i in range(left, len(rows) - right):
+        h = rows[i]["h"]
+        l = rows[i]["l"]
+        if all(h >= rows[i - k]["h"] and h >= rows[i + k]["h"] for k in range(1, left + 1)):
+            if all(h >= rows[i + k]["h"] for k in range(1, right + 1)):
+                ph.append({"i": i, "dt": rows[i]["dt"], "price": h})
+        if all(l <= rows[i - k]["l"] and l <= rows[i + k]["l"] for k in range(1, left + 1)):
+            if all(l <= rows[i + k]["l"] for k in range(1, right + 1)):
+                pl.append({"i": i, "dt": rows[i]["dt"], "price": l})
+    return ph, pl
+
+
+def trendline_value(p1: dict, p2: dict, at_index: int) -> float:
+    """Linear extrapolation between two pivot points to bar index at_index."""
+    x1, y1 = p1["i"], p1["price"]
+    x2, y2 = p2["i"], p2["price"]
+    if x2 == x1:
+        return y2
+    slope = (y2 - y1) / (x2 - x1)
+    return y1 + slope * (at_index - x1)
+
+
 def qty_for(entry: float) -> float:
     return round(NOTIONAL_USD / entry, 3)
+
+
+def risk_reward(side: str, entry: float, stop: float, tp: float) -> float:
+    if side == "sell":
+        risk = stop - entry
+        reward = entry - tp
+    else:
+        risk = entry - stop
+        reward = tp - entry
+    if risk <= 0 or reward <= 0:
+        return 0.0
+    return reward / risk
+
+
+def structure_stop(side: str, entry: float, structure: float, atr14: float) -> float:
+    """Stop beyond structure by at least 1 ATR (lesson: 11 Nov stop too tight)."""
+    pad = max(atr14 * ATR_STOP_MULT, entry * 0.004)
+    if side == "sell":
+        return round(max(structure, entry) + pad, 0)
+    return round(min(structure, entry) - pad, 0)
+
+
+def valid_ticket(side: str, entry: float, stop: float, tp: float) -> bool:
+    rr = risk_reward(side, entry, stop, tp)
+    if rr < MIN_RR:
+        return False
+    if side == "sell" and not (stop > entry > tp):
+        return False
+    if side == "buy" and not (stop < entry < tp):
+        return False
+    return True
 
 
 def load_state() -> dict[str, Any]:
@@ -140,49 +210,141 @@ def working_orders(state: dict[str, Any]) -> list[dict[str, Any]]:
     return [o for o in state.get("orders", []) if o.get("status") in {"proposed", "working", "filled"}]
 
 
+def invalidate_stale(state: dict[str, Any], px: float, atr14: float) -> list[str]:
+    """Cancel proposed ideas that price has structurally left behind."""
+    notes = []
+    for o in state.get("orders", []):
+        if o.get("status") not in {"proposed", "working"}:
+            continue
+        entry = float(o["entry"])
+        side = o["side"]
+        # If a pending sell limit is > 2 ATR above market and aging, mark broken.
+        if side == "sell" and entry - px > 2.5 * atr14:
+            o["status"] = "cancelled"
+            o["cancel_reason"] = "stale_above_market"
+            o["cancelled_at"] = ist_now().isoformat()
+            notes.append(f"Invalidated stale sell {entry} (>{2.5}*ATR above price)")
+        if side == "buy" and px - entry > 2.5 * atr14:
+            o["status"] = "cancelled"
+            o["cancel_reason"] = "stale_below_market"
+            o["cancelled_at"] = ist_now().isoformat()
+            notes.append(f"Invalidated stale buy {entry} (>{2.5}*ATR below price)")
+    if notes:
+        save_state(state)
+    return notes
+
+
 def analyze(session: str) -> dict[str, Any]:
     daily = load_ohlc(1440)
     h1 = load_ohlc(60)
+    h4 = load_ohlc(240)
     px = ticker_price()
-    closes = [r["c"] for r in daily]
-    e20, e50, e200 = ema(closes, 20)[-1], ema(closes, 50)[-1], ema(closes, 200)[-1]
-    daily_rsi = rsi(closes)
+
+    d_closes = [r["c"] for r in daily]
+    h1_closes = [r["c"] for r in h1]
+    e20, e50, e200 = ema(d_closes, 20)[-1], ema(d_closes, 50)[-1], ema(d_closes, 200)[-1]
+    h1_e20 = ema(h1_closes, 20)[-1]
+    daily_rsi = rsi(d_closes)
+    h1_rsi = rsi(h1_closes)
     daily_atr = atr(daily)
+    h1_atr = atr(h1)
+    macd_d = macd_hist(d_closes)
+    macd_h1 = macd_hist(h1_closes)
+
     today = daily[-1]
     yday = daily[-2]
     day_high, day_low = today["h"], today["l"]
     mid = (day_high + day_low) / 2
-
-    # Recent structure
     swing_low_30 = min(r["l"] for r in daily[-30:])
     swing_high_30 = max(r["h"] for r in daily[-30:])
     last_h1 = h1[-1]
 
+    # Volume: compare last completed daily volume to 20-day avg
+    vols = [r["v"] for r in daily[:-1]]
+    vol_avg = sum(vols[-20:]) / 20 if len(vols) >= 20 else sum(vols) / max(len(vols), 1)
+    vol_spike = today["v"] > vol_avg * 1.4 if vol_avg else False
+
+    # Swing pivots + descending resistance / rising support trendlines
+    ph, pl = pivots(daily[-60:], 2, 2)
+    # Re-index pivots relative to full daily for trendline math on last bar
+    # Use last-60 window indices; map to local
+    desc_line = None
+    rise_line = None
+    if len(ph) >= 2:
+        p1, p2 = ph[-2], ph[-1]
+        if p2["price"] < p1["price"]:
+            desc_line = trendline_value(p1, p2, len(daily[-60:]) - 1)
+    if len(pl) >= 2:
+        p1, p2 = pl[-2], pl[-1]
+        if p2["price"] > p1["price"]:
+            rise_line = trendline_value(p1, p2, len(daily[-60:]) - 1)
+
+    # Lower-high / lower-low structure
+    recent_ph = [p["price"] for p in ph[-3:]]
+    recent_pl = [p["price"] for p in pl[-3:]]
+    lower_highs = len(recent_ph) >= 2 and recent_ph[-1] < recent_ph[-2]
+    lower_lows = len(recent_pl) >= 2 and recent_pl[-1] < recent_pl[-2]
+
     bias = "range"
-    if px < e20 and px < e50 and daily_rsi < 45:
+    if px < e20 and px < e50 and (daily_rsi < 45 or lower_highs):
         bias = "bearish"
-    elif px > e20 and px > e50 and daily_rsi > 55:
+    elif px > e20 and px > e50 and (daily_rsi > 55 or not lower_lows):
         bias = "bullish"
 
-    proposals: list[OrderProposal] = []
-    notes: list[str] = []
-
-    # Mid-range filter from chat: do not chase middle.
     in_mid = MIDRANGE_NO_TRADE and (day_low + 0.25 * (day_high - day_low)) < px < (
         day_low + 0.75 * (day_high - day_low)
     )
     if day_high - day_low < daily_atr * 0.3:
-        in_mid = False  # too tight a day to apply mid filter
+        in_mid = False
 
-    # Setup A: rejection short into supply (20EMA / day high / 50EMA)
-    supply = max(e20, day_high)
+    notes: list[str] = []
+    proposals: list[OrderProposal] = []
+
+    # --- Strategy A: supply rejection short (confluence scored) ---
     if PREFER_SHORT_AT_SUPPLY and bias in {"bearish", "range"}:
-        entry = round(min(supply, e50) if px < e50 else supply, 0)
+        supply_levels = [day_high, e20, e50]
+        if desc_line:
+            supply_levels.append(desc_line)
+        entry = round(min(lvl for lvl in supply_levels if lvl > px), 0) if any(
+            lvl > px for lvl in supply_levels
+        ) else round(day_high, 0)
         if entry <= px:
-            entry = round(max(px * 1.002, e20), 0)
-        stop = round(entry * 1.008, 0)
-        tp = round(max(e200, FALLBACK["ema200_exit_zone"]), 0)
-        if entry > px and (entry - px) < daily_atr * 1.2:
+            entry = round(max(day_high, e20, px + h1_atr * 0.5), 0)
+
+        factors = []
+        if bias == "bearish":
+            factors.append("daily_bearish")
+        if lower_highs:
+            factors.append("lower_highs")
+        if px < e20:
+            factors.append("below_ema20")
+        if px < e50:
+            factors.append("below_ema50")
+        if macd_d < 0:
+            factors.append("macd_daily_neg")
+        if desc_line and entry <= desc_line * 1.01:
+            factors.append("desc_trendline")
+        if h1_rsi > 50:
+            factors.append("h1_rsi_bounce")
+        if vol_spike and today["c"] < today["o"]:
+            factors.append("vol_sell_day")
+
+        stop = structure_stop("sell", entry, max(day_high, entry), daily_atr)
+        # Target: next swing low or 1.5R, whichever is farther but sane
+        swing_tp = min(day_low, swing_low_30)
+        r_dist = stop - entry
+        tp_rr = round(entry - MIN_RR * r_dist, 0)
+        tp = round(min(swing_tp, tp_rr), 0)
+        if tp >= entry:
+            tp = round(entry - MIN_RR * r_dist, 0)
+
+        rr = risk_reward("sell", entry, stop, tp)
+        if (
+            len(factors) >= MIN_CONFLUENCE
+            and valid_ticket("sell", entry, stop, tp)
+            and entry > px
+            and (entry - px) < daily_atr * 1.5
+        ):
             proposals.append(
                 OrderProposal(
                     idea_id=f"short-supply-{session}-{ist_now().strftime('%Y%m%d')}",
@@ -193,60 +355,82 @@ def analyze(session: str) -> dict[str, Any]:
                     take_profit=tp,
                     qty=qty_for(entry),
                     notional_usd=NOTIONAL_USD,
-                    reason=f"Rejection short into supply/EMA. Bias={bias}. Chat rule: prefer short at supply.",
+                    reason="Supply rejection short with ATR structure stop + confluence filter.",
                     session=session,
+                    confluence=len(factors),
+                    factors=factors,
+                    rr=round(rr, 2),
                 )
             )
-            notes.append(f"Short limit {entry} SL {stop} TP {tp}")
+            notes.append(
+                f"Short {entry} SL {stop} TP {tp} RR {rr:.2f} conf {len(factors)} {factors}"
+            )
+        else:
+            notes.append(
+                f"Skipped supply short (conf={len(factors)}/{MIN_CONFLUENCE}, rr={rr:.2f}, valid={valid_ticket('sell', entry, stop, tp)})"
+            )
 
-    # Setup B: breakdown short only on confirmed close under day/swing low
-    break_level = min(day_low, swing_low_30)
+    # --- Strategy B: breakdown short (only after 1H close under swing) ---
+    break_level = swing_low_30
     if REQUIRE_BREAK_CLOSE_FOR_BREAKDOWN and last_h1["c"] < break_level:
         entry = round(break_level * 0.999, 0)
-        stop = round(mid if mid > entry else entry * 1.015, 0)
-        tp = round(FALLBACK["sept_swing_low"], 0)
-        proposals.append(
-            OrderProposal(
-                idea_id=f"short-break-{session}-{ist_now().strftime('%Y%m%d')}",
-                side="sell",
-                order_type="limit",
-                entry=entry,
-                stop=stop,
-                take_profit=tp,
-                qty=qty_for(entry),
-                notional_usd=NOTIONAL_USD,
-                reason="1H close already under breakdown level (chat rule: wait for break close).",
-                session=session,
+        stop = structure_stop("sell", entry, max(day_high, last_h1["h"]), daily_atr)
+        tp = round(min(FALLBACK["deep_target"], entry - MIN_RR * (stop - entry)), 0)
+        factors = ["break_close_1h", "below_swing_low"]
+        if bias == "bearish":
+            factors.append("daily_bearish")
+        if macd_h1 < 0:
+            factors.append("macd_h1_neg")
+        if vol_spike:
+            factors.append("vol_spike")
+        rr = risk_reward("sell", entry, stop, tp)
+        if len(factors) >= MIN_CONFLUENCE and valid_ticket("sell", entry, stop, tp):
+            proposals.append(
+                OrderProposal(
+                    idea_id=f"short-break-{session}-{ist_now().strftime('%Y%m%d')}",
+                    side="sell",
+                    order_type="limit",
+                    entry=entry,
+                    stop=stop,
+                    take_profit=tp,
+                    qty=qty_for(entry),
+                    notional_usd=NOTIONAL_USD,
+                    reason="Confirmed breakdown: 1H close under swing low.",
+                    session=session,
+                    confluence=len(factors),
+                    factors=factors,
+                    rr=round(rr, 2),
+                )
             )
-        )
-        notes.append(f"Breakdown short confirmed under {break_level}")
+            notes.append(f"Breakdown short {entry} SL {stop} TP {tp} RR {rr:.2f}")
     elif bias == "bearish":
         entry = round(break_level * 0.999, 0)
-        stop = round(max(e50, day_high) * 1.002, 0)
-        tp = round(min(e200, FALLBACK["sept_swing_low"] + 200), 0)
-        proposals.append(
-            OrderProposal(
-                idea_id=f"short-break-wait-{session}-{ist_now().strftime('%Y%m%d')}",
-                side="sell",
-                order_type="limit",
-                entry=entry,
-                stop=stop,
-                take_profit=tp,
-                qty=qty_for(entry),
-                notional_usd=NOTIONAL_USD,
-                reason="Pending breakdown: only valid if price accepts under level (do not market short mid-range).",
-                session=session,
-            )
+        stop = structure_stop("sell", entry, day_high, daily_atr)
+        tp = round(min(FALLBACK["deep_target"], entry - MIN_RR * (stop - entry)), 0)
+        notes.append(
+            f"Pending breakdown under {break_level:.0f} → limit {entry} SL {stop} TP {tp} "
+            f"(wait for 1H close; not active yet)"
         )
-        notes.append(f"Pending breakdown limit {entry} (wait for break)")
 
-    # Setup C: long only on reclaim of day high / failed-breakdown repair
-    reclaim = max(day_high, e20)
-    if bias != "bearish" or last_h1["c"] > e20:
+    # --- Strategy C: reclaim long ---
+    reclaim = max(day_high, e20 if e20 > px else day_high)
+    if last_h1["c"] > h1_e20 and (bias != "bearish" or px > e200):
         entry = round(reclaim * 1.001, 0)
-        stop = round(min(day_low, e200), 0)
-        tp = round(e50 if e50 > entry else swing_high_30, 0)
-        if tp > entry:
+        stop = structure_stop("buy", entry, day_low, daily_atr)
+        tp = round(max(e50, entry + MIN_RR * (entry - stop)), 0)
+        factors = []
+        if last_h1["c"] > h1_e20:
+            factors.append("h1_above_ema20")
+        if macd_h1 > 0:
+            factors.append("macd_h1_pos")
+        if rise_line and px >= rise_line:
+            factors.append("rising_support")
+        if h1_rsi < 40:
+            factors.append("h1_rsi_reset")
+        if px > e200:
+            factors.append("above_ema200")
+        rr = risk_reward("buy", entry, stop, tp)
+        if len(factors) >= MIN_CONFLUENCE and valid_ticket("buy", entry, stop, tp) and entry >= px:
             proposals.append(
                 OrderProposal(
                     idea_id=f"long-reclaim-{session}-{ist_now().strftime('%Y%m%d')}",
@@ -257,43 +441,70 @@ def analyze(session: str) -> dict[str, Any]:
                     take_profit=tp,
                     qty=qty_for(entry),
                     notional_usd=NOTIONAL_USD,
-                    reason="Long only on reclaim strength (chat rule after failed mid-range shorts).",
+                    reason="Reclaim long with confluence (not mid-range chase).",
                     session=session,
+                    confluence=len(factors),
+                    factors=factors,
+                    rr=round(rr, 2),
                 )
             )
-            notes.append(f"Long reclaim {entry} SL {stop} TP {tp}")
+            notes.append(f"Long reclaim {entry} SL {stop} TP {tp} RR {rr:.2f} {factors}")
 
-    # Dip long pending (optional second $10k)
-    dip = round(min(e200, day_low), 0)
-    if dip < px * 0.99:
-        proposals.append(
-            OrderProposal(
-                idea_id=f"long-dip-{session}-{ist_now().strftime('%Y%m%d')}",
-                side="buy",
-                order_type="limit",
-                entry=dip,
-                stop=round(dip * 0.985, 0),
-                take_profit=round(e20, 0),
-                qty=qty_for(dip),
-                notional_usd=NOTIONAL_USD,
-                reason="Dip buy at 200EMA / day low demand.",
-                session=session,
+    # --- Strategy D: dip long at swing demand ---
+    dip = round(min(day_low, swing_low_30), 0)
+    if dip < px * 0.995 and bias != "bullish":
+        entry = dip
+        stop = structure_stop("buy", entry, dip, daily_atr)
+        tp = round(min(day_high, e20), 0)
+        factors = ["swing_demand"]
+        if daily_rsi < 35:
+            factors.append("rsi_oversold")
+        if rise_line:
+            factors.append("rise_tl_nearby")
+        if h1_rsi < 35:
+            factors.append("h1_oversold")
+        rr = risk_reward("buy", entry, stop, tp)
+        if len(factors) >= MIN_CONFLUENCE and valid_ticket("buy", entry, stop, tp):
+            proposals.append(
+                OrderProposal(
+                    idea_id=f"long-dip-{session}-{ist_now().strftime('%Y%m%d')}",
+                    side="buy",
+                    order_type="limit",
+                    entry=entry,
+                    stop=stop,
+                    take_profit=tp,
+                    qty=qty_for(entry),
+                    notional_usd=NOTIONAL_USD,
+                    reason="Dip long at swing demand with oversold confluence.",
+                    session=session,
+                    confluence=len(factors),
+                    factors=factors,
+                    rr=round(rr, 2),
+                )
             )
-        )
+            notes.append(f"Dip long {entry} SL {stop} TP {tp} RR {rr:.2f}")
 
-    # Prefer at most 2 working ideas: one short, one long
-    shorts = [p for p in proposals if p.side == "sell"]
-    longs = [p for p in proposals if p.side == "buy"]
+    # Rank by confluence then RR; keep best short + best long
+    shorts = sorted([p for p in proposals if p.side == "sell"], key=lambda p: (p.confluence, p.rr), reverse=True)
+    longs = sorted([p for p in proposals if p.side == "buy"], key=lambda p: (p.confluence, p.rr), reverse=True)
     chosen: list[OrderProposal] = []
     if shorts:
-        # Prefer supply rejection over pending break if price is mid/high
         chosen.append(shorts[0])
-    if longs:
-        chosen.append(longs[0] if in_mid or bias != "bearish" else longs[-1])
+    if longs and not (in_mid and bias == "bearish"):
+        chosen.append(longs[0])
     chosen = chosen[:2]
 
-    if in_mid and px < e20:
-        notes.append("Price in day mid-range under 20EMA → no market chase; limits only.")
+    if in_mid:
+        notes.append("Price in day mid-range → no market chase; limits only.")
+    if desc_line:
+        notes.append(f"Descending resistance trendline ≈ {desc_line:.0f}")
+    if rise_line:
+        notes.append(f"Rising support trendline ≈ {rise_line:.0f}")
+
+    # Auto-invalidate stale tracked ideas
+    state = load_state()
+    stale_notes = invalidate_stale(state, px, daily_atr)
+    notes.extend(stale_notes)
 
     return {
         "session": session,
@@ -304,6 +515,7 @@ def analyze(session: str) -> dict[str, Any]:
             "ema20": round(e20, 1),
             "ema50": round(e50, 1),
             "ema200": round(e200, 1),
+            "h1_ema20": round(h1_e20, 1),
             "day_high": round(day_high, 1),
             "day_low": round(day_low, 1),
             "day_mid": round(mid, 1),
@@ -311,11 +523,31 @@ def analyze(session: str) -> dict[str, Any]:
             "yday_low": round(yday["l"], 1),
             "swing_low_30": round(swing_low_30, 1),
             "swing_high_30": round(swing_high_30, 1),
+            "desc_trendline": round(desc_line, 1) if desc_line else None,
+            "rise_trendline": round(rise_line, 1) if rise_line else None,
             "rsi14": round(daily_rsi, 1),
+            "h1_rsi14": round(h1_rsi, 1),
             "atr14": round(daily_atr, 1),
+            "h1_atr14": round(h1_atr, 1),
+            "macd_hist_daily": round(macd_d, 1),
+            "macd_hist_h1": round(macd_h1, 1),
+            "vol_spike": vol_spike,
+            "lower_highs": lower_highs,
+            "lower_lows": lower_lows,
         },
         "in_midrange": in_mid,
         "notes": notes,
+        "strategies": [
+            "A_supply_rejection",
+            "B_breakdown_confirm",
+            "C_reclaim_long",
+            "D_dip_demand",
+        ],
+        "filters": {
+            "min_rr": MIN_RR,
+            "min_confluence": MIN_CONFLUENCE,
+            "atr_stop_mult": ATR_STOP_MULT,
+        },
         "proposals": [asdict(p) for p in chosen],
         "tv_ticket": [
             {
@@ -326,6 +558,8 @@ def analyze(session: str) -> dict[str, Any]:
                 "units": p.qty,
                 "take_profit": p.take_profit,
                 "stop_loss": p.stop,
+                "rr": p.rr,
+                "confluence": p.confluence,
                 "idea_id": p.idea_id,
             }
             for p in chosen
@@ -352,11 +586,7 @@ def merge_proposals(state: dict[str, Any], report: dict[str, Any], force_replace
                 o["status"] = "cancelled"
                 o["cancelled_at"] = ist_now().isoformat()
                 o["cancel_reason"] = "force_replace"
-        state.setdefault("history", []).extend(
-            [o for o in open_ones if o.get("status") == "cancelled"]
-        )
 
-    # Attach new proposals
     for p in new_props:
         p["status"] = "proposed"
         p["created_at"] = ist_now().isoformat()
@@ -378,35 +608,42 @@ def confirm_placed(state: dict[str, Any]) -> None:
 
 def print_report(report: dict[str, Any]) -> None:
     print("=" * 60)
-    print(f"BTC PAPER BOT | session={report['session']} | {report['timestamp_ist']}")
+    print(f"BTC PAPER BOT v2 | session={report['session']} | {report['timestamp_ist']}")
     print(f"Price ${report['price']:.2f} | bias={report['bias']} | midrange={report['in_midrange']}")
     lv = report["levels"]
     print(
         f"EMA20 {lv['ema20']} | EMA50 {lv['ema50']} | EMA200 {lv['ema200']} | "
         f"RSI {lv['rsi14']} | ATR {lv['atr14']}"
     )
+    print(
+        f"H1 RSI {lv['h1_rsi14']} | MACD_d {lv['macd_hist_daily']} | "
+        f"LH {lv['lower_highs']} LL {lv['lower_lows']} | vol_spike {lv['vol_spike']}"
+    )
     print(f"Day H/L {lv['day_high']}/{lv['day_low']} | 30d H/L {lv['swing_high_30']}/{lv['swing_low_30']}")
+    if lv.get("desc_trendline"):
+        print(f"Desc TL {lv['desc_trendline']} | Rise TL {lv.get('rise_trendline')}")
     for n in report.get("notes", []):
         print(f"- {n}")
     if report.get("blocked_reason"):
         print(f"ORDER GUARD: {report['blocked_reason']}")
-    print(f"\nTradingView tickets (${int(NOTIONAL_USD)} each):")
+    print(f"\nTradingView tickets (${int(NOTIONAL_USD)} each, min RR {MIN_RR}, min conf {MIN_CONFLUENCE}):")
     for t in report.get("tv_ticket", []):
         print(
             f"  {t['side']} LIMIT {t['price']} | qty {t['units']} | "
-            f"SL {t['stop_loss']} | TP {t['take_profit']} | {t['idea_id']}"
+            f"SL {t['stop_loss']} | TP {t['take_profit']} | "
+            f"RR {t.get('rr')} conf {t.get('confluence')} | {t['idea_id']}"
         )
     if not report.get("tv_ticket"):
-        print("  (no new ticket — flat / guarded)")
+        print("  (no ticket passed confluence/RR filters — FLAT)")
     print("=" * 60)
 
 
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--session", choices=["india", "uk", "us", "ad_hoc"], default="ad_hoc")
-    parser.add_argument("--propose", action="store_true", help="Write proposals into order state")
-    parser.add_argument("--force-replace", action="store_true", help="Cancel tracked opens and replace")
-    parser.add_argument("--confirm-placed", action="store_true", help="Mark proposed as working on TV")
+    parser.add_argument("--propose", action="store_true")
+    parser.add_argument("--force-replace", action="store_true")
+    parser.add_argument("--confirm-placed", action="store_true")
     parser.add_argument("--status", action="store_true")
     args = parser.parse_args()
 
