@@ -606,6 +606,42 @@ def confirm_placed(state: dict[str, Any]) -> None:
     save_state(state)
 
 
+def print_simple(report: dict[str, Any]) -> None:
+    """User-facing format: Buy/Sell + entry + SL + TP only."""
+    tickets = report.get("tv_ticket") or []
+    print(f"Price ${report['price']:.2f} | {report['timestamp_ist']}")
+    if not tickets:
+        print("FLAT — no Buy/Sell setup")
+        return
+    for t in tickets:
+        print(
+            f"{t['side']} | Entry {t['price']} | Stop Loss {t['stop_loss']} | "
+            f"Take Profit {t['take_profit']} | Qty {t['units']}"
+        )
+
+
+def save_latest_signal(report: dict[str, Any]) -> Path:
+    path = ROOT / "data" / "latest_signal.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    simple = {
+        "timestamp_ist": report["timestamp_ist"],
+        "price": report["price"],
+        "bias": report["bias"],
+        "signals": [
+            {
+                "side": t["side"],
+                "entry": t["price"],
+                "stop_loss": t["stop_loss"],
+                "take_profit": t["take_profit"],
+                "qty": t["units"],
+            }
+            for t in report.get("tv_ticket") or []
+        ],
+    }
+    path.write_text(json.dumps(simple, indent=2))
+    return path
+
+
 def print_report(report: dict[str, Any]) -> None:
     print("=" * 60)
     print(f"BTC PAPER BOT v2 | session={report['session']} | {report['timestamp_ist']}")
@@ -636,6 +672,8 @@ def print_report(report: dict[str, Any]) -> None:
     if not report.get("tv_ticket"):
         print("  (no ticket passed confluence/RR filters — FLAT)")
     print("=" * 60)
+    print("\nSIMPLE:")
+    print_simple(report)
 
 
 def main() -> None:
@@ -645,6 +683,7 @@ def main() -> None:
     parser.add_argument("--force-replace", action="store_true")
     parser.add_argument("--confirm-placed", action="store_true")
     parser.add_argument("--status", action="store_true")
+    parser.add_argument("--simple", action="store_true", help="Print only Buy/Sell entry SL TP")
     args = parser.parse_args()
 
     LOG_DIR.mkdir(parents=True, exist_ok=True)
@@ -666,8 +705,13 @@ def main() -> None:
 
     out = LOG_DIR / f"report_{args.session}_{ist_now().strftime('%Y%m%d_%H%M%S')}.json"
     out.write_text(json.dumps(report, indent=2))
-    print_report(report)
+    latest = save_latest_signal(report)
+    if args.simple:
+        print_simple(report)
+    else:
+        print_report(report)
     print(f"Wrote {out}")
+    print(f"Saved {latest}")
 
 
 if __name__ == "__main__":

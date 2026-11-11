@@ -1,0 +1,14 @@
+{
+  "timestamp_ist": "2026-11-11T23:56:59.899733+05:30",
+  "price": 74431.6,
+  "bias": "bearish",
+  "signals": [
+    {
+      "side": "SELL",
+      "entry": 74754.0,
+      "stop_loss": 77230.0,
+      "take_profit": 71040.0,
+      "qty": 0.013
+    }
+  ]
+}
