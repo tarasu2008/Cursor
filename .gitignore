@@ -55,3 +55,7 @@ projects/*/*
 # CRE declarations
 !cre-declarations/
 !cre-declarations/**
+
+# Sports images
+!sports-images/
+!sports-images/**
