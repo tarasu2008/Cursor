@@ -1,0 +1,89 @@
+{
+  "session": "ad_hoc",
+  "timestamp_ist": "2026-11-11T23:50:13.623088+05:30",
+  "price": 74412.6,
+  "bias": "bearish",
+  "levels": {
+    "ema20": 77374.9,
+    "ema50": 78834.8,
+    "ema200": 76422.9,
+    "h1_ema20": 73921.9,
+    "day_high": 74754.1,
+    "day_low": 73113.6,
+    "day_mid": 73933.9,
+    "yday_high": 75323.5,
+    "yday_low": 72584.6,
+    "swing_low_30": 72584.6,
+    "swing_high_30": 84840.0,
+    "desc_trendline": 80360.1,
+    "rise_trendline": null,
+    "rsi14": 37.2,
+    "h1_rsi14": 58.7,
+    "atr14": 2476.0,
+    "h1_atr14": 442.4,
+    "macd_hist_daily": -328.6,
+    "macd_hist_h1": 107.6,
+    "vol_spike": false,
+    "lower_highs": true,
+    "lower_lows": true
+  },
+  "in_midrange": false,
+  "notes": [
+    "Short 74754.0 SL 77230.0 TP 71040.0 RR 1.50 conf 7 ['daily_bearish', 'lower_highs', 'below_ema20', 'below_ema50', 'macd_daily_neg', 'desc_trendline', 'h1_rsi_bounce']",
+    "Pending breakdown under 72585 \u2192 limit 72512.0 SL 77230.0 TP 65435.0 (wait for 1H close; not active yet)",
+    "Descending resistance trendline \u2248 80360"
+  ],
+  "strategies": [
+    "A_supply_rejection",
+    "B_breakdown_confirm",
+    "C_reclaim_long",
+    "D_dip_demand"
+  ],
+  "filters": {
+    "min_rr": 1.5,
+    "min_confluence": 3,
+    "atr_stop_mult": 1.0
+  },
+  "proposals": [
+    {
+      "idea_id": "short-supply-ad_hoc-20261111",
+      "side": "sell",
+      "order_type": "limit",
+      "entry": 74754.0,
+      "stop": 77230.0,
+      "take_profit": 71040.0,
+      "qty": 0.013,
+      "notional_usd": 1000.0,
+      "reason": "Supply rejection short with ATR structure stop + confluence filter.",
+      "session": "ad_hoc",
+      "confluence": 7,
+      "factors": [
+        "daily_bearish",
+        "lower_highs",
+        "below_ema20",
+        "below_ema50",
+        "macd_daily_neg",
+        "desc_trendline",
+        "h1_rsi_bounce"
+      ],
+      "rr": 1.5,
+      "status": "proposed",
+      "created_at": "2026-11-11T23:50:13.623241+05:30"
+    }
+  ],
+  "tv_ticket": [
+    {
+      "panel": "TradingView Paper Order",
+      "side": "SELL",
+      "type": "Limit",
+      "price": 74754.0,
+      "units": 0.013,
+      "take_profit": 71040.0,
+      "stop_loss": 77230.0,
+      "rr": 1.5,
+      "confluence": 7,
+      "idea_id": "short-supply-ad_hoc-20261111"
+    }
+  ],
+  "action": "proposed"
+}

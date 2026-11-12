@@ -1,0 +1,30 @@
+{
+  "orders": [
+    {
+      "idea_id": "short-supply-ad_hoc-20261111",
+      "side": "sell",
+      "order_type": "limit",
+      "entry": 74754.0,
+      "stop": 77230.0,
+      "take_profit": 71040.0,
+      "qty": 0.013,
+      "notional_usd": 1000.0,
+      "reason": "Supply rejection short with ATR structure stop + confluence filter.",
+      "session": "ad_hoc",
+      "confluence": 7,
+      "factors": [
+        "daily_bearish",
+        "lower_highs",
+        "below_ema20",
+        "below_ema50",
+        "macd_daily_neg",
+        "desc_trendline",
+        "h1_rsi_bounce"
+      ],
+      "rr": 1.5,
+      "status": "proposed",
+      "created_at": "2026-11-11T23:50:13.623241+05:30"
+    }
+  ],
+  "history": []
+}

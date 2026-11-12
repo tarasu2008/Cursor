@@ -39,6 +39,13 @@ USE_LONG_SHORT_LABELS = True
 # 5) Indicators alone (EMA/RSI) without swing/trendline confluence = weak tickets.
 # 6) Always review previous signal before a new one; remember chat rules.
 # 7) User wants simple LONG/SHORT + entry + SL + TP; paper size $1000.
+# 8) Grade previous analysis Pass or Fail only (no partial); save for week/month.
+# 9) Track paper P&L daily/weekly/monthly as if $1000 real trades were taken.
+# 10) Allow 1H timeframe trades; hourly recheck optional.
+# 11) Cursor alert title only — no BTC alert wording.
+
+ALLOW_1H_TRADES = True
+HOURLY_RECHECK = True
 
 # Risk model (ATR used for structure confluence; ticket SL/TP use fixed % when enabled)
 ATR_STOP_MULT = 1.0

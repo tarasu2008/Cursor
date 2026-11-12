@@ -1,8 +1,12 @@
 Cursor alert
 
-PREV: <result>
+PREV: Pass | Fail | Open | —
+PREV PnL: $+/-n (when closed)
+Today: Pass n Fail n PnL $+/-n
+Week: Pass n Fail n PnL $+/-n
+Month: Pass n Fail n PnL $+/-n
 LONG | SHORT | FLAT
-Entry: <price>
-Stop Loss: <price>
-Take Profit: <price>
-If TP: +$<amt> | If SL: -$<amt>
+Entry: n
+Stop Loss: n
+Take Profit: n
+If TP: +$n | If SL: -$n

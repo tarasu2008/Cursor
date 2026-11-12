@@ -1,0 +1,74 @@
+{
+  "session": "ad_hoc",
+  "timestamp_ist": "2026-11-11T23:42:33.744631+05:30",
+  "price": 74384.6,
+  "bias": "bearish",
+  "levels": {
+    "ema20": 77372.3,
+    "ema50": 78833.7,
+    "ema200": 76422.6,
+    "day_high": 74754.1,
+    "day_low": 73113.6,
+    "day_mid": 73933.9,
+    "yday_high": 75323.5,
+    "yday_low": 72584.6,
+    "swing_low_30": 72584.6,
+    "swing_high_30": 84840.0,
+    "rsi14": 37.1,
+    "atr14": 2476.0
+  },
+  "in_midrange": false,
+  "notes": [
+    "Pending breakdown limit 72512.0 (wait for break)"
+  ],
+  "proposals": [
+    {
+      "idea_id": "short-break-wait-ad_hoc-20261111",
+      "side": "sell",
+      "order_type": "limit",
+      "entry": 72512.0,
+      "stop": 78991.0,
+      "take_profit": 75092.0,
+      "qty": 0.014,
+      "notional_usd": 1000.0,
+      "reason": "Pending breakdown: only valid if price accepts under level (do not market short mid-range).",
+      "session": "ad_hoc",
+      "status": "proposed"
+    },
+    {
+      "idea_id": "long-dip-ad_hoc-20261111",
+      "side": "buy",
+      "order_type": "limit",
+      "entry": 73114.0,
+      "stop": 72017.0,
+      "take_profit": 77372.0,
+      "qty": 0.014,
+      "notional_usd": 1000.0,
+      "reason": "Dip buy at 200EMA / day low demand.",
+      "session": "ad_hoc",
+      "status": "proposed"
+    }
+  ],
+  "tv_ticket": [
+    {
+      "panel": "TradingView Paper Order",
+      "side": "SELL",
+      "type": "Limit",
+      "price": 72512.0,
+      "units": 0.014,
+      "take_profit": 75092.0,
+      "stop_loss": 78991.0,
+      "idea_id": "short-break-wait-ad_hoc-20261111"
+    },
+    {
+      "panel": "TradingView Paper Order",
+      "side": "BUY",
+      "type": "Limit",
+      "price": 73114.0,
+      "units": 0.014,
+      "take_profit": 77372.0,
+      "stop_loss": 72017.0,
+      "idea_id": "long-dip-ad_hoc-20261111"
+    }
+  ]
+}

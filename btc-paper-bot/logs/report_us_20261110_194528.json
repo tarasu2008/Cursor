@@ -1,0 +1,51 @@
+{
+  "session": "us",
+  "timestamp_ist": "2026-11-10T19:45:28.756713+05:30",
+  "price": 73856.5,
+  "bias": "bearish",
+  "levels": {
+    "ema20": 77701.7,
+    "ema50": 79021.4,
+    "ema200": 76441.5,
+    "day_high": 75323.5,
+    "day_low": 73400.0,
+    "day_mid": 74361.8,
+    "yday_high": 75500.0,
+    "yday_low": 73601.8,
+    "swing_low_30": 73400.0,
+    "swing_high_30": 84840.0,
+    "rsi14": 34.6,
+    "atr14": 2402.5
+  },
+  "in_midrange": false,
+  "notes": [
+    "Pending breakdown limit 73327.0 (wait for break)"
+  ],
+  "proposals": [
+    {
+      "idea_id": "short-break-wait-us-20261110",
+      "side": "sell",
+      "order_type": "limit",
+      "entry": 73327.0,
+      "stop": 79179.0,
+      "take_profit": 75092.0,
+      "qty": 0.014,
+      "notional_usd": 1000.0,
+      "reason": "Pending breakdown: only valid if price accepts under level (do not market short mid-range).",
+      "session": "us",
+      "status": "proposed"
+    }
+  ],
+  "tv_ticket": [
+    {
+      "panel": "TradingView Paper Order",
+      "side": "SELL",
+      "type": "Limit",
+      "price": 73327.0,
+      "units": 0.014,
+      "take_profit": 75092.0,
+      "stop_loss": 79179.0,
+      "idea_id": "short-break-wait-us-20261110"
+    }
+  ]
+}

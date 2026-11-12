@@ -31,6 +31,7 @@ from rules import (
 ROOT = Path(__file__).resolve().parent
 STATE_PATH = ROOT / "data" / "orders_state.json"
 LATEST_SIGNAL_PATH = ROOT / "data" / "latest_signal.json"
+ACTIVE_TRADE_PATH = ROOT / "data" / "active_trade.json"
 HISTORY_PATH = ROOT / "data" / "signal_history.json"
 LOG_DIR = ROOT / "logs"
 
@@ -220,25 +221,47 @@ def side_label(side: str) -> str:
     return side.upper()
 
 
-def review_previous_signal(h1: list[dict], px: float) -> dict[str, Any]:
-    """Score the last saved signal against price path since it was issued."""
+def review_previous_signal(h1: list[dict], px: float, session: str = "ad_hoc") -> dict[str, Any]:
+    """Score last signal as Pass or Fail only (no partial). Record paper P&L."""
     global _active_atr_stop_mult
+    from performance import record_closed_trade, write_summary
+
     _active_atr_stop_mult = ATR_STOP_MULT
     empty = {
         "had_previous": False,
+        "grade": "—",
         "result": "none",
         "mistake": None,
         "lesson": None,
         "adjustment": None,
-        "detail": "No previous signal file.",
+        "pnl_usd": 0.0,
+        "detail": "No previous signal.",
+        "performance": write_summary(),
     }
-    if not REVIEW_PREVIOUS_SIGNAL or not LATEST_SIGNAL_PATH.exists():
+    # Prefer active open trade file so hourly runs do not reset the clock.
+    prev_path = ACTIVE_TRADE_PATH if ACTIVE_TRADE_PATH.exists() else LATEST_SIGNAL_PATH
+    if not REVIEW_PREVIOUS_SIGNAL or not prev_path.exists():
         return empty
 
-    prev = json.loads(LATEST_SIGNAL_PATH.read_text())
+    prev = json.loads(prev_path.read_text())
     signals = prev.get("signals") or []
     if not signals:
-        return {**empty, "detail": "Previous file had no signals (was FLAT)."}
+        return {**empty, "detail": "Previous was FLAT.", "grade": "—"}
+
+    # Avoid double-grading the same open signal every hour until it closes.
+    if prev.get("graded_outcome") in {"Pass", "Fail"}:
+        return {
+            "had_previous": True,
+            "grade": prev["graded_outcome"],
+            "result": prev["graded_outcome"],
+            "mistake": prev.get("graded_mistake"),
+            "lesson": prev.get("graded_lesson"),
+            "adjustment": None,
+            "pnl_usd": prev.get("graded_pnl_usd", 0.0),
+            "detail": f"Already graded {prev['graded_outcome']}",
+            "previous_timestamp_ist": prev.get("timestamp_ist"),
+            "performance": write_summary(),
+        }
 
     ts = prev.get("timestamp_ist")
     try:
@@ -248,93 +271,127 @@ def review_previous_signal(h1: list[dict], px: float) -> dict[str, Any]:
     except Exception:
         issued = ist_now() - timedelta(hours=6)
 
-    # Price extremes since signal (from 1H bars at/after issue hour)
     bars = [b for b in h1 if b["dt"] >= issued - timedelta(minutes=30)]
     if not bars:
         bars = h1[-12:]
     hi = max(b["h"] for b in bars)
     lo = min(b["l"] for b in bars)
 
+    # Age: if still open after 24h without SL/TP, count as Fail (expired) — user asked Pass/Fail only.
+    age_h = (ist_now() - issued).total_seconds() / 3600
+
     reviews = []
-    worst_mistake = None
+    grade = "—"
+    mistake = None
     lesson = None
     adjustment = None
+    pnl_usd = 0.0
 
     for sig in signals:
         side = sig["side"].lower()
         entry = float(sig["entry"])
         stop = float(sig["stop_loss"])
         tp = float(sig["take_profit"])
+        qty = float(sig.get("qty") or round(NOTIONAL_USD / entry, 3))
         is_short = side in {"sell", "short"}
+        label = side_label(side)
 
         filled = hi >= entry if is_short else lo <= entry
-        hit_sl = hi >= stop if is_short else lo <= stop
-        hit_tp = lo <= tp if is_short else hi >= tp
+        hit_sl = filled and (hi >= stop if is_short else lo <= stop)
+        hit_tp = filled and (lo <= tp if is_short else hi >= tp)
 
-        # Path order approximation: if both SL and TP tagged, assume adverse first if
-        # stop is closer to first extreme in direction of entry fill.
-        result = "pending"
-        mistake = None
-        if not filled:
-            result = "not_filled"
-        elif hit_sl and hit_tp:
-            result = "stopped_before_or_with_tp"
-            mistake = "stop_too_tight_or_choppy"
+        # Pass/Fail only — no partial.
+        if hit_tp and not hit_sl:
+            outcome = "Pass"
         elif hit_sl:
-            result = "stopped_out"
-            mistake = "stop_too_tight" if abs(stop - entry) < atr(h1) * 1.2 else "thesis_wrong"
-        elif hit_tp:
-            result = "take_profit_hit"
+            outcome = "Fail"
+            mistake = "stop_hit"
+            lesson = "Failed trade — review entry/supply and keep 1% SL rule."
+            if abs(stop - entry) / entry < 0.012:
+                _active_atr_stop_mult = ATR_STOP_MULT_AFTER_STOPOUT
+                adjustment = f"ATR_STOP_MULT -> {ATR_STOP_MULT_AFTER_STOPOUT}"
+        elif hit_tp and hit_sl:
+            # Both tagged: Fail (conservative — no partial credit)
+            outcome = "Fail"
+            mistake = "both_sides_tagged"
+            lesson = "Choppy path tagged SL and TP — counted Fail only."
+        elif not filled and age_h >= 24:
+            outcome = "Fail"
+            mistake = "expired_unfilled"
+            lesson = "Signal expired unfilled after 24h — counted Fail."
+        elif filled and age_h >= 24:
+            outcome = "Fail"
+            mistake = "expired_open"
+            lesson = "Filled but neither SL nor TP in 24h — counted Fail."
         else:
-            result = "open_in_profit" if (
-                (is_short and px < entry) or ((not is_short) and px > entry)
-            ) else "open_underwater"
+            outcome = "Open"
+            mistake = None
+            lesson = None
 
-        if mistake == "stop_too_tight" or mistake == "stop_too_tight_or_choppy":
-            worst_mistake = mistake
-            lesson = "Widen stop to >= 1.25 ATR beyond structure; do not place SL under obvious liquidity high/low."
-            adjustment = f"ATR_STOP_MULT -> {ATR_STOP_MULT_AFTER_STOPOUT}"
-            _active_atr_stop_mult = ATR_STOP_MULT_AFTER_STOPOUT
-        elif result == "not_filled" and is_short and hi < entry and (entry - hi) > atr(h1):
-            worst_mistake = worst_mistake or "entry_too_far"
-            lesson = lesson or "Entry was unrealistic above market; place supply closer to price or wait."
-        elif result == "take_profit_hit":
-            lesson = lesson or "Prior signal worked — keep same confluence rules."
+        if outcome in {"Pass", "Fail"}:
+            row = record_closed_trade(
+                side=label,
+                entry=entry,
+                stop_loss=stop,
+                take_profit=tp,
+                qty=qty,
+                outcome=outcome,
+                issued_ist=ts,
+                session=session,
+            )
+            pnl_usd = row["pnl_usd"] if row else 0.0
+            grade = outcome
+            prev["graded_outcome"] = outcome
+            prev["graded_mistake"] = mistake
+            prev["graded_lesson"] = lesson
+            prev["graded_pnl_usd"] = pnl_usd
+            prev_path.write_text(json.dumps(prev, indent=2))
+            # Clear active trade once closed
+            if ACTIVE_TRADE_PATH.exists() and outcome in {"Pass", "Fail"}:
+                ACTIVE_TRADE_PATH.unlink(missing_ok=True)
 
         reviews.append(
             {
-                "side": side_label(side),
+                "side": label,
                 "entry": entry,
                 "stop_loss": stop,
                 "take_profit": tp,
+                "qty": qty,
                 "filled": filled,
                 "hit_sl": hit_sl,
                 "hit_tp": hit_tp,
-                "result": result,
+                "grade": outcome if outcome in {"Pass", "Fail"} else "Open",
                 "mistake": mistake,
+                "pnl_usd": pnl_usd if outcome in {"Pass", "Fail"} else 0.0,
                 "path_high": round(hi, 1),
                 "path_low": round(lo, 1),
             }
         )
 
-    detail = "; ".join(
-        f"{r['side']} entry {r['entry']} → {r['result']}" + (f" ({r['mistake']})" if r["mistake"] else "")
-        for r in reviews
-    )
+    if grade in {"Pass", "Fail"}:
+        detail = f"{reviews[0]['side']} → {grade}"
+    elif reviews:
+        detail = f"{reviews[0]['side']} → Open"
+        grade = "Open"
+    else:
+        detail = "No review"
+
     out = {
         "had_previous": True,
+        "grade": grade,
         "previous_timestamp_ist": ts,
         "previous_price": prev.get("price"),
-        "result": reviews[0]["result"] if len(reviews) == 1 else "mixed",
-        "mistake": worst_mistake,
+        "result": grade,
+        "mistake": mistake,
         "lesson": lesson,
         "adjustment": adjustment,
+        "pnl_usd": pnl_usd,
         "atr_stop_mult_now": _active_atr_stop_mult,
         "reviews": reviews,
         "detail": detail,
+        "performance": write_summary(),
     }
 
-    # Persist review trail
     history = []
     if HISTORY_PATH.exists():
         try:
@@ -343,7 +400,7 @@ def review_previous_signal(h1: list[dict], px: float) -> dict[str, Any]:
             history = []
     history.append({"reviewed_at_ist": ist_now().isoformat(), "current_price": px, **out})
     HISTORY_PATH.parent.mkdir(parents=True, exist_ok=True)
-    HISTORY_PATH.write_text(json.dumps(history[-50:], indent=2))
+    HISTORY_PATH.write_text(json.dumps(history[-100:], indent=2))
     return out
 
 
@@ -404,7 +461,7 @@ def analyze(session: str) -> dict[str, Any]:
     px = ticker_price()
 
     # Step 0 (required): review previous analysis before making a new one.
-    review = review_previous_signal(h1, px)
+    review = review_previous_signal(h1, px, session=session)
 
     d_closes = [r["c"] for r in daily]
     h1_closes = [r["c"] for r in h1]
@@ -784,16 +841,38 @@ def confirm_placed(state: dict[str, Any]) -> None:
 
 
 def print_simple(report: dict[str, Any]) -> None:
-    """User-facing format: LONG/SHORT + entry + SL + TP only."""
+    """Cursor alert format: Pass/Fail + LONG/SHORT + entry/SL/TP + P&L stats."""
     review = report.get("previous_review") or {}
-    if review.get("had_previous"):
-        print(f"PREV: {review.get('detail')}")
-        if review.get("lesson"):
-            print(f"LESSON: {review['lesson']}")
+    perf = review.get("performance") or {}
+    today = perf.get("today") or {}
+    week = perf.get("week") or {}
+    month = perf.get("month") or {}
+
+    grade = review.get("grade") or "—"
+    if grade not in {"Pass", "Fail", "Open", "—"}:
+        grade = "—"
+    print("Cursor alert")
+    print("")
+    print(f"PREV: {grade}")
+    if review.get("pnl_usd"):
+        print(f"PREV PnL: ${review['pnl_usd']:+.2f}")
+    print(
+        f"Today: Pass {today.get('pass', 0)} Fail {today.get('fail', 0)} PnL ${today.get('pnl_usd', 0):+.2f}"
+    )
+    print(
+        f"Week: Pass {week.get('pass', 0)} Fail {week.get('fail', 0)} PnL ${week.get('pnl_usd', 0):+.2f}"
+    )
+    print(
+        f"Month: Pass {month.get('pass', 0)} Fail {month.get('fail', 0)} PnL ${month.get('pnl_usd', 0):+.2f}"
+    )
+
     tickets = report.get("tv_ticket") or []
-    print(f"Price ${report['price']:.2f} | {report['timestamp_ist']}")
     if not tickets:
-        print("FLAT — no LONG/SHORT setup")
+        print("FLAT")
+        print("Entry: —")
+        print("Stop Loss: —")
+        print("Take Profit: —")
+        print("If TP: — | If SL: —")
         return
     for t in tickets:
         entry = float(t["price"])
@@ -807,33 +886,50 @@ def print_simple(report: dict[str, Any]) -> None:
         else:
             profit = (tp - entry) * qty
             loss = (entry - sl) * qty
-        print(
-            f"{side_label(t['side'])} | Entry {t['price']} | Stop Loss {t['stop_loss']} | "
-            f"Take Profit {t['take_profit']} | Qty {t['units']}"
-        )
-        print(f"  If TP: +${profit:.2f} (~{TAKE_PROFIT_PCT*100:.0f}%) | If SL: -${loss:.2f} (~{STOP_LOSS_PCT*100:.0f}%)")
+        print(side_label(t["side"]))
+        print(f"Entry: {t['price']}")
+        print(f"Stop Loss: {t['stop_loss']}")
+        print(f"Take Profit: {t['take_profit']}")
+        print(f"If TP: +${profit:.2f} | If SL: -${loss:.2f}")
 
 
 def save_latest_signal(report: dict[str, Any]) -> Path:
     path = LATEST_SIGNAL_PATH
     path.parent.mkdir(parents=True, exist_ok=True)
+    signals = [
+        {
+            "side": side_label(t["side"]),
+            "entry": t["price"],
+            "stop_loss": t["stop_loss"],
+            "take_profit": t["take_profit"],
+            "qty": t["units"],
+        }
+        for t in report.get("tv_ticket") or []
+    ]
     simple = {
         "timestamp_ist": report["timestamp_ist"],
         "price": report["price"],
         "bias": report["bias"],
         "previous_review": report.get("previous_review"),
-        "signals": [
-            {
-                "side": side_label(t["side"]),
-                "entry": t["price"],
-                "stop_loss": t["stop_loss"],
-                "take_profit": t["take_profit"],
-                "qty": t["units"],
-            }
-            for t in report.get("tv_ticket") or []
-        ],
+        "signals": signals,
     }
     path.write_text(json.dumps(simple, indent=2))
+
+    # Keep a stable active trade until Pass/Fail (hourly rechecks must not reset it).
+    if signals:
+        if ACTIVE_TRADE_PATH.exists():
+            active = json.loads(ACTIVE_TRADE_PATH.read_text())
+            a_sigs = active.get("signals") or []
+            same = (
+                a_sigs
+                and a_sigs[0].get("side") == signals[0]["side"]
+                and float(a_sigs[0].get("entry", 0)) == float(signals[0]["entry"])
+                and active.get("graded_outcome") not in {"Pass", "Fail"}
+            )
+            if not same:
+                ACTIVE_TRADE_PATH.write_text(json.dumps({**simple, "signals": signals}, indent=2))
+        else:
+            ACTIVE_TRADE_PATH.write_text(json.dumps({**simple, "signals": signals}, indent=2))
     return path
 
 
@@ -878,11 +974,18 @@ def main() -> None:
     parser.add_argument("--force-replace", action="store_true")
     parser.add_argument("--confirm-placed", action="store_true")
     parser.add_argument("--status", action="store_true")
-    parser.add_argument("--simple", action="store_true", help="Print only Buy/Sell entry SL TP")
+    parser.add_argument("--simple", action="store_true", help="Print Cursor alert LONG/SHORT only")
+    parser.add_argument("--performance", action="store_true", help="Show Pass/Fail and PnL summary")
     args = parser.parse_args()
 
     LOG_DIR.mkdir(parents=True, exist_ok=True)
     state = load_state()
+
+    if args.performance:
+        from performance import write_summary
+
+        print(json.dumps(write_summary(), indent=2))
+        return
 
     if args.status:
         print(json.dumps({"working": working_orders(state), "all": state.get("orders", [])}, indent=2))
