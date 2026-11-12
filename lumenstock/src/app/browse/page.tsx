@@ -1,6 +1,12 @@
 import { AssetGrid } from "@/components/AssetGrid";
 import { SearchForm } from "@/components/SearchForm";
-import { categories, searchAssets } from "@/data/catalog";
+import {
+  categories,
+  getCategory,
+  getSubcategoriesForParent,
+  getSubcategory,
+  searchAssets,
+} from "@/data/catalog";
 import Link from "next/link";
 
 type Props = {
@@ -17,9 +23,13 @@ export default async function BrowsePage({ searchParams }: Props) {
   const type = one(sp.type) || "all";
   const orientation = one(sp.orientation) || "all";
   const category = one(sp.category) || "all";
+  const subcategory = one(sp.subcategory) || "all";
   const people = one(sp.people) || "all";
 
-  const results = searchAssets({ q, type, orientation, category, people });
+  const results = searchAssets({ q, type, orientation, category, subcategory, people });
+  const activeCategory = category !== "all" ? getCategory(category) : undefined;
+  const subcats = activeCategory ? getSubcategoriesForParent(activeCategory.id) : [];
+  const activeSub = subcategory !== "all" ? getSubcategory(subcategory) : undefined;
 
   const filterHref = (key: string, value: string) => {
     const params = new URLSearchParams();
@@ -28,6 +38,9 @@ export default async function BrowsePage({ searchParams }: Props) {
     params.set("orientation", key === "orientation" ? value : orientation);
     params.set("category", key === "category" ? value : category);
     params.set("people", key === "people" ? value : people);
+    const nextSub =
+      key === "subcategory" ? value : key === "category" ? "all" : subcategory;
+    if (nextSub && nextSub !== "all") params.set("subcategory", nextSub);
     return `/browse?${params.toString()}`;
   };
 
@@ -36,8 +49,8 @@ export default async function BrowsePage({ searchParams }: Props) {
       <div className="page-hero">
         <h1>Browse</h1>
         <p>
-          Filter by type, orientation, people, and category — the same discovery pattern customers
-          expect from a stock marketplace.
+          Filter by type, orientation, people, category, and subcategory — the same discovery
+          pattern customers expect from a stock marketplace.
         </p>
       </div>
 
@@ -72,7 +85,7 @@ export default async function BrowsePage({ searchParams }: Props) {
         })}
       </div>
 
-      <div className="chip-row" style={{ marginBottom: "1.2rem" }}>
+      <div className="chip-row" style={{ marginBottom: "0.8rem" }}>
         <Link href={filterHref("category", "all")} className={`chip${category === "all" ? " active" : ""}`}>
           All categories
         </Link>
@@ -87,9 +100,30 @@ export default async function BrowsePage({ searchParams }: Props) {
         ))}
       </div>
 
+      {subcats.length > 0 && (
+        <div className="chip-row" style={{ marginBottom: "1.2rem" }}>
+          <Link
+            href={filterHref("subcategory", "all")}
+            className={`chip${subcategory === "all" ? " active" : ""}`}
+          >
+            All in {activeCategory?.name}
+          </Link>
+          {subcats.map((s) => (
+            <Link
+              key={s.id}
+              href={filterHref("subcategory", s.id)}
+              className={`chip${subcategory === s.id ? " active" : ""}`}
+            >
+              {s.name}
+            </Link>
+          ))}
+        </div>
+      )}
+
       <p style={{ color: "var(--muted)", marginBottom: "1rem" }}>
         {results.length} result{results.length === 1 ? "" : "s"}
         {q ? ` for “${q}”` : ""}
+        {activeSub ? ` · ${activeSub.name}` : activeCategory ? ` · ${activeCategory.name}` : ""}
       </p>
 
       <AssetGrid assets={results} />

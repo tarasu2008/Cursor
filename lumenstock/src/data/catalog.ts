@@ -1,3 +1,6 @@
+import { subcategories } from "./subcategories";
+import { subcategorySeeds } from "./subcategorySeeds";
+
 export type MediaType = "photo" | "illustration" | "vector";
 
 export interface Category {
@@ -13,6 +16,7 @@ export interface Asset {
   description: string;
   type: MediaType;
   categoryIds: string[];
+  subcategoryId?: string;
   keywords: string[];
   orientation: "horizontal" | "vertical";
   width: number;
@@ -597,7 +601,7 @@ const seeds: Record<string, Seed> = {
 };
 
 /** One HD catalog image per category — owned/sold by Lumenstock */
-export const assets: Asset[] = categories.map((cat, index) => {
+const categoryAssets: Asset[] = categories.map((cat, index) => {
   const seed = seeds[cat.id];
   return {
     id: `ls-${String(index + 1).padStart(4, "0")}`,
@@ -616,6 +620,33 @@ export const assets: Asset[] = categories.map((cat, index) => {
     people: seed.people,
   };
 });
+
+/** One HD image per subcategory */
+const subcategoryAssets: Asset[] = subcategories.map((sub, index) => {
+  const seed = subcategorySeeds[sub.id];
+  return {
+    id: `ls-sub-${String(index + 1).padStart(4, "0")}`,
+    title: seed.title,
+    description: seed.description,
+    type: seed.type,
+    categoryIds: [sub.parentId],
+    subcategoryId: sub.id,
+    keywords: [...seed.keywords, sub.name.toLowerCase(), sub.parentId],
+    orientation: seed.orientation,
+    width: seed.width,
+    height: seed.height,
+    owner: "Lumenstock",
+    priceHint: "From plan",
+    imageUrl: `/samples/subcategories/${sub.id}.jpg`,
+    color: seed.color,
+    people: seed.people,
+  };
+});
+
+export const assets: Asset[] = [...categoryAssets, ...subcategoryAssets];
+
+export { subcategories };
+export { getSubcategory, getSubcategoriesForParent } from "./subcategories";
 
 export const pricingPlans = [
   {
@@ -667,6 +698,7 @@ export function searchAssets(opts: {
   type?: string;
   orientation?: string;
   category?: string;
+  subcategory?: string;
   people?: string;
 }) {
   const q = (opts.q || "").trim().toLowerCase();
@@ -674,10 +706,20 @@ export function searchAssets(opts: {
     if (opts.type && opts.type !== "all" && a.type !== opts.type) return false;
     if (opts.orientation && opts.orientation !== "all" && a.orientation !== opts.orientation) return false;
     if (opts.category && opts.category !== "all" && !a.categoryIds.includes(opts.category)) return false;
+    if (opts.subcategory && opts.subcategory !== "all" && a.subcategoryId !== opts.subcategory) return false;
     if (opts.people === "none" && a.people > 0) return false;
     if (opts.people === "with" && a.people < 1) return false;
     if (!q) return true;
-    const hay = [a.title, a.description, a.owner, ...a.keywords, ...a.categoryIds].join(" ").toLowerCase();
+    const hay = [
+      a.title,
+      a.description,
+      a.owner,
+      a.subcategoryId || "",
+      ...a.keywords,
+      ...a.categoryIds,
+    ]
+      .join(" ")
+      .toLowerCase();
     return hay.includes(q);
   });
 }

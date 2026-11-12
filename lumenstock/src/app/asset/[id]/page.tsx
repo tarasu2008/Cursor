@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AssetGrid } from "@/components/AssetGrid";
-import { assets, categories, getAsset } from "@/data/catalog";
+import { assets, categories, getAsset, getSubcategory } from "@/data/catalog";
 import { DownloadPicker } from "./DownloadPicker";
 
 type Props = { params: Promise<{ id: string }> };
@@ -22,7 +22,10 @@ export default async function AssetPage({ params }: Props) {
   if (!asset) notFound();
 
   const cats = categories.filter((c) => asset.categoryIds.includes(c.id));
-  const related = assets.filter((a) => a.id !== asset.id).slice(0, 4);
+  const sub = asset.subcategoryId ? getSubcategory(asset.subcategoryId) : undefined;
+  const related = assets
+    .filter((a) => a.id !== asset.id && a.categoryIds.some((c) => asset.categoryIds.includes(c)))
+    .slice(0, 4);
 
   return (
     <div className="container">
@@ -54,6 +57,14 @@ export default async function AssetPage({ params }: Props) {
                 {c.name}
               </Link>
             ))}
+            {sub && (
+              <Link
+                href={`/browse?category=${sub.parentId}&subcategory=${sub.id}`}
+                className="chip active"
+              >
+                {sub.name}
+              </Link>
+            )}
           </div>
           <div className="chip-row" style={{ marginTop: "0.7rem" }}>
             {asset.keywords.map((k) => (

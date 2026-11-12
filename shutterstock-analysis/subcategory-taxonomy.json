@@ -1,0 +1,10 @@
+{
+  "sources": [
+    "https://www.shutterstock.com/images (bot-protected / DataDome \u2014 timed out)",
+    "Adobe Stock CategoryTree (github.com/mahallemuhtari/AdobeStockApiCategoryTree)",
+    "Adobe Stock contributor category guidance",
+    "Adobe Stock discover themes"
+  ],
+  "mapping_notes": "Mapped Adobe Stock child trees onto Lumenstock's existing Shutterstock-aligned parent categories (Animals\u2192Mammals/Birds/Aquatic, Nature\u2192Mountains/Forests/Skies, Business\u2192Office/Finance/Startup, etc.). Extended parents got 2 focused children each.",
+  "subcategory_count": 116
+}

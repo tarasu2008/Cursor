@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { categories } from "@/data/catalog";
+import { assets, categories, getSubcategoriesForParent } from "@/data/catalog";
 
 export const metadata = {
   title: "Categories",
@@ -9,13 +9,54 @@ export default function CategoriesPage() {
   const core = categories.filter((c) => c.group === "core");
   const extended = categories.filter((c) => c.group === "extended");
 
+  const renderCategory = (c: (typeof categories)[number]) => {
+    const subs = getSubcategoriesForParent(c.id);
+    const cover =
+      assets.find((a) => a.categoryIds.includes(c.id) && !a.subcategoryId)?.imageUrl ||
+      `/samples/categories/${c.id}.jpg`;
+
+    return (
+      <article key={c.id} className="category-block">
+        <Link href={`/browse?category=${c.id}`} className="category-block-head">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={cover} alt="" />
+          <div>
+            <strong>{c.name}</strong>
+            <span>{c.description}</span>
+          </div>
+        </Link>
+        {subs.length > 0 && (
+          <div className="subcategory-grid">
+            {subs.map((s) => {
+              const thumb = `/samples/subcategories/${s.id}.jpg`;
+              return (
+                <Link
+                  key={s.id}
+                  href={`/browse?category=${c.id}&subcategory=${s.id}`}
+                  className="subcategory-card"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={thumb} alt="" />
+                  <div>
+                    <strong>{s.name}</strong>
+                    <span>{s.description}</span>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        )}
+      </article>
+    );
+  };
+
   return (
     <div className="container">
       <div className="page-hero">
         <h1>Categories</h1>
         <p>
-          Start with the 26 classic stock categories, then browse Lumenstock extensions that most
-          marketplaces under-index.
+          Browse core stock categories with Adobe Stock–style subcategories (mammals, mountains,
+          finance, team sports, and more), plus Lumenstock extensions.
         </p>
       </div>
 
@@ -23,34 +64,20 @@ export default function CategoriesPage() {
         <div className="section-head">
           <div>
             <h2>Core stock taxonomy</h2>
-            <p>Aligned with industry-standard contributor categories.</p>
+            <p>Each category includes curated subcategories with one HD image each.</p>
           </div>
         </div>
-        <div className="roadmap">
-          {core.map((c) => (
-            <Link key={c.id} href={`/browse?category=${c.id}`} className="roadmap-item">
-              <strong>{c.name}</strong>
-              <span>{c.description}</span>
-            </Link>
-          ))}
-        </div>
+        <div className="category-stack">{core.map(renderCategory)}</div>
       </section>
 
       <section className="section" style={{ paddingTop: 0 }}>
         <div className="section-head">
           <div>
             <h2>Extended Lumenstock categories</h2>
-            <p>Differentiators for an all-in-one creative platform.</p>
+            <p>Differentiators with focused subcategory branches.</p>
           </div>
         </div>
-        <div className="roadmap">
-          {extended.map((c) => (
-            <Link key={c.id} href={`/browse?category=${c.id}`} className="roadmap-item">
-              <strong>{c.name}</strong>
-              <span>{c.description}</span>
-            </Link>
-          ))}
-        </div>
+        <div className="category-stack">{extended.map(renderCategory)}</div>
       </section>
     </div>
   );

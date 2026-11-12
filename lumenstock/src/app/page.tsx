@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { AssetGrid } from "@/components/AssetGrid";
 import { SearchForm } from "@/components/SearchForm";
+import { BrandWordmark } from "@/components/SiteHeader";
 import { assets, categories } from "@/data/catalog";
 
 export default function HomePage() {
-  const featured = assets.slice(0, 8);
+  const featured = assets.filter((a) => !a.subcategoryId).slice(0, 8);
   const core = categories.filter((c) => c.group === "core").slice(0, 10);
   const extended = categories.filter((c) => c.group === "extended").slice(0, 8);
 
@@ -16,9 +17,7 @@ export default function HomePage() {
           <img src={assets[0].imageUrl} alt="" />
         </div>
         <div className="container hero-content">
-          <p className="brand" style={{ marginBottom: "0.8rem", color: "var(--accent)" }}>
-            Lumenstock
-          </p>
+          <BrandWordmark className="hero-brand" />
           <h1>
             License luminous
             <br />
