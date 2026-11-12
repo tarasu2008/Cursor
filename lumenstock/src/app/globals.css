@@ -215,10 +215,9 @@ img {
 
 .hero {
   position: relative;
-  min-height: calc(100vh - var(--nav-h));
   display: grid;
   align-items: start;
-  padding: 2.5rem 0 4rem;
+  padding: 2.25rem 0 2.5rem;
   overflow: hidden;
 }
 
@@ -1269,9 +1268,8 @@ img {
   }
 
   .hero {
-    min-height: 78vh;
     align-items: start;
-    padding: 1.75rem 0 3rem;
+    padding: 1.5rem 0 1.75rem;
   }
 
   .hero h1 {

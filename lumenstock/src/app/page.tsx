@@ -5,7 +5,14 @@ import { SearchForm } from "@/components/SearchForm";
 import { assets, categories } from "@/data/catalog";
 
 export default function HomePage() {
-  const featured = assets.filter((a) => !a.subcategoryId).slice(0, 8);
+  const catalog = assets.filter((a) => !a.subcategoryId);
+  const subCatalog = assets.filter((a) => a.subcategoryId);
+
+  const featured = catalog.slice(0, 8);
+  // Placeholder rankings — swap for real download/view counts later
+  const mostDownloaded = [...catalog].slice(8, 16);
+  const mostViewed = (subCatalog.length >= 8 ? subCatalog : catalog).slice(0, 8);
+
   const core = categories.filter((c) => c.group === "core").slice(0, 10);
   const extended = categories.filter((c) => c.group === "extended").slice(0, 8);
 
@@ -43,6 +50,36 @@ export default function HomePage() {
             </Link>
           </div>
           <AssetGrid assets={featured} />
+        </div>
+      </section>
+
+      <section className="section" style={{ paddingTop: 0 }}>
+        <div className="container">
+          <div className="section-head">
+            <div>
+              <h2>Most downloaded</h2>
+              <p>Popular licenses right now — rankings will use real download counts later.</p>
+            </div>
+            <Link href="/browse" className="btn btn-soft">
+              Browse catalog
+            </Link>
+          </div>
+          <AssetGrid assets={mostDownloaded} />
+        </div>
+      </section>
+
+      <section className="section" style={{ paddingTop: 0 }}>
+        <div className="container">
+          <div className="section-head">
+            <div>
+              <h2>Most viewed</h2>
+              <p>What people are opening today — view counts will power this list later.</p>
+            </div>
+            <Link href="/browse" className="btn btn-soft">
+              Explore more
+            </Link>
+          </div>
+          <AssetGrid assets={mostViewed} />
         </div>
       </section>
 
