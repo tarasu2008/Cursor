@@ -60,9 +60,9 @@ projects/*/*
 !sports-images/
 !sports-images/**
 
-# Shutterstock marketplace analysis
-!shutterstock-analysis/
-!shutterstock-analysis/**
+# Stock marketplace research notes
+!stock-marketplace-analysis/
+!stock-marketplace-analysis/**
 
 # Lumenstock marketplace
 !lumenstock/
