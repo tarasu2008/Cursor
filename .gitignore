@@ -47,3 +47,23 @@ projects/*/*
 # PoliteType offline keyboard
 !polite-type/
 !polite-type/**
+
+# Diwali greeting cards
+!diwali-cards/
+!diwali-cards/**
+
+# CRE declarations
+!cre-declarations/
+!cre-declarations/**
+
+# Sports images
+!sports-images/
+!sports-images/**
+
+# Stock marketplace research notes
+!stock-marketplace-analysis/
+!stock-marketplace-analysis/**
+
+# Lumenstock marketplace
+!lumenstock/
+!lumenstock/**
