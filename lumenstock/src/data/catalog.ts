@@ -1,4 +1,4 @@
-import { subcategories } from "./subcategories";
+import { getSubcategory, subcategories } from "./subcategories";
 import { subcategorySeeds } from "./subcategorySeeds";
 
 export const siteConfig = {
@@ -316,7 +316,7 @@ const seeds: Record<string, Seed> = {
     title: "Trail through a green national park",
     description: "Outdoor recreation path lined with trees and soft light.",
     type: "photo",
-    keywords: ["park", "trail", "outdoor", "hiking", "fishing", "trees", "recreation", "green", "path"],
+    keywords: ["park", "trail", "outdoor", "hiking", "trees", "recreation", "green", "path"],
     orientation: "horizontal",
     color: "3F7D4E",
     people: 0,
@@ -371,7 +371,7 @@ const seeds: Record<string, Seed> = {
     title: "Sprinter exploding from starting blocks",
     description: "High-energy athletics action for sports and fitness brands.",
     type: "photo",
-    keywords: ["sports", "sprint", "athlete", "track", "fitness", "fishing", "action", "running", "stadium"],
+    keywords: ["sports", "sprint", "athlete", "track", "fitness", "action", "running", "stadium"],
     orientation: "horizontal",
     color: "E85D04",
     people: 1,
@@ -737,6 +737,55 @@ export function getCategory(id: string) {
   return categories.find((c) => c.id === id);
 }
 
+function tokenizeQuery(q: string) {
+  return q
+    .toLowerCase()
+    .split(/[^a-z0-9]+/)
+    .filter((t) => t.length > 1);
+}
+
+function wordMatch(hay: string, token: string) {
+  const text = hay.toLowerCase();
+  if (!token) return false;
+  // Prefer whole-word / keyword matches so parent categories don't leak unrelated hits
+  if (text === token) return true;
+  if (text.startsWith(`${token}-`) || text.endsWith(`-${token}`) || text.includes(`-${token}-`)) return true;
+  return new RegExp(`(^|[^a-z0-9])${token}([^a-z0-9]|$)`).test(text);
+}
+
+function assetMatchesToken(a: Asset, token: string) {
+  const sub = a.subcategoryId ? getSubcategory(a.subcategoryId) : undefined;
+  const fields = [
+    a.title,
+    a.description,
+    a.slug,
+    a.subcategoryId || "",
+    sub?.name || "",
+    sub?.description || "",
+    ...a.keywords,
+  ];
+  // Only match category names (not raw ids alone) to avoid noisy hits
+  for (const catId of a.categoryIds) {
+    const cat = getCategory(catId);
+    if (cat) fields.push(cat.name, cat.description);
+  }
+  return fields.some((f) => wordMatch(f, token));
+}
+
+function relevanceScore(a: Asset, tokens: string[]) {
+  let score = 0;
+  const title = a.title.toLowerCase();
+  const keywords = a.keywords.map((k) => k.toLowerCase());
+  const sub = a.subcategoryId ? getSubcategory(a.subcategoryId) : undefined;
+  for (const token of tokens) {
+    if (wordMatch(title, token)) score += 8;
+    if (keywords.some((k) => wordMatch(k, token))) score += 5;
+    if (sub && (wordMatch(sub.name, token) || wordMatch(sub.id, token))) score += 6;
+    if (wordMatch(a.description, token)) score += 2;
+  }
+  return score;
+}
+
 export function searchAssets(opts: {
   q?: string;
   type?: string;
@@ -746,24 +795,19 @@ export function searchAssets(opts: {
   people?: string;
 }) {
   const q = (opts.q || "").trim().toLowerCase();
-  return assets.filter((a) => {
+  const tokens = tokenizeQuery(q);
+
+  const filtered = assets.filter((a) => {
     if (opts.type && opts.type !== "all" && a.type !== opts.type) return false;
     if (opts.orientation && opts.orientation !== "all" && a.orientation !== opts.orientation) return false;
     if (opts.category && opts.category !== "all" && !a.categoryIds.includes(opts.category)) return false;
     if (opts.subcategory && opts.subcategory !== "all" && a.subcategoryId !== opts.subcategory) return false;
     if (opts.people === "none" && a.people > 0) return false;
     if (opts.people === "with" && a.people < 1) return false;
-    if (!q) return true;
-    const hay = [
-      a.title,
-      a.description,
-      a.owner,
-      a.subcategoryId || "",
-      ...a.keywords,
-      ...a.categoryIds,
-    ]
-      .join(" ")
-      .toLowerCase();
-    return hay.includes(q);
+    if (!tokens.length) return true;
+    return tokens.every((token) => assetMatchesToken(a, token));
   });
+
+  if (!tokens.length) return filtered;
+  return filtered.sort((a, b) => relevanceScore(b, tokens) - relevanceScore(a, tokens));
 }
