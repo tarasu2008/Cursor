@@ -1,0 +1,19 @@
+{
+  "trades": [
+    {
+      "dedupe_key": "2026-11-12T09:00:28.739073+05:30|SHORT|74116.0|Pass",
+      "closed_ist": "2026-11-12T21:10:21.069683+05:30",
+      "issued_ist": "2026-11-12T09:00:28.739073+05:30",
+      "session": "us",
+      "side": "SHORT",
+      "entry": 74116.0,
+      "stop_loss": 74857.0,
+      "take_profit": 72634.0,
+      "qty": 0.013,
+      "outcome": "Pass",
+      "pnl_usd": 19.27,
+      "notional_usd": 963.51
+    }
+  ],
+  "updated_ist": "2026-11-12T21:10:21.069699+05:30"
+}

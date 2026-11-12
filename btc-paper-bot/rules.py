@@ -48,6 +48,7 @@ USE_LONG_SHORT_LABELS = True
 # 14) Hourly: silent check only; if still Open, leave it and check again next hour.
 # 15) Never reply "waiting" / never block the chat — silent leave while Open.
 # 16) No email/notification spam: on STATUS:SILENT do not commit, push, or update PR.
+# 17) Pass/Fail by TP/SL price levels traded after signal — do not require limit fill.
 
 ALLOW_1H_TRADES = True
 HOURLY_RECHECK = True

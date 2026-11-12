@@ -1,17 +1,17 @@
 {
-  "timestamp_ist": "2026-11-12T18:35:12.402300+05:30",
-  "price": 72745.1,
+  "timestamp_ist": "2026-11-12T21:10:21.073178+05:30",
+  "price": 71323.9,
   "bias": "bearish",
   "previous_review": {
     "had_previous": true,
-    "grade": "Open",
+    "grade": "Pass",
     "previous_timestamp_ist": "2026-11-12T09:00:28.739073+05:30",
     "previous_price": 73726.3,
-    "result": "Open",
+    "result": "Pass",
     "mistake": null,
-    "lesson": null,
+    "lesson": "Take profit level reached \u2014 Pass.",
     "adjustment": null,
-    "pnl_usd": 0.0,
+    "pnl_usd": 19.27,
     "atr_stop_mult_now": 1.0,
     "reviews": [
       {
@@ -22,17 +22,17 @@
         "qty": 0.013,
         "filled": false,
         "hit_sl": false,
-        "hit_tp": false,
-        "grade": "Open",
+        "hit_tp": true,
+        "grade": "Pass",
         "mistake": null,
-        "pnl_usd": 0.0,
+        "pnl_usd": 19.27,
         "path_high": 73763.7,
-        "path_low": 72657.2
+        "path_low": 71133.4
       }
     ],
-    "detail": "SHORT \u2192 Open",
+    "detail": "SHORT \u2192 Pass",
     "performance": {
-      "updated_ist": "2026-11-12T18:35:12.399348+05:30",
+      "updated_ist": "2026-11-12T21:10:21.070225+05:30",
       "rules": {
         "notional_usd": 1000.0,
         "stop_loss_pct": 0.01,
@@ -40,31 +40,39 @@
         "grade": "Pass or Fail only (no partial)"
       },
       "today": {
-        "trades": 0,
-        "pass": 0,
+        "trades": 1,
+        "pass": 1,
         "fail": 0,
-        "pnl_usd": 0
+        "pnl_usd": 19.27
       },
       "week": {
-        "trades": 0,
-        "pass": 0,
+        "trades": 1,
+        "pass": 1,
         "fail": 0,
-        "pnl_usd": 0
+        "pnl_usd": 19.27
       },
       "month": {
-        "trades": 0,
-        "pass": 0,
+        "trades": 1,
+        "pass": 1,
         "fail": 0,
-        "pnl_usd": 0
+        "pnl_usd": 19.27
       },
       "all_time": {
-        "trades": 0,
-        "pass": 0,
+        "trades": 1,
+        "pass": 1,
         "fail": 0,
-        "pnl_usd": 0
+        "pnl_usd": 19.27
       }
     }
   },
-  "waiting_prev": true,
-  "signals": []
+  "waiting_prev": false,
+  "signals": [
+    {
+      "side": "SHORT",
+      "entry": 74116.0,
+      "stop_loss": 74857.0,
+      "take_profit": 72634.0,
+      "qty": 0.013
+    }
+  ]
 }

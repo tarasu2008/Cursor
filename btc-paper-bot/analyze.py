@@ -299,33 +299,32 @@ def review_previous_signal(h1: list[dict], px: float, session: str = "ad_hoc") -
         is_short = side in {"sell", "short"}
         label = side_label(side)
 
+        # Analysis grade: did price trade the TP/SL levels after the signal?
+        # Do NOT require limit fill — if TP level was reached, it is Pass (user 12 Nov).
         filled = hi >= entry if is_short else lo <= entry
-        hit_sl = filled and (hi >= stop if is_short else lo <= stop)
-        hit_tp = filled and (lo <= tp if is_short else hi >= tp)
+        hit_sl = hi >= stop if is_short else lo <= stop
+        hit_tp = lo <= tp if is_short else hi >= tp
 
         # Pass/Fail only — no partial.
-        if hit_tp and not hit_sl:
+        if hit_tp and hit_sl:
+            # Both levels traded: Fail (conservative — no partial credit)
+            outcome = "Fail"
+            mistake = "both_sides_tagged"
+            lesson = "Price tagged both SL and TP — counted Fail only."
+        elif hit_tp:
             outcome = "Pass"
+            lesson = "Take profit level reached — Pass."
         elif hit_sl:
             outcome = "Fail"
             mistake = "stop_hit"
-            lesson = "Failed trade — review entry/supply and keep 1% SL rule."
+            lesson = "Stop level reached — Fail."
             if abs(stop - entry) / entry < 0.012:
                 _active_atr_stop_mult = ATR_STOP_MULT_AFTER_STOPOUT
                 adjustment = f"ATR_STOP_MULT -> {ATR_STOP_MULT_AFTER_STOPOUT}"
-        elif hit_tp and hit_sl:
-            # Both tagged: Fail (conservative — no partial credit)
+        elif age_h >= 24:
             outcome = "Fail"
-            mistake = "both_sides_tagged"
-            lesson = "Choppy path tagged SL and TP — counted Fail only."
-        elif not filled and age_h >= 24:
-            outcome = "Fail"
-            mistake = "expired_unfilled"
-            lesson = "Signal expired unfilled after 24h — counted Fail."
-        elif filled and age_h >= 24:
-            outcome = "Fail"
-            mistake = "expired_open"
-            lesson = "Filled but neither SL nor TP in 24h — counted Fail."
+            mistake = "expired"
+            lesson = "Neither SL nor TP in 24h — counted Fail."
         else:
             outcome = "Open"
             mistake = None
