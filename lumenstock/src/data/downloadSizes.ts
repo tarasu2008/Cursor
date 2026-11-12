@@ -22,6 +22,8 @@ export const downloadSizes: DownloadSize[] = [
   // Phone
   { id: "phone-standard", group: "phone", label: "Phone", width: 390, height: 844, hint: "Modern phone portrait" },
   { id: "phone-hd", group: "phone", label: "Phone HD", width: 1170, height: 2532, hint: "Retina phone screens" },
+  { id: "phone-lock", group: "phone", label: "Lock Screen", width: 1290, height: 2796, hint: "iPhone / Android lock screen" },
+  { id: "phone-home", group: "phone", label: "Home Screen", width: 1179, height: 2556, hint: "Phone home screen wallpaper" },
   { id: "phone-wide", group: "phone", label: "Phone Landscape", width: 1920, height: 1080, hint: "Phone landscape / Stories landscape" },
 ];
 

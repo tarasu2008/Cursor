@@ -110,6 +110,18 @@ export const categories: Category[] = [
   { id: "seasonal", name: "Seasonal Campaigns", group: "extended", description: "Holiday marketing sets" },
   { id: "genz", name: "Gen Z Lifestyle", group: "extended", description: "Youth culture and trends" },
   { id: "arch-detail", name: "Architecture Detail", group: "extended", description: "Facades, materials, geometry" },
+  {
+    id: "phone-wallpapers",
+    name: "Phone Wallpapers",
+    group: "extended",
+    description: "Lock screen and home screen wallpapers for iPhone and Android",
+  },
+  {
+    id: "desktop-wallpapers",
+    name: "Desktop Wallpapers",
+    group: "extended",
+    description: "HD and ultrawide wallpapers for monitors and laptops",
+  },
 ];
 
 type Seed = {
@@ -630,6 +642,45 @@ const seeds: Record<string, Seed> = {
     people: 0,
     width: 1440,
     height: 1920,
+  },
+  "phone-wallpapers": {
+    title: "Soft aurora phone lock screen wallpaper",
+    description: "Portrait wallpaper made for phone lock screens and home screens.",
+    type: "photo",
+    keywords: [
+      "phone wallpaper",
+      "lock screen",
+      "home screen",
+      "iphone wallpaper",
+      "android wallpaper",
+      "mobile wallpaper",
+      "samsung wallpaper",
+      "phone background",
+    ],
+    orientation: "vertical",
+    color: "7B68EE",
+    people: 0,
+    width: 1170,
+    height: 2532,
+  },
+  "desktop-wallpapers": {
+    title: "Mountain lake desktop wallpaper panorama",
+    description: "Wide desktop wallpaper for monitors, laptops, and ultrawide screens.",
+    type: "photo",
+    keywords: [
+      "desktop wallpaper",
+      "monitor wallpaper",
+      "laptop wallpaper",
+      "pc wallpaper",
+      "ultrawide",
+      "desktop background",
+      "screen wallpaper",
+    ],
+    orientation: "horizontal",
+    color: "457B9D",
+    people: 0,
+    width: 2560,
+    height: 1440,
   },
 };
 

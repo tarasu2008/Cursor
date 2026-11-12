@@ -205,6 +205,19 @@ export const subcategories: Subcategory[] = [
   { id: "genz-social", parentId: "genz", name: "Social Moments", description: "Friends and nightlife energy" },
   { id: "arch-facades", parentId: "arch-detail", name: "Facades", description: "Building face geometry" },
   { id: "arch-materials", parentId: "arch-detail", name: "Materials", description: "Concrete, glass, metal detail" },
+  // Phone wallpapers — lock & home screen style sets
+  { id: "phone-wallpapers-lock", parentId: "phone-wallpapers", name: "Lock Screens", description: "Portrait wallpapers for phone lock screens" },
+  { id: "phone-wallpapers-home", parentId: "phone-wallpapers", name: "Home Screens", description: "Clean home screen backgrounds for app icons" },
+  { id: "phone-wallpapers-weather", parentId: "phone-wallpapers", name: "Weather", description: "Sky and weather wallpapers for live lock screens" },
+  { id: "phone-wallpapers-astronomy", parentId: "phone-wallpapers", name: "Astronomy", description: "Earth, moon, and space phone wallpapers" },
+  { id: "phone-wallpapers-abstract", parentId: "phone-wallpapers", name: "Abstract", description: "Gradient and abstract phone wallpapers" },
+  { id: "phone-wallpapers-nature", parentId: "phone-wallpapers", name: "Nature", description: "Nature scenes framed for tall phone screens" },
+  // Desktop wallpapers
+  { id: "desktop-wallpapers-nature", parentId: "desktop-wallpapers", name: "Nature Desktops", description: "Landscape wallpapers for desktop monitors" },
+  { id: "desktop-wallpapers-abstract", parentId: "desktop-wallpapers", name: "Abstract Desktops", description: "Abstract and gradient desktop backgrounds" },
+  { id: "desktop-wallpapers-dark", parentId: "desktop-wallpapers", name: "Dark Mode", description: "Dark desktop wallpapers that ease eye strain" },
+  { id: "desktop-wallpapers-minimal", parentId: "desktop-wallpapers", name: "Minimal", description: "Minimal calm desktop wallpaper scenes" },
+  { id: "desktop-wallpapers-ultrawide", parentId: "desktop-wallpapers", name: "Ultrawide", description: "Ultra-wide panoramas for ultrawide monitors" },
 ];
 
 export function getSubcategory(id: string) {
