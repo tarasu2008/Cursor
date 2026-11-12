@@ -63,3 +63,7 @@ projects/*/*
 # Shutterstock marketplace analysis
 !shutterstock-analysis/
 !shutterstock-analysis/**
+
+# Lumenstock marketplace
+!lumenstock/
+!lumenstock/**
