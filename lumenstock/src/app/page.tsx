@@ -13,6 +13,26 @@ export default function HomePage() {
   const mostDownloaded = [...catalog].slice(8, 16);
   const mostViewed = (subCatalog.length >= 8 ? subCatalog : catalog).slice(0, 8);
 
+  const aiRelatedIds = new Set([
+    "ai-generated",
+    "ai-surreal",
+    "ai-futuristic",
+    "technology-ai",
+    "renders-3d",
+    "3d-products",
+    "3d-characters",
+    "abstract-gradients",
+    "science-space",
+  ]);
+  const aiGenerated = assets
+    .filter(
+      (a) =>
+        a.categoryIds.some((id) => aiRelatedIds.has(id)) ||
+        (a.subcategoryId && aiRelatedIds.has(a.subcategoryId)) ||
+        a.keywords.some((k) => /\b(ai|neural|cgi|3d|surreal|futuristic)\b/i.test(k)),
+    )
+    .slice(0, 8);
+
   const core = categories.filter((c) => c.group === "core").slice(0, 10);
   const extended = categories.filter((c) => c.group === "extended").slice(0, 8);
 
@@ -80,6 +100,21 @@ export default function HomePage() {
             </Link>
           </div>
           <AssetGrid assets={mostViewed} />
+        </div>
+      </section>
+
+      <section className="section" style={{ paddingTop: 0 }}>
+        <div className="container">
+          <div className="section-head">
+            <div>
+              <h2>AI generated images</h2>
+              <p>Surreal worlds, futuristic concepts, neural visuals, and CGI-style art — clearly labeled AI.</p>
+            </div>
+            <Link href="/browse?category=ai-generated" className="btn btn-soft">
+              Browse AI
+            </Link>
+          </div>
+          <AssetGrid assets={aiGenerated} />
         </div>
       </section>
 
