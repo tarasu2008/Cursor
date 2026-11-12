@@ -444,6 +444,7 @@ img {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
   gap: 0.9rem;
+  /* Keep tiles from stretching to the tallest neighbor (avoids empty meta gaps) */
   align-items: start;
 }
 
@@ -462,6 +463,22 @@ img {
   transition: transform 0.25s ease, border-color 0.25s ease;
 }
 
+/* Mixed tile spans — wide feature tiles in the mosaic */
+.asset-card:nth-child(5),
+.asset-card:nth-child(8),
+.asset-card:nth-child(14),
+.asset-card:nth-child(17) {
+  grid-column: span 8;
+}
+
+.asset-card:nth-child(11) {
+  grid-column: span 6;
+}
+
+.asset-card:nth-child(12) {
+  grid-column: span 6;
+}
+
 .asset-card:hover {
   transform: translateY(-3px);
   border-color: rgba(240, 193, 74, 0.35);
@@ -470,11 +487,32 @@ img {
 .asset-card img {
   display: block;
   width: 100%;
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 4 / 3;
   object-fit: cover;
   object-position: center;
   flex: 0 0 auto;
   transition: transform 0.5s ease;
+}
+
+/* Vary crop ratios so the home mosaic feels tiled, not uniform */
+.asset-card:nth-child(3n) img {
+  aspect-ratio: 1 / 1;
+}
+
+.asset-card:nth-child(4n) img {
+  aspect-ratio: 5 / 4;
+}
+
+.asset-card:nth-child(5) img,
+.asset-card:nth-child(8) img,
+.asset-card:nth-child(14) img,
+.asset-card:nth-child(17) img {
+  aspect-ratio: 16 / 9;
+}
+
+.asset-card:nth-child(11) img,
+.asset-card:nth-child(7n) img {
+  aspect-ratio: 3 / 4;
 }
 
 .asset-card:hover img {
@@ -1367,7 +1405,13 @@ img {
 }
 
 @media (max-width: 960px) {
-  .asset-card {
+  .asset-card,
+  .asset-card:nth-child(5),
+  .asset-card:nth-child(8),
+  .asset-card:nth-child(11),
+  .asset-card:nth-child(12),
+  .asset-card:nth-child(14),
+  .asset-card:nth-child(17) {
     grid-column: span 6;
   }
 
@@ -1449,7 +1493,13 @@ img {
 }
 
 @media (max-width: 640px) {
-  .asset-card {
+  .asset-card,
+  .asset-card:nth-child(5),
+  .asset-card:nth-child(8),
+  .asset-card:nth-child(11),
+  .asset-card:nth-child(12),
+  .asset-card:nth-child(14),
+  .asset-card:nth-child(17) {
     grid-column: span 12;
   }
 
