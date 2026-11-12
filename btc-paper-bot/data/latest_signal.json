@@ -1,6 +1,6 @@
 {
-  "timestamp_ist": "2026-11-12T16:35:14.911046+05:30",
-  "price": 73356.1,
+  "timestamp_ist": "2026-11-12T17:35:22.646416+05:30",
+  "price": 72836.3,
   "bias": "bearish",
   "previous_review": {
     "had_previous": true,
@@ -27,12 +27,12 @@
         "mistake": null,
         "pnl_usd": 0.0,
         "path_high": 73763.7,
-        "path_low": 73168.4
+        "path_low": 72693.1
       }
     ],
     "detail": "SHORT \u2192 Open",
     "performance": {
-      "updated_ist": "2026-11-12T16:35:14.906618+05:30",
+      "updated_ist": "2026-11-12T17:35:22.644003+05:30",
       "rules": {
         "notional_usd": 1000.0,
         "stop_loss_pct": 0.01,
