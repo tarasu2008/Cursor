@@ -122,8 +122,8 @@ export default function HomePage() {
         <div className="container">
           <div className="section-head">
             <div>
-              <h2>Core categories</h2>
-              <p>The 26 stock classics customers already expect.</p>
+              <h2>Categories</h2>
+              <p>Popular stock themes customers already expect.</p>
             </div>
             <Link href="/categories">See all categories</Link>
           </div>
@@ -141,8 +141,8 @@ export default function HomePage() {
         <div className="container">
           <div className="section-head">
             <div>
-              <h2>Lumenstock extras</h2>
-              <p>Categories most stock sites under-serve — AI, 3D, cutouts, cultural, ESG, and more.</p>
+              <h2>More to explore</h2>
+              <p>AI, 3D, cutouts, cultural, wallpapers, ESG, and more.</p>
             </div>
           </div>
           <div className="chip-row">

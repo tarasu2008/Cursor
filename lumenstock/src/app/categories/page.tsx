@@ -10,18 +10,16 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Image categories & subcategories · Lumenstock",
     description:
-      "Explore core and extended stock categories with curated subcategory galleries, including phone and desktop wallpapers.",
+      "Explore stock categories with curated subcategory galleries, including phone and desktop wallpapers.",
     url: "/categories",
   },
 };
 
 export default function CategoriesPage() {
-  const core = categories.filter((c) => c.group === "core");
-  const extended = categories.filter((c) => c.group === "extended");
-  const wallpapers = extended.filter(
+  const wallpapers = categories.filter(
     (c) => c.id === "phone-wallpapers" || c.id === "desktop-wallpapers",
   );
-  const otherExtended = extended.filter(
+  const main = categories.filter(
     (c) => c.id !== "phone-wallpapers" && c.id !== "desktop-wallpapers",
   );
 
@@ -45,7 +43,9 @@ export default function CategoriesPage() {
           </div>
         </Link>
         {subs.length > 0 && (
-          <div className={`subcategory-grid${isPhone ? " phone-wallpaper-grid" : ""}${isDesktop ? " desktop-wallpaper-grid" : ""}`}>
+          <div
+            className={`subcategory-grid${isPhone ? " phone-wallpaper-grid" : ""}${isDesktop ? " desktop-wallpaper-grid" : ""}`}
+          >
             {subs.map((s) => {
               const thumb = `/samples/subcategories/${s.id}.jpg`;
               return (
@@ -81,12 +81,16 @@ export default function CategoriesPage() {
       <div className="page-hero">
         <h1>Categories</h1>
         <p>
-          Browse core stock categories with curated subcategories, plus phone lock/home wallpapers and
+          Explore stock categories with curated subcategories, plus phone lock/home wallpapers and
           desktop monitor wallpapers.
         </p>
       </div>
 
       <section className="section" style={{ paddingTop: "1rem" }}>
+        <div className="category-stack">{main.map(renderCategory)}</div>
+      </section>
+
+      <section className="section" style={{ paddingTop: 0 }}>
         <div className="section-head">
           <div>
             <h2>Wallpapers</h2>
@@ -94,26 +98,6 @@ export default function CategoriesPage() {
           </div>
         </div>
         <div className="category-stack">{wallpapers.map(renderCategory)}</div>
-      </section>
-
-      <section className="section" style={{ paddingTop: 0 }}>
-        <div className="section-head">
-          <div>
-            <h2>Core stock taxonomy</h2>
-            <p>Each category includes curated subcategories with one HD image each.</p>
-          </div>
-        </div>
-        <div className="category-stack">{core.map(renderCategory)}</div>
-      </section>
-
-      <section className="section" style={{ paddingTop: 0 }}>
-        <div className="section-head">
-          <div>
-            <h2>Extended Lumenstock categories</h2>
-            <p>Differentiators with focused subcategory branches.</p>
-          </div>
-        </div>
-        <div className="category-stack">{otherExtended.map(renderCategory)}</div>
       </section>
     </div>
   );

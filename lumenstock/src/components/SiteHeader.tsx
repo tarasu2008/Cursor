@@ -14,9 +14,6 @@ export function SiteHeader() {
   const menuId = useId();
   const catsRef = useRef<HTMLDivElement>(null);
 
-  const core = categories.filter((c) => c.group === "core");
-  const extended = categories.filter((c) => c.group === "extended");
-
   useEffect(() => {
     if (!catsOpen) return;
     const onPointer = (e: MouseEvent) => {
@@ -83,32 +80,15 @@ export function SiteHeader() {
               </button>
 
               <div id={menuId} className="nav-dropdown-panel" hidden={!catsOpen}>
-                <div className="nav-dropdown-grid">
-                  <div>
-                    <p className="nav-dropdown-heading">Core</p>
-                    <ul className="nav-dropdown-list">
-                      {core.map((c) => (
-                        <li key={c.id}>
-                          <Link href={`/browse?category=${c.id}`} onClick={closeAll}>
-                            {c.name}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div>
-                    <p className="nav-dropdown-heading">Extended</p>
-                    <ul className="nav-dropdown-list">
-                      {extended.map((c) => (
-                        <li key={c.id}>
-                          <Link href={`/browse?category=${c.id}`} onClick={closeAll}>
-                            {c.name}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
+                <ul className="nav-dropdown-list nav-dropdown-list-flat">
+                  {categories.map((c) => (
+                    <li key={c.id}>
+                      <Link href={`/browse?category=${c.id}`} onClick={closeAll}>
+                        {c.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
                 <Link href="/categories" className="nav-dropdown-footer" onClick={closeAll}>
                   View all categories →
                 </Link>
