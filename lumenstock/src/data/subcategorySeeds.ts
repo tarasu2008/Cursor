@@ -14,8 +14,8 @@ export type SubSeed = {
   prompt: string;
 };
 
-const H = { width: 3840, height: 2160, orientation: "horizontal" as const };
-const V = { width: 2880, height: 3840, orientation: "vertical" as const };
+const H = { width: 1920, height: 1080, orientation: "horizontal" as const };
+const V = { width: 1440, height: 1920, orientation: "vertical" as const };
 
 export const subcategorySeeds: Record<string, SubSeed> = {
   "animals-mammals": {
