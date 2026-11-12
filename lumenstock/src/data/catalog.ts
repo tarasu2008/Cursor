@@ -62,7 +62,7 @@ function uniqueSlug(title: string, used: Set<string>, fallback: string) {
   return slug;
 }
 
-/** Shutterstock-aligned core + Lumenstock extended categories */
+/** Industry-standard core categories + Lumenstock extended categories */
 export const categories: Category[] = [
   { id: "abstract", name: "Abstract", group: "core", description: "Patterns, blurs, conceptual forms" },
   { id: "animals", name: "Animals/Wildlife", group: "core", description: "Domestic and wild animals" },

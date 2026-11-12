@@ -1,9 +1,8 @@
 /**
- * Subcategory taxonomy inspired by Adobe Stock category trees +
- * Shutterstock/Freepik browse patterns (Animals→Mammals/Birds/Marine,
- * Nature→Mountains/Forests/Skies, Business→Finance/Office, etc.).
- * Shutterstock's public /images page is bot-protected here; industry trees
- * were cross-checked via Adobe Stock CategoryTree + Freepik photo themes.
+ * Subcategory taxonomy inspired by common stock-platform category trees
+ * (Animals→Mammals/Birds/Marine, Nature→Mountains/Forests/Skies,
+ * Business→Finance/Office, etc.), cross-checked with public industry
+ * category references such as Adobe Stock CategoryTree patterns.
  */
 export interface Subcategory {
   id: string;

@@ -65,7 +65,7 @@ export default function RoadmapPage() {
         <div className="section-head">
           <div>
             <h2>Shipping now</h2>
-            <p>Marketplace foundation from the Shutterstock-style analysis.</p>
+            <p>Marketplace foundation from our stock-platform research.</p>
           </div>
         </div>
         <div className="chip-row">
