@@ -91,7 +91,8 @@ function seedSuperAdmin(data: UserFile) {
   }
 
   const bootstrapPassword =
-    process.env.LUMENSTOCK_ADMIN_PASSWORD || "LumenstockAdmin2026!";
+    process.env.LUMENSTOCK_ADMIN_PASSWORD ||
+    `Ls-${randomBytes(9).toString("base64url")}`;
 
   data.users.push({
     id: createHash("sha256")
@@ -105,6 +106,19 @@ function seedSuperAdmin(data: UserFile) {
     paid: true,
     createdAt: new Date().toISOString(),
   });
+
+  // Local bootstrap only (.data is gitignored). Prefer LUMENSTOCK_ADMIN_PASSWORD in prod.
+  if (!process.env.LUMENSTOCK_ADMIN_PASSWORD) {
+    try {
+      writeFileSync(
+        path.join(DATA_DIR, "admin-bootstrap.txt"),
+        `email=${email}\npassword=${bootstrapPassword}\nrole=super_admin\n`,
+        "utf8",
+      );
+    } catch {
+      /* ignore */
+    }
+  }
   return true;
 }
 
