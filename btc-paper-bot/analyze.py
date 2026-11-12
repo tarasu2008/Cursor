@@ -567,7 +567,8 @@ def analyze(session: str) -> dict[str, Any]:
             len(factors) >= MIN_CONFLUENCE
             and valid_ticket("sell", entry, stop, tp)
             and entry > px
-            and (entry - px) < daily_atr * 1.5
+            # Entry must be near market (max ~1.5% or 0.75 ATR) — avoid stale far limits.
+            and (entry - px) < min(daily_atr * 0.75, entry * 0.015)
         ):
             proposals.append(
                 OrderProposal(
@@ -1038,24 +1039,33 @@ def main() -> None:
 
     out = LOG_DIR / f"report_{args.session}_{ist_now().strftime('%Y%m%d_%H%M%S')}.json"
     out.write_text(json.dumps(report, indent=2))
-    latest = save_latest_signal(report)
     grade = (report.get("previous_review") or {}).get("grade")
 
-    if args.hourly or args.simple:
-        # Hourly: always silent while Open. Simple sessions: also wait (no spam).
+    # Hourly = status check only: never open a new ticket / active trade here.
+    if args.hourly:
+        report["tv_ticket"] = []
+        report["proposals"] = []
+        report["waiting_prev"] = grade == "Open"
+
+    latest = save_latest_signal(report)
+
+    if args.hourly:
+        # Alert ONLY on Pass/Fail. Otherwise silent leave (no new-trade spam).
+        if grade in {"Pass", "Fail"}:
+            print_simple(report, force=True)
+        else:
+            print("STATUS:SILENT")
+    elif args.simple:
         if HOURLY_SILENT_IF_OPEN and grade == "Open":
-            # Silent leave — no Cursor alert, no "waiting" spam. Recheck next hour.
             print("STATUS:SILENT")
         else:
-            # Alert on Pass/Fail; also allow first signal when no previous (—)
+            # Sessions: alert on Pass/Fail, or new setup when no open prev (—)
             force = grade in {"Pass", "Fail", "—", None}
             printed = print_simple(report, force=bool(force))
             if not printed:
                 print("STATUS:SILENT")
     else:
         print_report(report)
-    # Keep file paths off user-facing Cursor alert stdout for --hourly/--simple wait path
-    if not (args.hourly or args.simple):
         print(f"Wrote {out}")
         print(f"Saved {latest}")
 

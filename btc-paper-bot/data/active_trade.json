@@ -1,38 +1,18 @@
 {
-  "timestamp_ist": "2026-11-12T21:10:21.073178+05:30",
-  "price": 71323.9,
+  "timestamp_ist": "2026-11-12T21:35:25.226624+05:30",
+  "price": 71688.2,
   "bias": "bearish",
   "previous_review": {
-    "had_previous": true,
-    "grade": "Pass",
-    "previous_timestamp_ist": "2026-11-12T09:00:28.739073+05:30",
-    "previous_price": 73726.3,
-    "result": "Pass",
+    "had_previous": false,
+    "grade": "\u2014",
+    "result": "none",
     "mistake": null,
-    "lesson": "Take profit level reached \u2014 Pass.",
+    "lesson": null,
     "adjustment": null,
-    "pnl_usd": 19.27,
-    "atr_stop_mult_now": 1.0,
-    "reviews": [
-      {
-        "side": "SHORT",
-        "entry": 74116.0,
-        "stop_loss": 74857.0,
-        "take_profit": 72634.0,
-        "qty": 0.013,
-        "filled": false,
-        "hit_sl": false,
-        "hit_tp": true,
-        "grade": "Pass",
-        "mistake": null,
-        "pnl_usd": 19.27,
-        "path_high": 73763.7,
-        "path_low": 71133.4
-      }
-    ],
-    "detail": "SHORT \u2192 Pass",
+    "pnl_usd": 0.0,
+    "detail": "Previous was FLAT.",
     "performance": {
-      "updated_ist": "2026-11-12T21:10:21.070225+05:30",
+      "updated_ist": "2026-11-12T21:35:25.224287+05:30",
       "rules": {
         "notional_usd": 1000.0,
         "stop_loss_pct": 0.01,
@@ -67,5 +47,5 @@
   },
   "waiting_prev": false,
   "signals": [],
-  "note": "Cleared stale same-idea reentry after Pass; price already through TP."
+  "note": "cleared far stale short after hourly fix"
 }
