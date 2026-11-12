@@ -10,7 +10,7 @@ import {
   getSubcategory,
   siteConfig,
 } from "@/data/catalog";
-import { DownloadPicker } from "./DownloadPicker";
+import { AssetWorkspace } from "./AssetWorkspace";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -84,11 +84,7 @@ export default async function AssetPage({ params }: Props) {
     <div className="container">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <div className="detail">
-        <div className="detail-media">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={asset.imageUrl} alt={asset.title} />
-        </div>
-        <aside className="detail-panel">
+        <div className="detail-copy">
           <h1>{asset.title}</h1>
           <p style={{ color: "var(--muted)", margin: 0 }}>{asset.description}</p>
           <div className="kv">
@@ -114,7 +110,7 @@ export default async function AssetPage({ params }: Props) {
             {sub && (
               <Link
                 href={`/browse?category=${sub.parentId}&subcategory=${sub.id}`}
-                className={`chip active`}
+                className="chip active"
               >
                 {sub.name}
               </Link>
@@ -127,8 +123,14 @@ export default async function AssetPage({ params }: Props) {
               </Link>
             ))}
           </div>
-          <DownloadPicker imageUrl={asset.imageUrl} title={asset.title} />
-        </aside>
+        </div>
+
+        <AssetWorkspace
+          imageUrl={asset.imageUrl}
+          title={asset.title}
+          width={asset.width}
+          height={asset.height}
+        />
       </div>
 
       {related.length > 0 && (

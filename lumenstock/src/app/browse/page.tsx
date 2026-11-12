@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { AssetGrid } from "@/components/AssetGrid";
+import { PAGE_SIZE, Pagination, paginate } from "@/components/Pagination";
 import { SearchForm } from "@/components/SearchForm";
 import {
   categories,
@@ -27,7 +28,13 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   const sub = subcategory !== "all" ? getSubcategory(subcategory) : undefined;
 
   const label = sub?.name || cat?.name || (q ? `“${q}”` : "all images");
-  const title = q ? `Search ${q}` : sub ? `${sub.name} images` : cat ? `${cat.name} stock photos` : "Browse stock images";
+  const title = q
+    ? `Search ${q}`
+    : sub
+      ? `${sub.name} images`
+      : cat
+        ? `${cat.name} stock photos`
+        : "Browse stock images";
   const description = q
     ? `Royalty-free stock results for ${q} on Lumenstock.`
     : `Browse ${label} — HD royalty-free photos and illustrations with desktop, tablet, and phone downloads.`;
@@ -50,8 +57,11 @@ export default async function BrowsePage({ searchParams }: Props) {
   const category = one(sp.category) || "all";
   const subcategory = one(sp.subcategory) || "all";
   const people = one(sp.people) || "all";
+  const pageParam = Number.parseInt(one(sp.page) || "1", 10);
+  const page = Number.isFinite(pageParam) && pageParam > 0 ? pageParam : 1;
 
   const results = searchAssets({ q, type, orientation, category, subcategory, people });
+  const { page: currentPage, slice } = paginate(results, page, PAGE_SIZE);
   const activeCategory = category !== "all" ? getCategory(category) : undefined;
   const subcats = activeCategory ? getSubcategoriesForParent(activeCategory.id) : [];
   const activeSub = subcategory !== "all" ? getSubcategory(subcategory) : undefined;
@@ -63,11 +73,30 @@ export default async function BrowsePage({ searchParams }: Props) {
     params.set("orientation", key === "orientation" ? value : orientation);
     params.set("category", key === "category" ? value : category);
     params.set("people", key === "people" ? value : people);
-    const nextSub =
-      key === "subcategory" ? value : key === "category" ? "all" : subcategory;
+    const nextSub = key === "subcategory" ? value : key === "category" ? "all" : subcategory;
     if (nextSub && nextSub !== "all") params.set("subcategory", nextSub);
+    // Reset to page 1 when filters change
+    if (key === "page") {
+      if (value !== "1") params.set("page", value);
+    }
     return `/browse?${params.toString()}`;
   };
+
+  const hrefForPage = (p: number) => {
+    const params = new URLSearchParams();
+    if (q) params.set("q", q);
+    if (type !== "all") params.set("type", type);
+    if (orientation !== "all") params.set("orientation", orientation);
+    if (category !== "all") params.set("category", category);
+    if (people !== "all") params.set("people", people);
+    if (subcategory !== "all") params.set("subcategory", subcategory);
+    if (p > 1) params.set("page", String(p));
+    const qs = params.toString();
+    return qs ? `/browse?${qs}` : "/browse";
+  };
+
+  const from = results.length === 0 ? 0 : (currentPage - 1) * PAGE_SIZE + 1;
+  const to = Math.min(currentPage * PAGE_SIZE, results.length);
 
   return (
     <div className="container">
@@ -147,11 +176,13 @@ export default async function BrowsePage({ searchParams }: Props) {
 
       <p style={{ color: "var(--muted)", marginBottom: "1rem" }}>
         {results.length} result{results.length === 1 ? "" : "s"}
+        {results.length > 0 ? ` · showing ${from}–${to}` : ""}
         {q ? ` for “${q}”` : ""}
         {activeSub ? ` · ${activeSub.name}` : activeCategory ? ` · ${activeCategory.name}` : ""}
       </p>
 
-      <AssetGrid assets={results} />
+      <AssetGrid assets={slice} />
+      <Pagination page={currentPage} total={results.length} hrefForPage={hrefForPage} />
       <div style={{ height: "3rem" }} />
     </div>
   );
