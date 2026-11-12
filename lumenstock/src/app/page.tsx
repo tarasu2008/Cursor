@@ -12,6 +12,10 @@ export default function HomePage() {
   return (
     <>
       <section className="hero">
+        <div className="hero-media" aria-hidden>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={assets[0].imageUrl} alt="" />
+        </div>
         <div className="container hero-content">
           <BrandWordmark className="hero-brand" accent />
           <h1>
@@ -24,10 +28,6 @@ export default function HomePage() {
             or phone size — ready to grow into an all-in-one creative studio.
           </p>
           <SearchForm />
-        </div>
-        <div className="hero-media">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={assets[0].imageUrl} alt="" />
         </div>
       </section>
 
