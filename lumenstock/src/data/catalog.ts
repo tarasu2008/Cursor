@@ -393,7 +393,7 @@ const seeds: Record<string, Seed> = {
     title: "High-speed train blurring through station",
     description: "Motion-rich transportation scene with modern rail design.",
     type: "photo",
-    keywords: ["train", "transport", "rail", "speed", "station", "travel", "motion", "modern"],
+    keywords: ["train", "transport", "rail", "vehicle", "travel", "motion", "modern", "transit"],
     orientation: "horizontal",
     color: "457B9D",
     people: 0,

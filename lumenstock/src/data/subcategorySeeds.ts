@@ -84,6 +84,28 @@ export const subcategorySeeds: Record<string, SubSeed> = {
     prompt:
       "Photorealistic dramatic storm clouds over an open plain, epic sky cloudscape stock photo, high contrast light, no text",
   },
+  "nature-beaches": {
+    title: "Golden beach shoreline with gentle waves",
+    description: "Coastal beach landscape for travel and summer brands.",
+    type: "photo",
+    keywords: ["beach", "shore", "sand", "waves", "coast", "ocean", "summer"],
+    color: "F4A261",
+    people: 0,
+    ...H,
+    prompt:
+      "Photorealistic golden sandy beach shoreline with gentle turquoise waves at sunset, nature travel stock photo, no people, no text",
+  },
+  "nature-deserts": {
+    title: "Sand dunes under a clear desert sky",
+    description: "Arid desert dunes and landscape.",
+    type: "photo",
+    keywords: ["desert", "dunes", "sand", "arid", "landscape", "dry"],
+    color: "E9C46A",
+    people: 0,
+    ...H,
+    prompt:
+      "Photorealistic sweeping sand dunes under a clear blue desert sky, nature landscape stock photo, no people, no text",
+  },
   "people-portraits": {
     title: "Natural light portrait of a young adult",
     description: "Clean people portrait for lifestyle and brand storytelling.",
@@ -226,6 +248,50 @@ export const subcategorySeeds: Record<string, SubSeed> = {
     ...H,
     prompt:
       "Photorealistic angler casting a fishing line on a scenic river, sport fishing stock photo, natural light, no logos or text",
+  },
+  "sports-hunting": {
+    title: "Hunter with rifle in misty woodland",
+    description: "Field hunting scene for outdoor sports catalogs.",
+    type: "photo",
+    keywords: ["hunting", "hunter", "rifle", "woodland", "wildlife", "field sport", "outdoors", "camo"],
+    color: "3A5A40",
+    people: 1,
+    ...H,
+    prompt:
+      "Photorealistic hunter in camouflage standing in misty woodland with a hunting rifle, respectful outdoor sports stock photo, no blood, no logos or text",
+  },
+  "sports-water": {
+    title: "Surfer riding a turquoise ocean wave",
+    description: "Water sports action on open sea.",
+    type: "photo",
+    keywords: ["surfing", "surfer", "wave", "water sports", "ocean", "kayak", "recreation"],
+    color: "0077B6",
+    people: 1,
+    ...H,
+    prompt:
+      "Photorealistic surfer riding a turquoise ocean wave, dynamic water sports stock photo, spray and motion, no logos or text",
+  },
+  "sports-winter": {
+    title: "Skier carving fresh powder snow",
+    description: "Winter sports action in alpine snow.",
+    type: "photo",
+    keywords: ["skiing", "skier", "snow", "winter sports", "alpine", "snowboard", "powder"],
+    color: "E8F1F8",
+    people: 1,
+    ...H,
+    prompt:
+      "Photorealistic skier carving through fresh powder snow on a mountain slope, winter sports stock photo, crisp daylight, no logos or text",
+  },
+  "sports-cycling": {
+    title: "Cyclist on a coastal road bike ride",
+    description: "Cycling and road biking recreation.",
+    type: "photo",
+    keywords: ["cycling", "cyclist", "bike", "bicycle", "road bike", "riding", "sport"],
+    color: "E76F51",
+    people: 1,
+    ...H,
+    prompt:
+      "Photorealistic cyclist riding a road bike along a scenic coastal highway, cycling sports stock photo, motion blur background, no logos or text",
   },
   "technology-devices": {
     title: "Smartphone and laptop on minimal desk",
@@ -545,6 +611,61 @@ export const subcategorySeeds: Record<string, SubSeed> = {
     ...H,
     prompt:
       "Photorealistic empty highway curve through desert landscape at golden hour, transportation stock photo, no text",
+  },
+  "transport-cars": {
+    title: "Modern sedan car on a city street",
+    description: "Automobile and car lifestyle stock photo.",
+    type: "photo",
+    keywords: ["car", "automobile", "sedan", "vehicle", "auto", "cars", "driving"],
+    color: "457B9D",
+    people: 0,
+    ...H,
+    prompt:
+      "Photorealistic modern silver sedan car parked on a clean city street at dusk, automobile vehicle stock photo, no brand logos or readable text",
+  },
+  "transport-buses": {
+    title: "City bus arriving at an urban stop",
+    description: "Public transit bus and coach vehicles.",
+    type: "photo",
+    keywords: ["bus", "buses", "coach", "transit", "public transport", "vehicle", "city bus"],
+    color: "E63946",
+    people: 0,
+    ...H,
+    prompt:
+      "Photorealistic city transit bus arriving at an urban bus stop, public transportation vehicle stock photo, blank destination board, no logos or readable text",
+  },
+  "transport-trucks": {
+    title: "Freight truck on an open highway",
+    description: "Commercial trucking and hauling vehicles.",
+    type: "photo",
+    keywords: ["truck", "trucks", "freight", "lorry", "hauler", "vehicle", "transport"],
+    color: "6C757D",
+    people: 0,
+    ...H,
+    prompt:
+      "Photorealistic freight truck driving on an open highway under blue sky, commercial vehicle stock photo, no company logos or readable text",
+  },
+  "transport-motorcycles": {
+    title: "Motorcycle parked on a scenic overlook",
+    description: "Motorcycle and bike travel imagery.",
+    type: "photo",
+    keywords: ["motorcycle", "motorbike", "bike", "rider", "vehicle", "two wheeler"],
+    color: "212529",
+    people: 0,
+    ...H,
+    prompt:
+      "Photorealistic black motorcycle parked at a scenic mountain overlook, vehicle travel stock photo, no brand logos or text",
+  },
+  "transport-boats": {
+    title: "White motorboat on calm blue water",
+    description: "Boats, ships, and maritime vehicles.",
+    type: "photo",
+    keywords: ["boat", "boats", "ship", "yacht", "ferry", "maritime", "vessel", "vehicle"],
+    color: "48CAE4",
+    people: 0,
+    ...H,
+    prompt:
+      "Photorealistic white motorboat floating on calm blue water near a marina, maritime boat vehicle stock photo, no logos or readable text",
   },
   "transport-air": {
     title: "Passenger jet lifting off at sunset",
@@ -1096,6 +1217,28 @@ export const subcategorySeeds: Record<string, SubSeed> = {
     prompt:
       "Photorealistic sunbeams piercing deep blue underwater scene, ethereal ocean light stock photo, no people, no text",
   },
+  "underwater-scuba": {
+    title: "Scuba diver exploring a coral reef",
+    description: "Scuba diving exploration underwater.",
+    type: "photo",
+    keywords: ["scuba", "diving", "diver", "scuba diving", "reef", "underwater", "tank", "dive"],
+    color: "0077B6",
+    people: 1,
+    ...H,
+    prompt:
+      "Photorealistic scuba diver with full gear exploring a colorful coral reef underwater, scuba diving stock photo, clear blue water, no logos or text",
+  },
+  "underwater-snorkel": {
+    title: "Snorkeler above a shallow tropical reef",
+    description: "Snorkeling at the ocean surface.",
+    type: "photo",
+    keywords: ["snorkeling", "snorkel", "reef", "tropical", "underwater", "swimming", "ocean"],
+    color: "00B4D8",
+    people: 1,
+    ...H,
+    prompt:
+      "Photorealistic snorkeler swimming above a shallow tropical reef in clear turquoise water, snorkeling stock photo, bright daylight, no logos or text",
+  },
   "cultural-festivals": {
     title: "Festival lanterns and marigold garlands",
     description: "Cultural festival celebration scene.",
@@ -1337,5 +1480,192 @@ export const subcategorySeeds: Record<string, SubSeed> = {
     ...H,
     prompt:
       "Photorealistic concrete glass and metal architectural material detail close-up, modern architecture stock photo, no text",
+  },
+  "animals-fish": {
+    title: "Colorful tropical fish swimming close-up",
+    description: "Freshwater and saltwater fish for wildlife catalogs.",
+    type: "photo",
+    keywords: ["fish", "tropical fish", "aquatic", "underwater", "wildlife", "fins", "reef fish"],
+    color: "00B4D8",
+    people: 0,
+    ...H,
+    prompt:
+      "Photorealistic close-up of colorful tropical fish swimming in clear blue water, sharp scales and fins, wildlife stock photo, no text",
+  },
+  "nature-landscapes": {
+    title: "Wide scenic valley landscape at golden hour",
+    description: "Expansive landscape vista for travel and outdoor brands.",
+    type: "photo",
+    keywords: ["landscape", "vista", "valley", "scenery", "horizon", "countryside", "panorama"],
+    color: "588157",
+    people: 0,
+    ...H,
+    prompt:
+      "Photorealistic wide scenic valley landscape at golden hour with rolling hills and soft light, nature travel stock photo, no people, no text",
+  },
+  "nature-sea": {
+    title: "Open sea waves under a bright horizon",
+    description: "Ocean and sea horizons for marine and travel stories.",
+    type: "photo",
+    keywords: ["sea", "ocean", "waves", "horizon", "marine", "open water", "blue sea"],
+    color: "0077B6",
+    people: 0,
+    ...H,
+    prompt:
+      "Photorealistic open sea with rolling blue waves under a bright horizon, ocean stock photography, no boats, no people, no text",
+  },
+  "nature-rivers": {
+    title: "Mountain river flowing over smooth stones",
+    description: "Rivers and streams for outdoor and nature campaigns.",
+    type: "photo",
+    keywords: ["river", "stream", "flowing water", "creek", "freshwater", "rapids", "nature"],
+    color: "468FAF",
+    people: 0,
+    ...H,
+    prompt:
+      "Photorealistic mountain river flowing over smooth stones with clear water and forest banks, nature stock photo, no people, no text",
+  },
+  "nature-dams": {
+    title: "Concrete hydro dam and reservoir spillway",
+    description: "Dam and reservoir infrastructure for industrial and energy stories.",
+    type: "photo",
+    keywords: ["dam", "dams", "hydro", "reservoir", "spillway", "hydroelectric", "infrastructure"],
+    color: "6C757D",
+    people: 0,
+    ...H,
+    prompt:
+      "Photorealistic large concrete hydroelectric dam with reservoir and spillway water, industrial infrastructure stock photo, daytime, no logos or text",
+  },
+  "buildings-houses": {
+    title: "Suburban family house with front garden",
+    description: "House exteriors for real estate and lifestyle catalogs.",
+    type: "photo",
+    keywords: ["house", "home", "residential", "suburb", "family home", "front yard", "architecture"],
+    color: "BC6C25",
+    people: 0,
+    ...H,
+    prompt:
+      "Photorealistic suburban family house exterior with front garden and warm daylight, residential real estate stock photo, no logos or text",
+  },
+  "transport-docks": {
+    title: "Wooden dock pier over calm harbor water",
+    description: "Docks, piers, and harbors for maritime catalogs.",
+    type: "photo",
+    keywords: ["dock", "docks", "pier", "harbor", "harbour", "port", "wharf", "marina"],
+    color: "457B9D",
+    people: 0,
+    ...H,
+    prompt:
+      "Photorealistic wooden dock pier extending over calm harbor water at sunrise, maritime port stock photo, no people, no text",
+  },
+  "objects-clocks": {
+    title: "Classic wall clock on a textured wall",
+    description: "Clocks and timepieces for object and lifestyle stills.",
+    type: "photo",
+    keywords: ["clock", "clocks", "timepiece", "wall clock", "watch", "time", "hour"],
+    color: "C9A227",
+    people: 0,
+    ...V,
+    prompt:
+      "Photorealistic classic round wall clock with clear numerals on a textured wall, product still life stock photo, no brand logos or readable brand text",
+  },
+  "cultural-asia": {
+    title: "Lantern-lit Asian temple courtyard at dusk",
+    description: "Asian cultural heritage and landmark atmosphere.",
+    type: "photo",
+    keywords: ["asia", "asian", "temple", "lanterns", "heritage", "culture", "japan", "china", "india", "korea"],
+    color: "E63946",
+    people: 0,
+    ...H,
+    prompt:
+      "Photorealistic lantern-lit Asian temple courtyard at dusk with traditional architecture, cultural travel stock photo, no readable text or logos",
+  },
+  "cultural-europe": {
+    title: "Cobblestone European plaza with historic facades",
+    description: "European streets and cultural plazas for travel brands.",
+    type: "photo",
+    keywords: ["europe", "european", "plaza", "cobblestone", "historic", "culture", "italy", "france", "spain", "germany"],
+    color: "A8DADC",
+    people: 2,
+    ...H,
+    prompt:
+      "Photorealistic cobblestone European plaza with historic stone facades and soft afternoon light, cultural travel stock photo, few distant people, no readable text",
+  },
+  "cultural-africa": {
+    title: "Vibrant African craft market under open sky",
+    description: "African markets, crafts, and cultural color.",
+    type: "photo",
+    keywords: ["africa", "african", "market", "crafts", "culture", "heritage", "kenya", "nigeria", "morocco", "ghana"],
+    color: "E9C46A",
+    people: 3,
+    ...H,
+    prompt:
+      "Photorealistic vibrant African outdoor craft market with colorful textiles and pottery under open sky, cultural travel stock photo, no logos or readable text",
+  },
+  "cultural-americas": {
+    title: "Colorful Americas street mural and cafe culture",
+    description: "North and South American cultural street scenes.",
+    type: "photo",
+    keywords: ["americas", "america", "latin america", "usa", "brazil", "mexico", "canada", "culture", "street"],
+    color: "F4A261",
+    people: 2,
+    ...H,
+    prompt:
+      "Photorealistic colorful Americas street scene with mural wall and cafe patio culture, travel stock photo, soft daylight, no brand logos or readable text",
+  },
+  "cultural-middleeast": {
+    title: "Ornate Middle Eastern courtyard with arches",
+    description: "Middle Eastern architecture and cultural atmosphere.",
+    type: "photo",
+    keywords: ["middle east", "arabian", "mosque", "arches", "culture", "heritage", "uae", "egypt", "turkey", "morocco"],
+    color: "C9A227",
+    people: 0,
+    ...H,
+    prompt:
+      "Photorealistic ornate Middle Eastern courtyard with geometric arches and warm stone light, cultural architecture stock photo, no people, no readable text",
+  },
+  "cultural-oceania": {
+    title: "Pacific coastal cultural meeting place at sunset",
+    description: "Oceania and Pacific cultural coastal scenes.",
+    type: "photo",
+    keywords: ["oceania", "pacific", "australia", "new zealand", "polynesia", "culture", "coastal", "heritage"],
+    color: "48CAE4",
+    people: 1,
+    ...H,
+    prompt:
+      "Photorealistic Pacific coastal cultural meeting place with wooden structures at sunset, Oceania travel stock photo, respectful scene, no logos or text",
+  },
+  "pets-birds": {
+    title: "Pet parrot perched near a sunny window",
+    description: "Companion birds for pet lifestyle catalogs.",
+    type: "photo",
+    keywords: ["pet bird", "parrot", "companion bird", "pets", "avian", "home"],
+    color: "2A9D8F",
+    people: 0,
+    ...H,
+    prompt:
+      "Photorealistic pet parrot perched near a sunny home window, soft interior light, pet lifestyle stock photo, no text",
+  },
+  "pets-fish": {
+    title: "Home aquarium with colorful pet fish",
+    description: "Aquarium pets for home and lifestyle stories.",
+    type: "photo",
+    keywords: ["aquarium", "pet fish", "goldfish", "tank", "pets", "home aquarium"],
+    color: "00B4D8",
+    people: 0,
+    ...H,
+    prompt:
+      "Photorealistic home aquarium with colorful pet fish swimming among plants, cozy interior stock photo, no text",
+  },
+  "pets-rabbits": {
+    title: "Pet rabbit resting on soft indoor blanket",
+    description: "Rabbits and small companion pets.",
+    type: "photo",
+    keywords: ["rabbit", "bunny", "pet rabbit", "pets", "companion animal", "cute"],
+    color: "E9C46A",
+    people: 0,
+    ...H,
+    prompt:
+      "Photorealistic pet rabbit resting on a soft indoor blanket in warm natural light, cute pet lifestyle stock photo, no text",
   },
 };
