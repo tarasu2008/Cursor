@@ -218,13 +218,18 @@ img {
   display: grid;
   align-items: start;
   padding: 2.25rem 0 2.5rem;
-  overflow: hidden;
+  /* Keep visible so search suggestions can overlay sections below */
+  overflow: visible;
+  z-index: 5;
 }
 
 .hero-media {
   position: absolute;
   inset: 0;
   z-index: 0;
+  overflow: hidden;
+  border-radius: 0;
+  pointer-events: none;
 }
 
 .hero-media img {
@@ -275,7 +280,7 @@ img {
   position: relative;
   max-width: 560px;
   width: 100%;
-  z-index: 20;
+  z-index: 60;
 }
 
 .search-wrap.compact {
@@ -299,12 +304,14 @@ img {
   left: 0;
   right: 0;
   top: calc(100% + 0.55rem);
+  z-index: 70;
   background: #10141c;
   border: 1px solid var(--line);
   border-radius: 16px;
   padding: 0.85rem;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
   animation: rise 0.18s ease both;
+  overflow: visible;
 }
 
 .search-suggest-grid {
