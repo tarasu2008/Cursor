@@ -47,6 +47,7 @@ USE_LONG_SHORT_LABELS = True
 # 13) Alert ONLY when previous analysis is Pass or Fail. If Open → leave it (no alert).
 # 14) Hourly: silent check only; if still Open, leave it and check again next hour.
 # 15) Never reply "waiting" / never block the chat — silent leave while Open.
+# 16) No email/notification spam: on STATUS:SILENT do not commit, push, or update PR.
 
 ALLOW_1H_TRADES = True
 HOURLY_RECHECK = True
@@ -55,6 +56,7 @@ ALERT_ONLY_ON_PASS_FAIL = True
 WAIT_FOR_PREV_BEFORE_NEW = True
 HOURLY_SILENT_IF_OPEN = True
 SILENT_LEAVE_IF_OPEN = True  # no "waiting" messages
+NO_EMAIL_ON_SILENT = True  # no git push / PR update / chat noise while Open
 
 # Risk model (ATR used for structure confluence; ticket SL/TP use fixed % when enabled)
 ATR_STOP_MULT = 1.0

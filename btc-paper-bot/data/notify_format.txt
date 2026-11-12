@@ -1,6 +1,7 @@
 Cursor alert ONLY when PREV is Pass or Fail.
 Hourly: silent check. If still Open → leave it (STATUS:SILENT), check again next hour.
 Never reply "waiting". Never spam while Open.
+No email/notification on silent checks: do not commit, push, or update PR when STATUS:SILENT.
 
 Cursor alert
 
