@@ -4,11 +4,19 @@ import { assetPath, type Asset } from "@/data/catalog";
 /** Stable placeholder download count from asset id — replace with real stats later */
 function placeholderDownloads(id: string) {
   let hash = 0;
-  for (let i = 0; i < id.length; i += 1) hash = (hash * 31 + id.charCodeAt(i)) >>> 0;
-  const n = 120 + (hash % 9800); // 120 – ~9.9k
+  for (let i = 0; i < id.length; i += 1) hash = (hash * 33 + id.charCodeAt(i)) >>> 0;
+
+  // Mix plain counts and a few "k" values so cards don't all look alike
+  const samples = [
+    48, 67, 89, 100, 124, 156, 189, 210, 256, 312, 347, 401, 456, 512, 589, 640, 721, 803, 890, 945,
+    1100, 1400, 1800, 2300, 2900, 3600, 4200, 5100, 6700, 8200,
+  ];
+  const n = samples[hash % samples.length];
+
   if (n >= 1000) {
     const k = n / 1000;
-    return `${k >= 10 ? Math.round(k) : k.toFixed(1).replace(/\.0$/, "")}k downloaded`;
+    const label = Number.isInteger(k) ? `${k}` : k.toFixed(1).replace(/\.0$/, "");
+    return `${label}k downloaded`;
   }
   return `${n} downloaded`;
 }
