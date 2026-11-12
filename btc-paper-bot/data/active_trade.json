@@ -66,13 +66,6 @@
     }
   },
   "waiting_prev": false,
-  "signals": [
-    {
-      "side": "SHORT",
-      "entry": 74116.0,
-      "stop_loss": 74857.0,
-      "take_profit": 72634.0,
-      "qty": 0.013
-    }
-  ]
+  "signals": [],
+  "note": "Cleared stale same-idea reentry after Pass; price already through TP."
 }
