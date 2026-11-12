@@ -44,8 +44,9 @@ USE_LONG_SHORT_LABELS = True
 # 10) Allow 1H timeframe trades; hourly recheck optional.
 # 11) Cursor alert title only — no BTC alert wording.
 # 12) Every Cursor alert must include Time + Date (IST) when triggered.
-# 13) Alert ONLY when previous analysis is Pass or Fail. If Open → wait (no alert).
-# 14) Hourly timer: silent status check only; do not spam Cursor alert every hour.
+# 13) Alert ONLY when previous analysis is Pass or Fail. If Open → leave it (no alert).
+# 14) Hourly: silent check only; if still Open, leave it and check again next hour.
+# 15) Never reply "waiting" / never block the chat — silent leave while Open.
 
 ALLOW_1H_TRADES = True
 HOURLY_RECHECK = True
@@ -53,6 +54,7 @@ ALERT_INCLUDE_DATETIME = True
 ALERT_ONLY_ON_PASS_FAIL = True
 WAIT_FOR_PREV_BEFORE_NEW = True
 HOURLY_SILENT_IF_OPEN = True
+SILENT_LEAVE_IF_OPEN = True  # no "waiting" messages
 
 # Risk model (ATR used for structure confluence; ticket SL/TP use fixed % when enabled)
 ATR_STOP_MULT = 1.0

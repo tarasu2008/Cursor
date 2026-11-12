@@ -1,5 +1,6 @@
-Alert ONLY when PREV is Pass or Fail (never while Open).
-Hourly: silent STATUS:WAIT check; Cursor alert only on close.
+Cursor alert ONLY when PREV is Pass or Fail.
+Hourly: silent check. If still Open → leave it (STATUS:SILENT), check again next hour.
+Never reply "waiting". Never spam while Open.
 
 Cursor alert
 

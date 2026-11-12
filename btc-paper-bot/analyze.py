@@ -734,7 +734,7 @@ def analyze(session: str) -> dict[str, Any]:
     waiting_prev = WAIT_FOR_PREV_BEFORE_NEW and review.get("grade") == "Open"
     if waiting_prev:
         chosen = []
-        notes.insert(0, "WAIT: previous analysis still Open — no new LONG/SHORT until Pass or Fail.")
+        notes.insert(0, "SILENT: previous still Open — leave it; no new LONG/SHORT until Pass or Fail.")
 
     # Auto-invalidate stale tracked ideas
     state = load_state()
@@ -1045,14 +1045,14 @@ def main() -> None:
     if args.hourly or args.simple:
         # Hourly: always silent while Open. Simple sessions: also wait (no spam).
         if HOURLY_SILENT_IF_OPEN and grade == "Open":
-            print("STATUS:WAIT")
-            print(f"PREV: Open | waiting for Pass or Fail | {report.get('timestamp_ist')}")
+            # Silent leave — no Cursor alert, no "waiting" spam. Recheck next hour.
+            print("STATUS:SILENT")
         else:
             # Alert on Pass/Fail; also allow first signal when no previous (—)
             force = grade in {"Pass", "Fail", "—", None}
             printed = print_simple(report, force=bool(force))
             if not printed:
-                print("STATUS:WAIT")
+                print("STATUS:SILENT")
     else:
         print_report(report)
     # Keep file paths off user-facing Cursor alert stdout for --hourly/--simple wait path
