@@ -1,8 +1,11 @@
+Alert ONLY when PREV is Pass or Fail (never while Open).
+Hourly: silent STATUS:WAIT check; Cursor alert only on close.
+
 Cursor alert
 
 Time: <dd Mon YYYY, hh:mm AM/PM IST>
-PREV: Pass | Fail | Open | —
-PREV PnL: $+/-n (when closed)
+PREV: Pass | Fail
+PREV PnL: $+/-n
 Today: Pass n Fail n PnL $+/-n
 Week: Pass n Fail n PnL $+/-n
 Month: Pass n Fail n PnL $+/-n

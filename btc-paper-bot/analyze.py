@@ -26,6 +26,9 @@ from rules import (
     STOP_LOSS_PCT,
     TAKE_PROFIT_PCT,
     USE_FIXED_PCT_RISK,
+    ALERT_ONLY_ON_PASS_FAIL,
+    WAIT_FOR_PREV_BEFORE_NEW,
+    HOURLY_SILENT_IF_OPEN,
 )
 
 ROOT = Path(__file__).resolve().parent
@@ -727,6 +730,12 @@ def analyze(session: str) -> dict[str, Any]:
     if rise_line:
         notes.append(f"Rising support trendline ≈ {rise_line:.0f}")
 
+    # Wait for previous Open trade to Pass/Fail before proposing a new one.
+    waiting_prev = WAIT_FOR_PREV_BEFORE_NEW and review.get("grade") == "Open"
+    if waiting_prev:
+        chosen = []
+        notes.insert(0, "WAIT: previous analysis still Open — no new LONG/SHORT until Pass or Fail.")
+
     # Auto-invalidate stale tracked ideas
     state = load_state()
     stale_notes = invalidate_stale(state, px, daily_atr)
@@ -770,6 +779,7 @@ def analyze(session: str) -> dict[str, Any]:
             "lower_lows": lower_lows,
         },
         "in_midrange": in_mid,
+        "waiting_prev": waiting_prev,
         "notes": notes,
         "strategies": [
             "A_supply_rejection",
@@ -840,8 +850,12 @@ def confirm_placed(state: dict[str, Any]) -> None:
     save_state(state)
 
 
-def print_simple(report: dict[str, Any]) -> None:
-    """Cursor alert format: Pass/Fail + LONG/SHORT + entry/SL/TP + P&L stats."""
+def print_simple(report: dict[str, Any], *, force: bool = False) -> bool:
+    """Cursor alert format. Returns True if an alert was printed.
+
+    User rule: alert ONLY when previous is Pass or Fail (unless force / no prev).
+    While Open → wait (no Cursor alert).
+    """
     review = report.get("previous_review") or {}
     perf = review.get("performance") or {}
     today = perf.get("today") or {}
@@ -851,7 +865,10 @@ def print_simple(report: dict[str, Any]) -> None:
     grade = review.get("grade") or "—"
     if grade not in {"Pass", "Fail", "Open", "—"}:
         grade = "—"
-    # Always show IST date+time when this alert fires (user request 12 Nov).
+
+    if ALERT_ONLY_ON_PASS_FAIL and not force and grade == "Open":
+        return False
+
     when = report.get("timestamp_ist") or ist_now().isoformat()
     try:
         dt = datetime.fromisoformat(when)
@@ -883,7 +900,7 @@ def print_simple(report: dict[str, Any]) -> None:
         print("Stop Loss: —")
         print("Take Profit: —")
         print("If TP: — | If SL: —")
-        return
+        return True
     for t in tickets:
         entry = float(t["price"])
         sl = float(t["stop_loss"])
@@ -901,6 +918,7 @@ def print_simple(report: dict[str, Any]) -> None:
         print(f"Stop Loss: {t['stop_loss']}")
         print(f"Take Profit: {t['take_profit']}")
         print(f"If TP: +${profit:.2f} | If SL: -${loss:.2f}")
+    return True
 
 
 def save_latest_signal(report: dict[str, Any]) -> Path:
@@ -921,11 +939,14 @@ def save_latest_signal(report: dict[str, Any]) -> Path:
         "price": report["price"],
         "bias": report["bias"],
         "previous_review": report.get("previous_review"),
+        "waiting_prev": report.get("waiting_prev", False),
         "signals": signals,
     }
     path.write_text(json.dumps(simple, indent=2))
 
-    # Keep a stable active trade until Pass/Fail (hourly rechecks must not reset it).
+    # Keep a stable active trade until Pass/Fail (hourly rechecks must not reset / replace it).
+    if report.get("waiting_prev") and ACTIVE_TRADE_PATH.exists():
+        return path
     if signals:
         if ACTIVE_TRADE_PATH.exists():
             active = json.loads(ACTIVE_TRADE_PATH.read_text())
@@ -984,7 +1005,12 @@ def main() -> None:
     parser.add_argument("--force-replace", action="store_true")
     parser.add_argument("--confirm-placed", action="store_true")
     parser.add_argument("--status", action="store_true")
-    parser.add_argument("--simple", action="store_true", help="Print Cursor alert LONG/SHORT only")
+    parser.add_argument("--simple", action="store_true", help="Print Cursor alert when Pass/Fail (or new after close)")
+    parser.add_argument(
+        "--hourly",
+        action="store_true",
+        help="Silent status check while Open; Cursor alert only on Pass/Fail",
+    )
     parser.add_argument("--performance", action="store_true", help="Show Pass/Fail and PnL summary")
     args = parser.parse_args()
 
@@ -1014,12 +1040,25 @@ def main() -> None:
     out = LOG_DIR / f"report_{args.session}_{ist_now().strftime('%Y%m%d_%H%M%S')}.json"
     out.write_text(json.dumps(report, indent=2))
     latest = save_latest_signal(report)
-    if args.simple:
-        print_simple(report)
+    grade = (report.get("previous_review") or {}).get("grade")
+
+    if args.hourly or args.simple:
+        # Hourly: always silent while Open. Simple sessions: also wait (no spam).
+        if HOURLY_SILENT_IF_OPEN and grade == "Open":
+            print("STATUS:WAIT")
+            print(f"PREV: Open | waiting for Pass or Fail | {report.get('timestamp_ist')}")
+        else:
+            # Alert on Pass/Fail; also allow first signal when no previous (—)
+            force = grade in {"Pass", "Fail", "—", None}
+            printed = print_simple(report, force=bool(force))
+            if not printed:
+                print("STATUS:WAIT")
     else:
         print_report(report)
-    print(f"Wrote {out}")
-    print(f"Saved {latest}")
+    # Keep file paths off user-facing Cursor alert stdout for --hourly/--simple wait path
+    if not (args.hourly or args.simple):
+        print(f"Wrote {out}")
+        print(f"Saved {latest}")
 
 
 if __name__ == "__main__":

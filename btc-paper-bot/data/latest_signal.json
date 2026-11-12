@@ -1,6 +1,6 @@
 {
-  "timestamp_ist": "2026-11-12T14:35:09.590233+05:30",
-  "price": 73367.7,
+  "timestamp_ist": "2026-11-12T14:47:57.411525+05:30",
+  "price": 73324.4,
   "bias": "bearish",
   "previous_review": {
     "had_previous": true,
@@ -27,12 +27,12 @@
         "mistake": null,
         "pnl_usd": 0.0,
         "path_high": 73763.7,
-        "path_low": 73332.6
+        "path_low": 73214.8
       }
     ],
     "detail": "SHORT \u2192 Open",
     "performance": {
-      "updated_ist": "2026-11-12T14:35:09.588013+05:30",
+      "updated_ist": "2026-11-12T14:47:57.409152+05:30",
       "rules": {
         "notional_usd": 1000.0,
         "stop_loss_pct": 0.01,
@@ -65,13 +65,6 @@
       }
     }
   },
-  "signals": [
-    {
-      "side": "SHORT",
-      "entry": 74116.0,
-      "stop_loss": 74857.0,
-      "take_profit": 72634.0,
-      "qty": 0.013
-    }
-  ]
+  "waiting_prev": true,
+  "signals": []
 }
