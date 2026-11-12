@@ -53,7 +53,7 @@ export function SiteHeader() {
             <Link href="/roadmap" onClick={() => setOpen(false)}>
               Studio roadmap
             </Link>
-            <button type="button" className="nav-text-btn" onClick={() => openAuth("login")}>
+            <button type="button" className="btn btn-ghost nav-mobile-cta" onClick={() => openAuth("login")}>
               Log in
             </button>
             <button type="button" className="btn btn-soft nav-mobile-cta" onClick={() => openAuth("signup")}>
