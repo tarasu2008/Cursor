@@ -392,6 +392,8 @@ img {
 }
 
 .section {
+  position: relative;
+  z-index: 1;
   padding: 4rem 0;
 }
 
