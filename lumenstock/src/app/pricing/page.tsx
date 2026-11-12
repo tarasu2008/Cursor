@@ -1,7 +1,11 @@
+import type { Metadata } from "next";
 import { packs, pricingPlans } from "@/data/catalog";
 
-export const metadata = {
-  title: "Pricing",
+export const metadata: Metadata = {
+  title: "Pricing & image licenses",
+  description:
+    "Lumenstock subscription plans and on-demand image packs with standard and enhanced licenses, plus desktop, tablet, and phone download sizes.",
+  alternates: { canonical: "/pricing" },
 };
 
 export default function PricingPage() {

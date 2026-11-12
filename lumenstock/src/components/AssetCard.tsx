@@ -1,9 +1,9 @@
 import Link from "next/link";
-import type { Asset } from "@/data/catalog";
+import { assetPath, type Asset } from "@/data/catalog";
 
 export function AssetCard({ asset }: { asset: Asset }) {
   return (
-    <Link href={`/asset/${asset.id}`} className="asset-card">
+    <Link href={assetPath(asset)} className="asset-card">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={asset.imageUrl} alt={asset.title} loading="lazy" />
       <div className="asset-meta">

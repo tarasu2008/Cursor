@@ -216,6 +216,17 @@ export const subcategorySeeds: Record<string, SubSeed> = {
     prompt:
       "Photorealistic trail runner on a mountain ridge at sunrise, outdoor sports stock photo, dynamic motion, no text",
   },
+  "sports-fishing": {
+    title: "Angler casting a line on a river",
+    description: "Sport fishing and angling action outdoors.",
+    type: "photo",
+    keywords: ["fishing", "angler", "casting", "river", "sport", "angling", "rod", "outdoors"],
+    color: "2A9D8F",
+    people: 1,
+    ...H,
+    prompt:
+      "Photorealistic angler casting a fishing line on a scenic river, sport fishing stock photo, natural light, no logos or text",
+  },
   "technology-devices": {
     title: "Smartphone and laptop on minimal desk",
     description: "Device still life for tech product marketing.",
@@ -314,6 +325,17 @@ export const subcategorySeeds: Record<string, SubSeed> = {
     ...H,
     prompt:
       "Photorealistic blooming public garden pathway with colorful flowers and trimmed hedges, parks stock photo, no text",
+  },
+  "parks-fishing": {
+    title: "Lakeside fishing rod at golden hour",
+    description: "Peaceful park fishing scene with rod and still water.",
+    type: "photo",
+    keywords: ["fishing", "angler", "lake", "rod", "outdoors", "park", "tackle", "reel"],
+    color: "1D8A99",
+    people: 0,
+    ...H,
+    prompt:
+      "Photorealistic lakeside fishing scene with a fishing rod extending over calm water at golden hour, outdoor recreation stock photo, no text",
   },
   "healthcare-clinic": {
     title: "Bright modern hospital corridor",

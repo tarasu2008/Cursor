@@ -1,25 +1,64 @@
+import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { AssetGrid } from "@/components/AssetGrid";
-import { assets, categories, getAsset, getSubcategory } from "@/data/catalog";
+import {
+  assetPath,
+  assets,
+  categories,
+  getAsset,
+  getSubcategory,
+  siteConfig,
+} from "@/data/catalog";
 import { DownloadPicker } from "./DownloadPicker";
 
-type Props = { params: Promise<{ id: string }> };
+type Props = { params: Promise<{ slug: string }> };
 
 export async function generateStaticParams() {
-  return assets.map((a) => ({ id: a.id }));
+  return assets.map((a) => ({ slug: a.slug }));
 }
 
-export async function generateMetadata({ params }: Props) {
-  const { id } = await params;
-  const asset = getAsset(id);
-  return { title: asset?.title ?? "Asset" };
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const asset = getAsset(slug);
+  if (!asset) return { title: "Image not found" };
+
+  const url = `${siteConfig.url}${assetPath(asset)}`;
+  const image = `${siteConfig.url}${asset.imageUrl}`;
+  const title = `${asset.title} — royalty-free stock image`;
+  const description = `${asset.description} Download HD desktop, tablet, and phone sizes from Lumenstock.`;
+
+  return {
+    title: asset.title,
+    description,
+    keywords: asset.keywords,
+    alternates: { canonical: url },
+    openGraph: {
+      type: "article",
+      url,
+      title,
+      description,
+      siteName: siteConfig.name,
+      images: [{ url: image, width: asset.width, height: asset.height, alt: asset.title }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [image],
+    },
+  };
 }
 
 export default async function AssetPage({ params }: Props) {
-  const { id } = await params;
-  const asset = getAsset(id);
+  const { slug } = await params;
+  const asset = getAsset(slug);
   if (!asset) notFound();
+
+  // Canonicalize legacy /asset/ls-0003 links to the image-name URL
+  if (slug === asset.id && slug !== asset.slug) {
+    redirect(assetPath(asset));
+  }
 
   const cats = categories.filter((c) => asset.categoryIds.includes(c.id));
   const sub = asset.subcategoryId ? getSubcategory(asset.subcategoryId) : undefined;
@@ -27,8 +66,23 @@ export default async function AssetPage({ params }: Props) {
     .filter((a) => a.id !== asset.id && a.categoryIds.some((c) => asset.categoryIds.includes(c)))
     .slice(0, 4);
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ImageObject",
+    name: asset.title,
+    description: asset.description,
+    contentUrl: `${siteConfig.url}${asset.imageUrl}`,
+    url: `${siteConfig.url}${assetPath(asset)}`,
+    creditText: asset.owner,
+    acquireLicensePage: `${siteConfig.url}/pricing`,
+    keywords: asset.keywords.join(", "),
+    width: asset.width,
+    height: asset.height,
+  };
+
   return (
     <div className="container">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <div className="detail">
         <div className="detail-media">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -60,7 +114,7 @@ export default async function AssetPage({ params }: Props) {
             {sub && (
               <Link
                 href={`/browse?category=${sub.parentId}&subcategory=${sub.id}`}
-                className="chip active"
+                className={`chip active`}
               >
                 {sub.name}
               </Link>

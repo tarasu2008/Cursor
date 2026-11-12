@@ -2,20 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-
-function BrandMark() {
-  return <span className="brand-mark" aria-hidden />;
-}
-
-function BrandWordmark({ className = "brand-wordmark" }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 168 28" role="img" aria-label="Lumenstock">
-      <text x="0" y="21">
-        Lumenstock
-      </text>
-    </svg>
-  );
-}
+import { BrandWordmark } from "./BrandWordmark";
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
@@ -24,7 +11,7 @@ export function SiteHeader() {
     <header className="site-header">
       <div className="container nav">
         <Link href="/" className="brand" aria-label="Lumenstock home" onClick={() => setOpen(false)}>
-          <BrandMark />
+          <span className="brand-mark" aria-hidden />
           <BrandWordmark />
         </Link>
 
@@ -71,5 +58,3 @@ export function SiteHeader() {
     </header>
   );
 }
-
-export { BrandWordmark };

@@ -37,6 +37,7 @@ export const subcategories: Subcategory[] = [
   { id: "sports-team", parentId: "sports", name: "Team Sports", description: "Football, basketball, and team play" },
   { id: "sports-fitness", parentId: "sports", name: "Fitness & Gym", description: "Training, yoga, and workouts" },
   { id: "sports-outdoor", parentId: "sports", name: "Outdoor Sports", description: "Running, cycling, hiking sports" },
+  { id: "sports-fishing", parentId: "sports", name: "Fishing & Angling", description: "Sport fishing, casting, and catch" },
   // Technology
   { id: "technology-devices", parentId: "technology", name: "Devices", description: "Phones, laptops, and gadgets" },
   { id: "technology-ai", parentId: "technology", name: "AI & Data", description: "Artificial intelligence concepts" },
@@ -49,6 +50,7 @@ export const subcategories: Subcategory[] = [
   { id: "parks-camping", parentId: "parks", name: "Camping", description: "Tents, campfires, and outdoor stays" },
   { id: "parks-hiking", parentId: "parks", name: "Hiking Trails", description: "Paths and trail recreation" },
   { id: "parks-gardens", parentId: "parks", name: "Gardens & Parks", description: "Public parks and gardens" },
+  { id: "parks-fishing", parentId: "parks", name: "Fishing", description: "Angling, lakeside fishing, and tackle" },
   // Healthcare
   { id: "healthcare-clinic", parentId: "healthcare", name: "Clinics & Hospitals", description: "Care facilities and corridors" },
   { id: "healthcare-wellness", parentId: "healthcare", name: "Wellness", description: "Healthy living and recovery" },

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { AssetGrid } from "@/components/AssetGrid";
+import { BrandWordmark } from "@/components/BrandWordmark";
 import { SearchForm } from "@/components/SearchForm";
-import { BrandWordmark } from "@/components/SiteHeader";
 import { assets, categories } from "@/data/catalog";
 
 export default function HomePage() {
@@ -17,7 +17,7 @@ export default function HomePage() {
           <img src={assets[0].imageUrl} alt="" />
         </div>
         <div className="container hero-content">
-          <BrandWordmark className="hero-brand" />
+          <BrandWordmark className="hero-brand" accent />
           <h1>
             License luminous
             <br />

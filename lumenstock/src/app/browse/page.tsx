@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { AssetGrid } from "@/components/AssetGrid";
 import { SearchForm } from "@/components/SearchForm";
 import {
@@ -15,6 +16,30 @@ type Props = {
 
 function one(v: string | string[] | undefined) {
   return Array.isArray(v) ? v[0] : v;
+}
+
+export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
+  const sp = await searchParams;
+  const q = one(sp.q) || "";
+  const category = one(sp.category) || "all";
+  const subcategory = one(sp.subcategory) || "all";
+  const cat = category !== "all" ? getCategory(category) : undefined;
+  const sub = subcategory !== "all" ? getSubcategory(subcategory) : undefined;
+
+  const label = sub?.name || cat?.name || (q ? `“${q}”` : "all images");
+  const title = q ? `Search ${q}` : sub ? `${sub.name} images` : cat ? `${cat.name} stock photos` : "Browse stock images";
+  const description = q
+    ? `Royalty-free stock results for ${q} on Lumenstock.`
+    : `Browse ${label} — HD royalty-free photos and illustrations with desktop, tablet, and phone downloads.`;
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: `/browse${category !== "all" ? `?category=${category}` : ""}`,
+    },
+    openGraph: { title: `${title} · Lumenstock`, description },
+  };
 }
 
 export default async function BrowsePage({ searchParams }: Props) {

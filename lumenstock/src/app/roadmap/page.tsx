@@ -1,5 +1,10 @@
-export const metadata = {
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
   title: "Studio roadmap",
+  description:
+    "See what’s next for Lumenstock — design editor, templates, brand kits, and Canva-style creative tools planned after the stock marketplace.",
+  alternates: { canonical: "/roadmap" },
 };
 
 const later = [

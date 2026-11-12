@@ -1,8 +1,18 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { assets, categories, getSubcategoriesForParent } from "@/data/catalog";
 
-export const metadata = {
-  title: "Categories",
+export const metadata: Metadata = {
+  title: "Image categories & subcategories",
+  description:
+    "Browse Lumenstock stock photo categories and subcategories — animals, nature, business, sports, fishing, and more — with HD samples for each.",
+  alternates: { canonical: "/categories" },
+  openGraph: {
+    title: "Image categories & subcategories · Lumenstock",
+    description:
+      "Explore core and extended stock categories with curated subcategory galleries.",
+    url: "/categories",
+  },
 };
 
 export default function CategoriesPage() {

@@ -1,6 +1,15 @@
 import { subcategories } from "./subcategories";
 import { subcategorySeeds } from "./subcategorySeeds";
 
+export const siteConfig = {
+  name: "Lumenstock",
+  tagline: "Royalty-free stock images to license",
+  description:
+    "License HD royalty-free stock photos and illustrations from Lumenstock. Browse categories and subcategories, then download desktop, tablet, and phone sizes.",
+  url: process.env.NEXT_PUBLIC_SITE_URL || "https://lumenstock.cursor.app",
+  locale: "en_US",
+};
+
 export type MediaType = "photo" | "illustration" | "vector";
 
 export interface Category {
@@ -12,6 +21,8 @@ export interface Category {
 
 export interface Asset {
   id: string;
+  /** SEO-friendly URL segment from the image title, e.g. artist-palette-with-wet-oil-paints */
+  slug: string;
   title: string;
   description: string;
   type: MediaType;
@@ -27,6 +38,28 @@ export interface Asset {
   color: string;
   people: number;
   editorial?: boolean;
+}
+
+export function slugifyTitle(title: string) {
+  return title
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80);
+}
+
+function uniqueSlug(title: string, used: Set<string>, fallback: string) {
+  const base = slugifyTitle(title) || fallback;
+  let slug = base;
+  let n = 2;
+  while (used.has(slug)) {
+    slug = `${base}-${n}`;
+    n += 1;
+  }
+  used.add(slug);
+  return slug;
 }
 
 /** Shutterstock-aligned core + Lumenstock extended categories */
@@ -283,7 +316,7 @@ const seeds: Record<string, Seed> = {
     title: "Trail through a green national park",
     description: "Outdoor recreation path lined with trees and soft light.",
     type: "photo",
-    keywords: ["park", "trail", "outdoor", "hiking", "trees", "recreation", "green", "path"],
+    keywords: ["park", "trail", "outdoor", "hiking", "fishing", "trees", "recreation", "green", "path"],
     orientation: "horizontal",
     color: "3F7D4E",
     people: 0,
@@ -338,7 +371,7 @@ const seeds: Record<string, Seed> = {
     title: "Sprinter exploding from starting blocks",
     description: "High-energy athletics action for sports and fitness brands.",
     type: "photo",
-    keywords: ["sports", "sprint", "athlete", "track", "fitness", "action", "running", "stadium"],
+    keywords: ["sports", "sprint", "athlete", "track", "fitness", "fishing", "action", "running", "stadium"],
     orientation: "horizontal",
     color: "E85D04",
     people: 1,
@@ -600,11 +633,15 @@ const seeds: Record<string, Seed> = {
   },
 };
 
+const usedSlugs = new Set<string>();
+
 /** One HD catalog image per category — owned/sold by Lumenstock */
 const categoryAssets: Asset[] = categories.map((cat, index) => {
   const seed = seeds[cat.id];
+  const id = `ls-${String(index + 1).padStart(4, "0")}`;
   return {
-    id: `ls-${String(index + 1).padStart(4, "0")}`,
+    id,
+    slug: uniqueSlug(seed.title, usedSlugs, id),
     title: seed.title,
     description: seed.description,
     type: seed.type,
@@ -624,8 +661,10 @@ const categoryAssets: Asset[] = categories.map((cat, index) => {
 /** One HD image per subcategory */
 const subcategoryAssets: Asset[] = subcategories.map((sub, index) => {
   const seed = subcategorySeeds[sub.id];
+  const id = `ls-sub-${String(index + 1).padStart(4, "0")}`;
   return {
-    id: `ls-sub-${String(index + 1).padStart(4, "0")}`,
+    id,
+    slug: uniqueSlug(seed.title, usedSlugs, id),
     title: seed.title,
     description: seed.description,
     type: seed.type,
@@ -644,6 +683,10 @@ const subcategoryAssets: Asset[] = subcategories.map((sub, index) => {
 });
 
 export const assets: Asset[] = [...categoryAssets, ...subcategoryAssets];
+
+export function assetPath(asset: Pick<Asset, "slug">) {
+  return `/asset/${asset.slug}`;
+}
 
 export { subcategories };
 export { getSubcategory, getSubcategoriesForParent } from "./subcategories";
@@ -685,8 +728,9 @@ export const packs = [
   { id: "pack-25", count: 25, price: 229 },
 ];
 
-export function getAsset(id: string) {
-  return assets.find((a) => a.id === id);
+/** Resolve by SEO slug or legacy id (ls-0003 / ls-sub-0001). */
+export function getAsset(slugOrId: string) {
+  return assets.find((a) => a.slug === slugOrId || a.id === slugOrId);
 }
 
 export function getCategory(id: string) {
