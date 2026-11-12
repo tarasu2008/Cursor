@@ -1,0 +1,128 @@
+{
+  "analyzed_at": "2026-11-12",
+  "site": "https://www.shutterstock.com/",
+  "access_note": "www blocked by DataDome (403); used contributor docs, API, robots, submit host, pricing aggregators",
+  "media_types": [
+    "photo",
+    "illustration",
+    "vector",
+    "video",
+    "music",
+    "editorial",
+    "ai_generate",
+    "editor_studio"
+  ],
+  "categories_image": [
+    "Abstract",
+    "Animals/Wildlife",
+    "Arts",
+    "Backgrounds/Textures",
+    "Beauty/Fashion",
+    "Buildings/Landmarks",
+    "Business/Finance",
+    "Celebrities",
+    "Education",
+    "Food and Drink",
+    "Healthcare/Medical",
+    "Holidays",
+    "Industrial",
+    "Interiors",
+    "Miscellaneous",
+    "Nature",
+    "Objects",
+    "Parks/Outdoor",
+    "People",
+    "Religion",
+    "Science",
+    "Signs/Symbols",
+    "Sports/Recreation",
+    "Technology",
+    "Transportation",
+    "Vintage"
+  ],
+  "categories_not_for_video": [
+    "Abstract",
+    "Beauty/Fashion",
+    "Celebrities",
+    "Interiors",
+    "Miscellaneous",
+    "Parks/Outdoor",
+    "Vintage"
+  ],
+  "upload": {
+    "formats": [
+      "JPEG",
+      "TIFF"
+    ],
+    "min_megapixels": 4,
+    "browser_max_mb": 50,
+    "batch_browser": 100,
+    "alt_upload": "FTPS",
+    "keywords_min": 7,
+    "keywords_max": 50,
+    "categories_required": 1,
+    "categories_optional": 1,
+    "submit_window_days": 21,
+    "publish_lag_hours_max": 72
+  },
+  "customer_pricing_approx_usd_2026": {
+    "images_annual_from": {
+      "10": 25,
+      "50": 75,
+      "350": 129,
+      "750": 149
+    },
+    "on_demand_packs": {
+      "2": 29,
+      "5": 49,
+      "25": 229
+    },
+    "unlimited_images_from": 29,
+    "unlimited_plus_from": 69,
+    "video_annual_from": {
+      "5": 59,
+      "10": 75,
+      "20": 119
+    }
+  },
+  "licenses": [
+    "Standard",
+    "Enhanced",
+    "Editorial",
+    "Premier"
+  ],
+  "creator_royalty_pct": {
+    "min": 15,
+    "max": 40,
+    "levels": 6,
+    "reset": "January 1"
+  },
+  "creator_payout": {
+    "methods": [
+      "PayPal",
+      "Payoneer",
+      "Skrill"
+    ],
+    "cycle": "monthly",
+    "min_default_usd": 25
+  },
+  "tech": {
+    "frontend": "Next.js + React",
+    "cdn": "CloudFront",
+    "storage": "Amazon S3",
+    "api": "https://api.shutterstock.com/v2",
+    "bot_protection": "DataDome",
+    "contributor_header": "x-shutterstock-served-by: contributor-web-nextjs"
+  },
+  "mvp_modules": [
+    "catalog",
+    "search",
+    "taxonomy",
+    "contributor_portal",
+    "commerce",
+    "licensing",
+    "media_pipeline",
+    "trust_safety",
+    "payouts"
+  ]
+}

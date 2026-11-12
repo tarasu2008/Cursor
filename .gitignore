@@ -59,3 +59,7 @@ projects/*/*
 # Sports images
 !sports-images/
 !sports-images/**
+
+# Shutterstock marketplace analysis
+!shutterstock-analysis/
+!shutterstock-analysis/**
