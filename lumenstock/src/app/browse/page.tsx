@@ -34,7 +34,7 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
       ? `${sub.name} images`
       : cat
         ? `${cat.name} stock photos`
-        : "Browse stock images";
+        : "All images";
   const description = q
     ? `Royalty-free stock results for ${q} on Lumenstock.`
     : `Browse ${label} — HD royalty-free photos and illustrations with desktop, tablet, and phone downloads.`;
@@ -101,7 +101,7 @@ export default async function BrowsePage({ searchParams }: Props) {
   return (
     <div className="container">
       <div className="page-hero">
-        <h1>Browse</h1>
+        <h1>All images</h1>
         <p>
           Filter by type, orientation, people, category, and subcategory — the same discovery
           pattern customers expect from a stock marketplace.
