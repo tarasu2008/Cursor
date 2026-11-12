@@ -1536,6 +1536,28 @@ export const subcategorySeeds: Record<string, SubSeed> = {
     prompt:
       "Photorealistic large concrete hydroelectric dam with reservoir and spillway water, industrial infrastructure stock photo, daytime, no logos or text",
   },
+  "nature-flowers": {
+    title: "Vibrant wildflower blooms in soft daylight",
+    description: "Floral close-ups and flower fields for nature catalogs.",
+    type: "photo",
+    keywords: ["flowers", "flower", "blooms", "petals", "floral", "wildflowers", "bouquet", "blossom"],
+    color: "E63946",
+    people: 0,
+    ...H,
+    prompt:
+      "Photorealistic vibrant wildflower blooms in soft daylight with sharp petals and gentle bokeh, nature flower stock photo, no people, no text",
+  },
+  "nature-plants": {
+    title: "Lush green leafy plants in natural light",
+    description: "Greenery and plant foliage for nature and lifestyle stories.",
+    type: "photo",
+    keywords: ["plants", "plant", "greenery", "foliage", "leaves", "leafy", "botanical", "houseplant"],
+    color: "2F6B3A",
+    people: 0,
+    ...H,
+    prompt:
+      "Photorealistic lush green leafy plants in natural soft light with fresh foliage detail, botanical plant stock photo, no people, no text",
+  },
   "buildings-houses": {
     title: "Suburban family house with front garden",
     description: "House exteriors for real estate and lifestyle catalogs.",

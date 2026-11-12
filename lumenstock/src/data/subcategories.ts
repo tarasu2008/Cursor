@@ -27,6 +27,8 @@ export const subcategories: Subcategory[] = [
   { id: "nature-sea", parentId: "nature", name: "Sea & Ocean", description: "Open sea, waves, and ocean horizons" },
   { id: "nature-rivers", parentId: "nature", name: "Rivers", description: "Rivers, streams, and flowing water" },
   { id: "nature-dams", parentId: "nature", name: "Dams", description: "Hydro dams, reservoirs, and spillways" },
+  { id: "nature-flowers", parentId: "nature", name: "Flowers", description: "Blooms, petals, and floral close-ups" },
+  { id: "nature-plants", parentId: "nature", name: "Plants", description: "Greenery, foliage, and leafy plants" },
   // People
   { id: "people-portraits", parentId: "people", name: "Portraits", description: "Individual headshots and close-ups" },
   { id: "people-families", parentId: "people", name: "Families", description: "Parents, kids, and family life" },
