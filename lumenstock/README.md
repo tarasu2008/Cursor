@@ -1,18 +1,18 @@
 # Lumenstock
 
-Royalty-free stock image marketplace MVP.
+Royalty-free stock image marketplace MVP — we curate and sell HD images (no public contributor uploads).
 
-**Brand:** Lumenstock (`lumenstock.com` concept) — preferred over ImageStock for distinctiveness and trademark headroom.
+**Brand:** Lumenstock (`lumenstock.com` concept)
 
-## What’s included
+## Features
 
-- Home search hero
+- Home search hero (mobile-ready)
 - Browse with type / orientation / people / category filters
-- 26 core + 20 extended categories
-- Asset detail with Standard / Enhanced license picker
+- 46 categories (26 core + 20 extended) with **one HD image each**
+- Asset detail with Standard / Enhanced license
+- **Device download sizes:** Desktop / Tablet / Phone presets
 - Pricing (subscriptions + on-demand packs)
-- Contribute upload demo
-- Studio roadmap (Canva-inspired features for later)
+- Studio roadmap (Canva-inspired features later)
 
 ## Run
 
@@ -24,7 +24,6 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
-## Notes
+## Catalog images
 
-- Sample catalog mixes local demos and Unsplash URLs.
-- Payments, auth, and contributor review console are intentionally stubbed for the next iteration.
+HD masters live in `public/samples/categories/{category-id}.jpg` (4K-class long edge).

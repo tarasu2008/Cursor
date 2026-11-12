@@ -9,7 +9,7 @@ export function AssetCard({ asset }: { asset: Asset }) {
       <div className="asset-meta">
         <h3>{asset.title}</h3>
         <p>
-          {asset.type} · {asset.contributor} · {asset.width}×{asset.height}
+          {asset.type} · HD {asset.width}×{asset.height}
         </p>
       </div>
     </Link>

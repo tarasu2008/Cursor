@@ -25,8 +25,8 @@ export default function HomePage() {
             <span>stock imagery</span>
           </h1>
           <p className="hero-lead">
-            Search royalty-free photos and illustrations with Standard or Enhanced licenses — built
-            like a modern stock marketplace, ready to grow into an all-in-one creative studio.
+            Browse our curated HD catalog, pick a license, then download the perfect desktop, tablet,
+            or phone size — ready to grow into an all-in-one creative studio.
           </p>
           <SearchForm />
         </div>

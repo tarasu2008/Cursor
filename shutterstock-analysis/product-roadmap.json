@@ -71,12 +71,16 @@
     }
   ],
   "mvp_now": [
-    "Home search hero",
+    "Home search hero (mobile responsive)",
     "Browse with filters",
-    "Categories (26 core + extended)",
+    "Categories (26 core + 20 extended)",
+    "One HD image per category",
     "Asset detail + license chooser",
+    "Desktop / tablet / phone download sizes",
     "Pricing (subscription + packs)",
-    "Contribute upload teaser",
-    "Sample catalog"
+    "Admin-owned catalog only (no public contributor upload)"
+  ],
+  "removed": [
+    "Public contributor upload portal — Lumenstock uploads and sells its own images"
   ]
 }

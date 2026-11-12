@@ -67,10 +67,10 @@ export default function RoadmapPage() {
           {[
             "Search & filters",
             "46 categories (26 + 20 extended)",
+            "One HD image per category",
+            "Desktop / tablet / phone sizes",
             "Asset detail + licenses",
             "Subscriptions & packs",
-            "Contribute flow (demo)",
-            "Sample catalog",
           ].map((item) => (
             <span key={item} className="chip active">
               {item}

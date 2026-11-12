@@ -7,8 +7,8 @@ export function SiteFooter() {
         <div>
           <h4>Lumenstock</h4>
           <p>
-            Royalty-free stock marketplace inspired by modern licensing platforms — with room to grow
-            into an all-in-one creative studio.
+            Royalty-free stock marketplace — we curate and sell HD images with desktop, tablet, and
+            phone download sizes.
           </p>
         </div>
         <div>
@@ -16,13 +16,12 @@ export function SiteFooter() {
           <Link href="/browse">Browse</Link>
           <Link href="/categories">Categories</Link>
           <Link href="/pricing">Pricing</Link>
-          <Link href="/contribute">Contribute</Link>
         </div>
         <div>
-          <h4>Licenses</h4>
+          <h4>Licenses & sizes</h4>
           <Link href="/pricing#licenses">Standard</Link>
           <Link href="/pricing#licenses">Enhanced</Link>
-          <Link href="/roadmap">Canva-style studio (later)</Link>
+          <Link href="/roadmap">Studio roadmap</Link>
         </div>
       </div>
     </footer>

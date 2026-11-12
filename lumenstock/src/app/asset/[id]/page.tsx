@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AssetGrid } from "@/components/AssetGrid";
 import { assets, categories, getAsset } from "@/data/catalog";
-import { LicensePicker } from "./LicensePicker";
+import { DownloadPicker } from "./DownloadPicker";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -22,7 +22,7 @@ export default async function AssetPage({ params }: Props) {
   if (!asset) notFound();
 
   const cats = categories.filter((c) => asset.categoryIds.includes(c.id));
-  const related = assets.filter((a) => a.id !== asset.id && a.categoryIds.some((c) => asset.categoryIds.includes(c))).slice(0, 4);
+  const related = assets.filter((a) => a.id !== asset.id).slice(0, 4);
 
   return (
     <div className="container">
@@ -36,13 +36,13 @@ export default async function AssetPage({ params }: Props) {
           <p style={{ color: "var(--muted)", margin: 0 }}>{asset.description}</p>
           <div className="kv">
             <div>
-              <strong style={{ color: "var(--ink)" }}>Contributor:</strong> {asset.contributor}
+              <strong style={{ color: "var(--ink)" }}>Seller:</strong> {asset.owner}
             </div>
             <div>
               <strong style={{ color: "var(--ink)" }}>Type:</strong> {asset.type}
             </div>
             <div>
-              <strong style={{ color: "var(--ink)" }}>Size:</strong> {asset.width}×{asset.height}px
+              <strong style={{ color: "var(--ink)" }}>Master size:</strong> {asset.width}×{asset.height}px HD
             </div>
             <div>
               <strong style={{ color: "var(--ink)" }}>Orientation:</strong> {asset.orientation}
@@ -62,7 +62,7 @@ export default async function AssetPage({ params }: Props) {
               </Link>
             ))}
           </div>
-          <LicensePicker />
+          <DownloadPicker imageUrl={asset.imageUrl} title={asset.title} />
         </aside>
       </div>
 
