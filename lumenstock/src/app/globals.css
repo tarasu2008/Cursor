@@ -444,6 +444,7 @@ img {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
   gap: 0.9rem;
+  align-items: start;
 }
 
 .asset-card {
@@ -454,12 +455,11 @@ img {
   background: var(--bg-elevated);
   border: 1px solid var(--line);
   isolation: isolate;
+  height: fit-content;
+  align-self: start;
+  display: flex;
+  flex-direction: column;
   transition: transform 0.25s ease, border-color 0.25s ease;
-}
-
-.asset-card:nth-child(5),
-.asset-card:nth-child(8) {
-  grid-column: span 8;
 }
 
 .asset-card:hover {
@@ -468,15 +468,13 @@ img {
 }
 
 .asset-card img {
+  display: block;
   width: 100%;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 16 / 10;
   object-fit: cover;
+  object-position: center;
+  flex: 0 0 auto;
   transition: transform 0.5s ease;
-}
-
-.asset-card:nth-child(5) img,
-.asset-card:nth-child(8) img {
-  aspect-ratio: 16 / 9;
 }
 
 .asset-card:hover img {
@@ -484,19 +482,26 @@ img {
 }
 
 .asset-meta {
-  padding: 0.85rem 0.95rem 1rem;
+  padding: 0.7rem 0.85rem 0.75rem;
+  flex: 0 0 auto;
 }
 
 .asset-meta h3 {
   margin: 0;
-  font-size: 0.98rem;
+  font-size: 0.95rem;
   font-weight: 600;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .asset-meta p {
-  margin: 0.35rem 0 0;
+  margin: 0.3rem 0 0;
   color: var(--faint);
-  font-size: 0.82rem;
+  font-size: 0.8rem;
+  line-height: 1.3;
 }
 
 .filters {
@@ -1288,9 +1293,7 @@ img {
 }
 
 @media (max-width: 960px) {
-  .asset-card,
-  .asset-card:nth-child(5),
-  .asset-card:nth-child(8) {
+  .asset-card {
     grid-column: span 6;
   }
 
@@ -1372,9 +1375,7 @@ img {
 }
 
 @media (max-width: 640px) {
-  .asset-card,
-  .asset-card:nth-child(5),
-  .asset-card:nth-child(8) {
+  .asset-card {
     grid-column: span 12;
   }
 
