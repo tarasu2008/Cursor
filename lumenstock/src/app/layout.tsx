@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { AuthProvider } from "@/components/AuthProvider";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { siteConfig } from "@/data/catalog";
@@ -107,9 +108,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd) }}
         />
-        <SiteHeader />
-        <main>{children}</main>
-        <SiteFooter />
+        <AuthProvider>
+          <SiteHeader />
+          <main>{children}</main>
+          <SiteFooter />
+        </AuthProvider>
       </body>
     </html>
   );

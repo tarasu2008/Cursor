@@ -1,6 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
+import { useAuth } from "@/components/AuthProvider";
 import { deviceGroups, downloadSizes, type DeviceGroup, type DownloadSize } from "@/data/downloadSizes";
 
 type Props = {
@@ -9,6 +12,87 @@ type Props = {
   width: number;
   height: number;
 };
+
+function SizePreviewModal({
+  open,
+  onClose,
+  imageUrl,
+  size,
+}: {
+  open: boolean;
+  onClose: () => void;
+  imageUrl: string;
+  size: DownloadSize;
+}) {
+  const [mounted, setMounted] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+  const [error, setError] = useState(false);
+
+  useEffect(() => setMounted(true), []);
+
+  useEffect(() => {
+    if (!open) return;
+    setLoaded(false);
+    setError(false);
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prev;
+    };
+  }, [open, onClose, imageUrl, size.id]);
+
+  if (!open || !mounted) return null;
+
+  const isPortrait = size.height > size.width;
+
+  return createPortal(
+    <div className="modal-root preview-modal-root" role="dialog" aria-modal="true" aria-label="Size preview">
+      <button type="button" className="modal-backdrop" aria-label="Close preview" onClick={onClose} />
+      <div className="modal-panel preview-modal-panel">
+        <div className="modal-head">
+          <div>
+            <p className="modal-kicker">Size preview</p>
+            <h2>
+              {size.label} · {size.width}×{size.height}
+            </h2>
+            <p className="modal-sub">{size.hint}</p>
+          </div>
+          <button type="button" className="modal-close" onClick={onClose} aria-label="Close">
+            ×
+          </button>
+        </div>
+
+        <div className={`preview-modal-stage${isPortrait ? " portrait" : ""}`}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            key={`${imageUrl}-${size.id}`}
+            src={imageUrl}
+            alt={`${size.label} crop preview`}
+            className={`preview-modal-image${loaded ? " ready" : ""}`}
+            style={{
+              aspectRatio: `${size.width} / ${size.height}`,
+              maxWidth: isPortrait ? "min(420px, 100%)" : "min(100%, 920px)",
+              maxHeight: "min(70vh, 720px)",
+              width: isPortrait ? "auto" : "100%",
+              height: "auto",
+              objectFit: "cover",
+            }}
+            onLoad={() => setLoaded(true)}
+            onError={() => setError(true)}
+          />
+          {!loaded && !error && <div className="preview-modal-status">Loading preview…</div>}
+          {error && <div className="preview-modal-status">Couldn’t load preview.</div>}
+        </div>
+      </div>
+    </div>,
+    document.body,
+  );
+}
 
 function drawCoverCrop(
   ctx: CanvasRenderingContext2D,
@@ -33,112 +117,14 @@ function drawCoverCrop(
   ctx.drawImage(img, sx, sy, sw, sh, 0, 0, destW, destH);
 }
 
-function SizePreviewModal({
-  open,
-  onClose,
-  imageUrl,
-  size,
-}: {
-  open: boolean;
-  onClose: () => void;
-  imageUrl: string;
-  size: DownloadSize;
-}) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [ready, setReady] = useState(false);
-  const [error, setError] = useState(false);
-
-  useEffect(() => {
-    if (!open) return;
-    let cancelled = false;
-    setReady(false);
-    setError(false);
-
-    const img = new Image();
-    img.decoding = "async";
-    img.onload = () => {
-      if (cancelled) return;
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-
-      // Keep true pixel aspect; scale down for display budget
-      const maxEdge = 1100;
-      const scale = Math.min(1, maxEdge / Math.max(size.width, size.height));
-      const pw = Math.max(1, Math.round(size.width * scale));
-      const ph = Math.max(1, Math.round(size.height * scale));
-      canvas.width = pw;
-      canvas.height = ph;
-      const ctx = canvas.getContext("2d");
-      if (!ctx) return;
-      drawCoverCrop(ctx, img, pw, ph);
-      setReady(true);
-    };
-    img.onerror = () => {
-      if (!cancelled) setError(true);
-    };
-    img.src = imageUrl;
-
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    document.addEventListener("keydown", onKey);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-
-    return () => {
-      cancelled = true;
-      document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = prev;
-    };
-  }, [open, imageUrl, size, onClose]);
-
-  if (!open) return null;
-
-  const isPortrait = size.height > size.width;
-
-  return (
-    <div className="modal-root" role="dialog" aria-modal="true" aria-label="Size preview">
-      <button type="button" className="modal-backdrop" aria-label="Close preview" onClick={onClose} />
-      <div className="modal-panel preview-modal-panel">
-        <div className="modal-head">
-          <div>
-            <p className="modal-kicker">Size preview</p>
-            <h2>
-              {size.label} · {size.width}×{size.height}
-            </h2>
-            <p className="modal-sub">{size.hint}</p>
-          </div>
-          <button type="button" className="modal-close" onClick={onClose} aria-label="Close">
-            ×
-          </button>
-        </div>
-
-        <div className={`preview-modal-stage${isPortrait ? " portrait" : ""}`}>
-          <canvas
-            ref={canvasRef}
-            className={`preview-modal-canvas${ready ? " ready" : ""}`}
-            style={{
-              aspectRatio: `${size.width} / ${size.height}`,
-              maxWidth: isPortrait ? "min(420px, 100%)" : "100%",
-              maxHeight: "min(70vh, 720px)",
-              width: "auto",
-              height: "auto",
-            }}
-          />
-          {!ready && !error && <div className="preview-modal-status">Rendering crop…</div>}
-          {error && <div className="preview-modal-status">Couldn’t load preview.</div>}
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export function AssetWorkspace({ imageUrl, title, width, height }: Props) {
+  const { user, openAuth } = useAuth();
   const [license, setLicense] = useState<"standard" | "enhanced">("standard");
   const [device, setDevice] = useState<DeviceGroup>("desktop");
   const [sizeId, setSizeId] = useState("desk-hd");
   const [busy, setBusy] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [gateMessage, setGateMessage] = useState("");
 
   const sizes = useMemo(() => downloadSizes.filter((s) => s.group === device), [device]);
   const selected = downloadSizes.find((s) => s.id === sizeId) ?? sizes[0];
@@ -151,40 +137,92 @@ export function AssetWorkspace({ imageUrl, title, width, height }: Props) {
 
   async function download() {
     if (!selected) return;
+    setGateMessage("");
+
+    if (!user) {
+      setGateMessage("Log in with a registered email to download images.");
+      openAuth("login");
+      return;
+    }
+    if (!user.canDownload) {
+      setGateMessage("Your account is registered but not paid yet. Choose a plan to unlock downloads.");
+      return;
+    }
+
     setBusy(true);
     try {
-      const img = new Image();
-      img.crossOrigin = "anonymous";
-      await new Promise<void>((resolve, reject) => {
-        img.onload = () => resolve();
-        img.onerror = () => reject(new Error("Failed to load image"));
-        img.src = imageUrl;
+      const res = await fetch("/api/download", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          imageUrl,
+          sizeId: selected.id,
+          title,
+          license,
+        }),
       });
 
-      const canvas = document.createElement("canvas");
-      canvas.width = selected.width;
-      canvas.height = selected.height;
-      const ctx = canvas.getContext("2d");
-      if (!ctx) throw new Error("Canvas unsupported");
-      drawCoverCrop(ctx, img, selected.width, selected.height);
+      if (res.status === 401) {
+        setGateMessage("Log in with a registered email to download images.");
+        openAuth("login");
+        return;
+      }
+      if (res.status === 402) {
+        setGateMessage("Downloads require an active paid plan.");
+        return;
+      }
+      if (!res.ok) {
+        const data = (await res.json().catch(() => null)) as { error?: string } | null;
+        setGateMessage(data?.error || "Download failed. Try again.");
+        return;
+      }
 
-      const blob = await new Promise<Blob | null>((resolve) =>
-        canvas.toBlob((b) => resolve(b), "image/jpeg", 0.95),
-      );
-      if (!blob) throw new Error("Export failed");
+      const masterBlob = await res.blob();
+      const objectUrl = URL.createObjectURL(masterBlob);
+      try {
+        const img = new Image();
+        await new Promise<void>((resolve, reject) => {
+          img.onload = () => resolve();
+          img.onerror = () => reject(new Error("Failed to load image"));
+          img.src = objectUrl;
+        });
 
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      const safe = title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-      a.download = `lumenstock-${safe}-${selected.id}-${license}.jpg`;
-      a.click();
-      URL.revokeObjectURL(a.href);
+        const canvas = document.createElement("canvas");
+        canvas.width = selected.width;
+        canvas.height = selected.height;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) throw new Error("Canvas unsupported");
+        drawCoverCrop(ctx, img, selected.width, selected.height);
+
+        const blob = await new Promise<Blob | null>((resolve) =>
+          canvas.toBlob((b) => resolve(b), "image/jpeg", 0.95),
+        );
+        if (!blob) throw new Error("Export failed");
+
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        const safe = title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+        a.download = `lumenstock-${safe}-${selected.id}-${license}.jpg`;
+        a.click();
+        URL.revokeObjectURL(a.href);
+      } finally {
+        URL.revokeObjectURL(objectUrl);
+      }
     } catch {
-      window.open(imageUrl, "_blank", "noopener,noreferrer");
+      setGateMessage("Download failed. Please try again.");
     } finally {
       setBusy(false);
     }
   }
+
+  const downloadLabel = !user
+    ? "Log in to download"
+    : !user.canDownload
+      ? "Paid plan required"
+      : busy
+        ? "Preparing…"
+        : `Download ${selected?.label ?? ""} (${selected?.width}×${selected?.height})`;
 
   return (
     <div className="asset-workspace">
@@ -265,15 +303,36 @@ export function AssetWorkspace({ imageUrl, title, width, height }: Props) {
             className="btn btn-primary"
             style={{ width: "100%" }}
             type="button"
-            onClick={download}
+            onClick={() => void download()}
             disabled={busy || !selected}
           >
-            {busy
-              ? "Preparing…"
-              : `Download ${selected?.label ?? ""} (${selected?.width}×${selected?.height})`}
+            {downloadLabel}
           </button>
         </div>
-        <p className="download-note">Open Preview size to check the exact crop before downloading.</p>
+
+        {gateMessage && <p className="download-gate-msg">{gateMessage}</p>}
+        {!user && (
+          <p className="download-note">
+            Preview is free.{" "}
+            <button type="button" className="nav-text-btn" onClick={() => openAuth("login")}>
+              Log in
+            </button>{" "}
+            with a registered email to download. New accounts need a paid plan first.
+          </p>
+        )}
+        {user && !user.canDownload && (
+          <p className="download-note">
+            Signed in as {user.email}.{" "}
+            <Link href="/pricing">View pricing</Link> to unlock downloads.
+          </p>
+        )}
+        {user?.canDownload && (
+          <p className="download-note">
+            Signed in as {user.email}
+            {user.role === "super_admin" ? " (super admin)" : ""} — downloads unlocked. Open Preview size
+            to check the crop before downloading.
+          </p>
+        )}
       </div>
 
       {selected && (

@@ -1,19 +1,11 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
+import { useAuth, type AuthUser } from "./AuthProvider";
 
-type Mode = "login" | "signup";
-
-type Props = {
-  open: boolean;
-  initialMode?: Mode;
-  onClose: () => void;
-};
-
-type AuthUser = { id: string; name: string; email: string };
-
-export function AuthModal({ open, initialMode = "login", onClose }: Props) {
-  const [mode, setMode] = useState<Mode>(initialMode);
+export function AuthModal() {
+  const { authOpen: open, authMode: initialMode, closeAuth: onClose, setUser: onAuthed } = useAuth();
+  const [mode, setMode] = useState<"login" | "signup">(initialMode);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -50,6 +42,7 @@ export function AuthModal({ open, initialMode = "login", onClose }: Props) {
       const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({
           name: name.trim(),
           email: email.trim(),
@@ -61,11 +54,7 @@ export function AuthModal({ open, initialMode = "login", onClose }: Props) {
         setError(data.error || "Something went wrong. Try again.");
         return;
       }
-      try {
-        localStorage.setItem("lumenstock-auth", JSON.stringify({ ...data.user, at: Date.now() }));
-      } catch {
-        /* ignore */
-      }
+      onAuthed(data.user);
       setUser(data.user);
     } catch {
       setError("Network error. Please try again.");
@@ -89,7 +78,7 @@ export function AuthModal({ open, initialMode = "login", onClose }: Props) {
             <h2>{mode === "login" ? "Welcome back" : "Create your account"}</h2>
             <p className="modal-sub">
               {mode === "login"
-                ? "Log in with the email and password you registered."
+                ? "Log in with a registered email. Downloads need a paid plan (or super admin)."
                 : "Create an account to license HD stock. We only store your name, email, and hashed password."}
             </p>
           </div>
@@ -127,13 +116,16 @@ export function AuthModal({ open, initialMode = "login", onClose }: Props) {
         {user ? (
           <div className="auth-success">
             <strong>{mode === "login" ? `Welcome back, ${user.name}.` : `Welcome, ${user.name}.`}</strong>
-            {mode === "signup" ? (
-              <ul className="auth-policy">
-                <li>We never store your card details.</li>
-                <li>No auto-renewal — before your plan ends we email you a payment link to renew.</li>
-              </ul>
+            {user.role === "super_admin" ? (
+              <p>Super admin access — downloads are unlocked.</p>
+            ) : user.canDownload ? (
+              <p>Paid plan active — you can download HD sizes.</p>
             ) : (
-              <p>You’re signed in. Subscription renewals are email-only; we never auto-charge a card.</p>
+              <ul className="auth-policy">
+                <li>You’re signed in and can browse and preview freely.</li>
+                <li>Downloads unlock after a paid plan — see Pricing.</li>
+                <li>We never store card details; renewals are email-only.</li>
+              </ul>
             )}
             <button type="button" className="btn btn-primary" onClick={onClose}>
               Continue browsing
@@ -183,6 +175,7 @@ export function AuthModal({ open, initialMode = "login", onClose }: Props) {
                 <ul className="auth-policy">
                   <li>We don’t store card details.</li>
                   <li>No auto-renewal. We’ll email you a pay link when it’s time to renew.</li>
+                  <li>Downloads require a paid plan after signup.</li>
                 </ul>
               </div>
             )}
