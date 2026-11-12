@@ -851,8 +851,18 @@ def print_simple(report: dict[str, Any]) -> None:
     grade = review.get("grade") or "—"
     if grade not in {"Pass", "Fail", "Open", "—"}:
         grade = "—"
+    # Always show IST date+time when this alert fires (user request 12 Nov).
+    when = report.get("timestamp_ist") or ist_now().isoformat()
+    try:
+        dt = datetime.fromisoformat(when)
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=IST)
+        when_line = dt.strftime("%d %b %Y, %I:%M %p IST")
+    except Exception:
+        when_line = when
     print("Cursor alert")
     print("")
+    print(f"Time: {when_line}")
     print(f"PREV: {grade}")
     if review.get("pnl_usd"):
         print(f"PREV PnL: ${review['pnl_usd']:+.2f}")

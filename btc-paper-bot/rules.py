@@ -43,9 +43,11 @@ USE_LONG_SHORT_LABELS = True
 # 9) Track paper P&L daily/weekly/monthly as if $1000 real trades were taken.
 # 10) Allow 1H timeframe trades; hourly recheck optional.
 # 11) Cursor alert title only — no BTC alert wording.
+# 12) Every Cursor alert must include Time + Date (IST) when triggered.
 
 ALLOW_1H_TRADES = True
 HOURLY_RECHECK = True
+ALERT_INCLUDE_DATETIME = True
 
 # Risk model (ATR used for structure confluence; ticket SL/TP use fixed % when enabled)
 ATR_STOP_MULT = 1.0

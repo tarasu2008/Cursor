@@ -1,5 +1,6 @@
 Cursor alert
 
+Time: <dd Mon YYYY, hh:mm AM/PM IST>
 PREV: Pass | Fail | Open | —
 PREV PnL: $+/-n (when closed)
 Today: Pass n Fail n PnL $+/-n
