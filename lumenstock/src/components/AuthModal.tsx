@@ -10,17 +10,23 @@ type Props = {
   onClose: () => void;
 };
 
+type AuthUser = { id: string; name: string; email: string };
+
 export function AuthModal({ open, initialMode = "login", onClose }: Props) {
   const [mode, setMode] = useState<Mode>(initialMode);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [done, setDone] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  const [user, setUser] = useState<AuthUser | null>(null);
 
   useEffect(() => {
     if (!open) return;
     setMode(initialMode);
-    setDone(false);
+    setError("");
+    setUser(null);
+    setBusy(false);
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
@@ -35,23 +41,37 @@ export function AuthModal({ open, initialMode = "login", onClose }: Props) {
 
   if (!open) return null;
 
-  function submit(e: FormEvent) {
+  async function submit(e: FormEvent) {
     e.preventDefault();
-    // Demo auth — no backend yet; store a lightweight session marker
+    setBusy(true);
+    setError("");
     try {
-      localStorage.setItem(
-        "lumenstock-auth",
-        JSON.stringify({
+      const endpoint = mode === "login" ? "/api/auth/login" : "/api/auth/signup";
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: name.trim(),
           email: email.trim(),
-          name: (name || email.split("@")[0]).trim(),
-          mode,
-          at: Date.now(),
+          password,
         }),
-      );
+      });
+      const data = (await res.json()) as { user?: AuthUser; error?: string };
+      if (!res.ok || !data.user) {
+        setError(data.error || "Something went wrong. Try again.");
+        return;
+      }
+      try {
+        localStorage.setItem("lumenstock-auth", JSON.stringify({ ...data.user, at: Date.now() }));
+      } catch {
+        /* ignore */
+      }
+      setUser(data.user);
     } catch {
-      /* ignore */
+      setError("Network error. Please try again.");
+    } finally {
+      setBusy(false);
     }
-    setDone(true);
   }
 
   return (
@@ -69,8 +89,8 @@ export function AuthModal({ open, initialMode = "login", onClose }: Props) {
             <h2>{mode === "login" ? "Welcome back" : "Create your account"}</h2>
             <p className="modal-sub">
               {mode === "login"
-                ? "Log in to save downloads, licenses, and collections."
-                : "Join to license HD stock and sync your studio later."}
+                ? "Log in with the email and password you registered."
+                : "Create an account to license HD stock. We only store your name, email, and hashed password."}
             </p>
           </div>
         </div>
@@ -83,7 +103,8 @@ export function AuthModal({ open, initialMode = "login", onClose }: Props) {
             className={mode === "login" ? "active" : ""}
             onClick={() => {
               setMode("login");
-              setDone(false);
+              setError("");
+              setUser(null);
             }}
           >
             Log in
@@ -95,17 +116,25 @@ export function AuthModal({ open, initialMode = "login", onClose }: Props) {
             className={mode === "signup" ? "active" : ""}
             onClick={() => {
               setMode("signup");
-              setDone(false);
+              setError("");
+              setUser(null);
             }}
           >
             Sign up
           </button>
         </div>
 
-        {done ? (
+        {user ? (
           <div className="auth-success">
-            <strong>{mode === "login" ? "You’re logged in." : "Account ready."}</strong>
-            <p>Demo session saved in this browser. Full auth wiring comes with checkout.</p>
+            <strong>{mode === "login" ? `Welcome back, ${user.name}.` : `Welcome, ${user.name}.`}</strong>
+            {mode === "signup" ? (
+              <ul className="auth-policy">
+                <li>We never store your card details.</li>
+                <li>No auto-renewal — before your plan ends we email you a payment link to renew.</li>
+              </ul>
+            ) : (
+              <p>You’re signed in. Subscription renewals are email-only; we never auto-charge a card.</p>
+            )}
             <button type="button" className="btn btn-primary" onClick={onClose}>
               Continue browsing
             </button>
@@ -147,11 +176,24 @@ export function AuthModal({ open, initialMode = "login", onClose }: Props) {
                 required
               />
             </label>
-            <button type="submit" className="btn btn-primary" style={{ width: "100%" }}>
-              {mode === "login" ? "Log in" : "Create account"}
+
+            {mode === "signup" && (
+              <div className="auth-notice" role="note">
+                <strong>Billing, simply:</strong>
+                <ul className="auth-policy">
+                  <li>We don’t store card details.</li>
+                  <li>No auto-renewal. We’ll email you a pay link when it’s time to renew.</li>
+                </ul>
+              </div>
+            )}
+
+            {error && <p className="auth-error">{error}</p>}
+
+            <button type="submit" className="btn btn-primary" style={{ width: "100%" }} disabled={busy}>
+              {busy ? "Please wait…" : mode === "login" ? "Log in" : "Create account"}
             </button>
             <p className="auth-footnote">
-              By continuing you agree to demo terms. No password is sent to a server yet.
+              Passwords are stored hashed for login validation. Card numbers are never saved on Lumenstock.
             </p>
           </form>
         )}

@@ -17,6 +17,10 @@ export default function PricingPage() {
           Subscriptions for steady creators, on-demand packs when you only need a few downloads —
           the same commerce pattern as major stock platforms.
         </p>
+        <p className="billing-callout">
+          We never store card details. Plans are not auto-renewed — before a subscription ends we
+          email you a payment link to renew.
+        </p>
       </div>
 
       <section className="section" style={{ paddingTop: "1rem" }}>
