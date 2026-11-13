@@ -39,7 +39,7 @@ from rules import (
     BLOCK_CHOPPY_Q,
 )
 from furry import furry_state
-from extra_indicators import suite as indicator_suite
+from extra_indicators import suite as indicator_suite, tiered_targets
 
 ROOT = Path(__file__).resolve().parent
 STATE_PATH = ROOT / "data" / "orders_state.json"
@@ -571,13 +571,15 @@ def analyze(session: str) -> dict[str, Any]:
         ms = ind_d.get("macd_sma200") or {}
         esu = ind_d.get("ema_suite") or {}
         tm = ind_d.get("truemarket") or {}
+        utssl = ind_d.get("ut_ssl") or {}
         notes.append(
             f"ST={'bull' if st.get('bullish') else 'bear'}@{st.get('value')} | "
             f"ADX={adx_d.get('adx')} trending={adx_d.get('trending')} | "
             f"Q={q.get('q')} | CDC={cdc.get('zone')} | "
             f"SMA200={'above' if ms.get('above_sma200') else 'below'} | "
             f"EMA_suite={'bull' if esu.get('aligned_bull') else ('bear' if esu.get('aligned_bear') else 'chop')} | "
-            f"TM={'accum' if tm.get('accum') else ('distrib' if tm.get('distrib') else 'mid')}"
+            f"TM={'accum' if tm.get('accum') else ('distrib' if tm.get('distrib') else 'mid')} | "
+            f"UT+SSL={'bull' if utssl.get('agree_bull') else ('bear' if utssl.get('agree_bear') else 'split')}"
         )
         if BLOCK_CHOPPY_Q and q.get("choppy") and not adx_d.get("trending"):
             choppy_block = True
@@ -648,6 +650,13 @@ def analyze(session: str) -> dict[str, Any]:
                 factors.append("below_sma200")
             if esu.get("aligned_bear"):
                 factors.append("ema_suite_bear")
+            utssl = ind_d.get("ut_ssl") or {}
+            if utssl.get("agree_bear"):
+                factors.append("ut_ssl_bear")
+            if utssl.get("short_sig"):
+                factors.append("ut_ssl_short_sig")
+            if ms.get("bear_impulse"):
+                factors.append("macd_sma200_bear")
 
         stop = structure_stop("sell", entry, max(day_high, entry), daily_atr)
         swing_tp = min(day_low, swing_low_30)
@@ -821,6 +830,13 @@ def analyze(session: str) -> dict[str, Any]:
                 factors.append("ema_suite_bull")
             if (ind_d.get("truemarket") or {}).get("accum"):
                 factors.append("tm_accum")
+            utssl = ind_d.get("ut_ssl") or {}
+            if utssl.get("agree_bull"):
+                factors.append("ut_ssl_bull")
+            if utssl.get("long_sig"):
+                factors.append("ut_ssl_long_sig")
+            if ms.get("bull_impulse"):
+                factors.append("macd_sma200_bull")
         rr = risk_reward("buy", entry, stop, tp)
         if len(factors) >= MIN_CONFLUENCE and valid_ticket("buy", entry, stop, tp) and entry >= px:
             proposals.append(
@@ -982,6 +998,8 @@ def analyze(session: str) -> dict[str, Any]:
             "H_cdc_action_zone",
             "I_multi_ema_suite",
             "J_truemarket_mean",
+            "K_ut_bot_ssl_combo",
+            "L_triple_confluence_atr_tiers",
         ],
         "filters": {
             "min_rr": MIN_RR,
@@ -1001,6 +1019,8 @@ def analyze(session: str) -> dict[str, Any]:
                 "rr": p.rr,
                 "confluence": p.confluence,
                 "idea_id": p.idea_id,
+                # Tiered ATR targets for analysis (paper primary TP stays 2%)
+                "tiers": tiered_targets(p.side, p.entry, daily_atr),
             }
             for p in chosen
         ],

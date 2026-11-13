@@ -233,6 +233,106 @@ def truemarket_mean(rows: list[dict], length: int = 100, atr_len: int = 14, mult
     }
 
 
+def ut_bot(rows: list[dict], key: float = 1.0, atr_len: int = 10) -> dict[str, Any]:
+    """UT Bot ATR trailing stop (HPotter-style)."""
+    if len(rows) < atr_len + 2:
+        return {"trail": None, "bullish": False, "buy": False, "sell": False}
+    atrs = atr_series(rows, atr_len)
+    closes = [r["c"] for r in rows]
+    trail: list[float] = []
+    for i, c in enumerate(closes):
+        n_loss = key * atrs[i]
+        if i == 0:
+            trail.append(c - n_loss)
+            continue
+        prev = trail[i - 1]
+        if c > prev and closes[i - 1] > prev:
+            trail.append(max(prev, c - n_loss))
+        elif c < prev and closes[i - 1] < prev:
+            trail.append(min(prev, c + n_loss))
+        elif c > prev:
+            trail.append(c - n_loss)
+        else:
+            trail.append(c + n_loss)
+    bull = closes[-1] > trail[-1]
+    buy = closes[-2] < trail[-2] and closes[-1] > trail[-1]
+    sell = closes[-2] > trail[-2] and closes[-1] < trail[-1]
+    return {
+        "trail": round(trail[-1], 1),
+        "bullish": bull,
+        "buy": buy,
+        "sell": sell,
+    }
+
+
+def ssl_channel(rows: list[dict], length: int = 10) -> dict[str, Any]:
+    highs = [r["h"] for r in rows]
+    lows = [r["l"] for r in rows]
+    closes = [r["c"] for r in rows]
+    if len(rows) < length + 2:
+        return {"bullish": False, "bull_cross": False, "bear_cross": False, "ssl_up": None, "ssl_down": None}
+    sma_h = sma(highs, length)
+    sma_l = sma(lows, length)
+    hlv = 0
+    ssl_up: list[float] = []
+    ssl_down: list[float] = []
+    dirs: list[int] = []
+    for i in range(len(rows)):
+        if closes[i] > sma_h[i]:
+            hlv = 1
+        elif closes[i] < sma_l[i]:
+            hlv = -1
+        dirs.append(hlv)
+        if hlv < 0:
+            ssl_down.append(sma_h[i])
+            ssl_up.append(sma_l[i])
+        else:
+            ssl_down.append(sma_l[i])
+            ssl_up.append(sma_h[i])
+    bull = dirs[-1] > 0
+    bull_cross = dirs[-2] <= 0 and dirs[-1] > 0
+    bear_cross = dirs[-2] >= 0 and dirs[-1] < 0
+    return {
+        "bullish": bull,
+        "bull_cross": bull_cross,
+        "bear_cross": bear_cross,
+        "ssl_up": round(ssl_up[-1], 1),
+        "ssl_down": round(ssl_down[-1], 1),
+    }
+
+
+def ut_ssl_combo(rows: list[dict]) -> dict[str, Any]:
+    """UT Bot + SSL: only agree signals (reduces sideways over-trading)."""
+    ut = ut_bot(rows)
+    ssl = ssl_channel(rows)
+    return {
+        "ut": ut,
+        "ssl": ssl,
+        "long_sig": bool(ut.get("buy") and ssl.get("bullish")),
+        "short_sig": bool(ut.get("sell") and not ssl.get("bullish")),
+        "agree_bull": bool(ut.get("bullish") and ssl.get("bullish")),
+        "agree_bear": bool((not ut.get("bullish")) and (not ssl.get("bullish"))),
+    }
+
+
+def tiered_targets(side: str, entry: float, atr: float) -> dict[str, float]:
+    """Triple-confluence style tiered TPs (ATR). Primary paper TP remains fixed % in rules."""
+    a = max(atr, 1.0)
+    if side in {"sell", "short"}:
+        return {
+            "tp1": round(entry - 1.0 * a, 0),
+            "tp2": round(entry - 2.0 * a, 0),
+            "tp3": round(entry - 3.0 * a, 0),
+            "atr_stop": round(entry + 1.0 * a, 0),
+        }
+    return {
+        "tp1": round(entry + 1.0 * a, 0),
+        "tp2": round(entry + 2.0 * a, 0),
+        "tp3": round(entry + 3.0 * a, 0),
+        "atr_stop": round(entry - 1.0 * a, 0),
+    }
+
+
 def suite(rows: list[dict], closes: list[float] | None = None) -> dict[str, Any]:
     closes = closes or [r["c"] for r in rows]
     return {
@@ -243,4 +343,5 @@ def suite(rows: list[dict], closes: list[float] | None = None) -> dict[str, Any]
         "macd_sma200": macd_sma200(closes),
         "ema_suite": multi_ema_suite(closes),
         "truemarket": truemarket_mean(rows),
+        "ut_ssl": ut_ssl_combo(rows),
     }

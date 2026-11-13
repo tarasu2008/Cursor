@@ -103,4 +103,6 @@ FALLBACK = {
 # 12) No email spam: silent checks must not commit/push/update PR.
 # 13) Furry A (9) / Furry B (21) EMA cloud + cross — confluence for LONG/SHORT.
 # 14) Extra frameworks: Supertrend, ADX, Q quality, MACD+SMA200, CDC Action Zone,
-#     multi-EMA suite, TrueMarket mean proxy — see indicators/*.pine.
+#     multi-EMA suite, TrueMarket mean, UT Bot + SSL Channel — see indicators/*.pine.
+# 15) Triple Confluence: trend + HTF/ADX filter; ATR stop reference + tiered TPs
+#     (paper ticket still uses fixed 1%/2% until user widens risk).
