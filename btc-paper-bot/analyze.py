@@ -37,9 +37,11 @@ from rules import (
     USE_EXTRA_INDICATORS,
     MIN_ADX,
     BLOCK_CHOPPY_Q,
+    AUTO_PLACE_DELTA_DEMO,
 )
 from furry import furry_state
 from extra_indicators import suite as indicator_suite, tiered_targets
+from delta_demo import maybe_place_from_report, sync_after_paper_grade
 
 ROOT = Path(__file__).resolve().parent
 STATE_PATH = ROOT / "data" / "orders_state.json"
@@ -1286,25 +1288,65 @@ def main() -> None:
     out.write_text(json.dumps(report, indent=2))
     grade = (report.get("previous_review") or {}).get("grade")
 
-    # Hourly: silent while Open. On Pass/Fail keep next tickets (immediate re-analyze).
+    # Hourly cycle:
+    # - Open → silent, keep watching previous ticket (no stack).
+    # - Pass/Fail → keep next tickets from same run + bid Delta DEMO.
+    # - Flat → allow a fresh ticket if confluence fires (restart cycle) + bid.
     if args.hourly and grade == "Open":
         report["tv_ticket"] = []
         report["proposals"] = []
         report["waiting_prev"] = True
     elif args.hourly and grade in {"Pass", "Fail"} and IMMEDIATE_REANALYZE_ON_CLOSE:
-        # Keep new LONG/SHORT from same run — do not strip tickets.
         report["waiting_prev"] = False
     elif args.hourly:
-        # Flat / no close this hour — do not open a fresh trade on silent hourly.
-        report["tv_ticket"] = []
-        report["proposals"] = []
+        report["waiting_prev"] = False
 
     latest = save_latest_signal(report)
 
+    # Cycle: paper Pass/Fail → sync Delta flat; new ticket → bid Delta DEMO.
+    if AUTO_PLACE_DELTA_DEMO:
+        try:
+            sync_after_paper_grade(grade if isinstance(grade, str) else None)
+        except Exception as e:
+            report["delta_sync_error"] = str(e)
+        should_bid = bool(report.get("tv_ticket")) and not report.get("waiting_prev")
+        if args.hourly and grade == "Open":
+            should_bid = False
+        if should_bid:
+            try:
+                placed = maybe_place_from_report(report)
+                if placed is not None:
+                    report["delta_demo"] = placed
+            except Exception as e:
+                report["delta_demo"] = {"ok": False, "error": str(e)}
+            # Persist delta result onto latest_signal for the agent/timer.
+            try:
+                simple = json.loads(latest.read_text())
+                simple["delta_demo"] = report.get("delta_demo")
+                latest.write_text(json.dumps(simple, indent=2))
+            except Exception:
+                pass
+
+    def _print_delta_line() -> None:
+        dd = report.get("delta_demo") or {}
+        if not dd:
+            return
+        if dd.get("ok") and not dd.get("skipped"):
+            o = (dd.get("state") or {}).get("order") or {}
+            print(
+                f"DELTA DEMO: placed {o.get('side')} {o.get('size_contracts')} @ "
+                f"{o.get('average_fill_price') or o.get('limit_price')} id={o.get('id')}"
+            )
+        elif dd.get("skipped"):
+            print(f"DELTA DEMO: skipped ({dd.get('reason')})")
+        elif not dd.get("ok"):
+            print(f"DELTA DEMO: place failed — {dd.get('error') or dd}")
+
     if args.hourly:
-        if grade in {"Pass", "Fail"}:
-            # Alert close + next order (if any)
+        if grade in {"Pass", "Fail"} or report.get("tv_ticket"):
+            # Alert on close and/or new cycle ticket (+ Delta bid line).
             print_simple(report, force=True)
+            _print_delta_line()
         else:
             print("STATUS:SILENT")
     elif args.simple or args.show:
@@ -1318,10 +1360,13 @@ def main() -> None:
             printed = print_simple(report, force=bool(force))
             if not printed:
                 print("STATUS:SILENT")
+            if printed:
+                _print_delta_line()
     else:
         print_report(report)
         print(f"Wrote {out}")
         print(f"Saved {latest}")
+        _print_delta_line()
 
 
 if __name__ == "__main__":

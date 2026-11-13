@@ -47,6 +47,9 @@ RECHECK_EVERY_MINUTES = 30           # check BTC + PREV Pass/Fail every 30 min
 HOURLY_SILENT_IF_OPEN = True         # while Open: STATUS:SILENT, empty chat reply
 # One active ticket only (never SHORT+LONG together) so Pass/Fail is unambiguous.
 ONE_ACTIVE_TICKET = True
+# After analysis produces a new LONG/SHORT → place it on Delta DEMO automatically.
+AUTO_PLACE_DELTA_DEMO = True
+DELTA_DEMO_BASE = "https://cdn-ind.testnet.deltaex.org"
 # Session timers optional — user may disable; 30-min timer is the Pass/Fail watcher.
 SESSIONS = ("india", "uk", "us")     # ~09:00 / 13:00 / 19:45 IST
 
@@ -106,3 +109,5 @@ FALLBACK = {
 #     multi-EMA suite, TrueMarket mean, UT Bot + SSL Channel — see indicators/*.pine.
 # 15) Triple Confluence: trend + HTF/ADX filter; ATR stop reference + tiered TPs
 #     (paper ticket still uses fixed 1%/2% until user widens risk).
+# 16) Cycle: analyze → on new ticket bid Delta DEMO (API) with same Entry/SL/TP;
+#     30-min watch → Pass/Fail alert → analyze next → bid again. Silent while Open.

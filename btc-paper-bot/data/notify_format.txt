@@ -9,6 +9,7 @@ REMEMBERED ALERT RULES
 - Pass/Fail by TP/SL levels traded (fill not required)
 - Save Today / Week / Month Pass-Fail + paper PnL
 - After Pass/Fail → immediately propose next order
+- After new ticket → automatically bid Delta DEMO (same Entry/SL/TP); cycle repeats
 
 Cursor alert
 

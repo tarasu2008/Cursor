@@ -22,8 +22,12 @@ Locked in `rules.py`. Change only when the user explicitly asks.
 17. Use these frameworks for analysis progress (`indicators/*.pine` + `extra_indicators.py`):
     Triple Confluence (trend + ADX + ATR tiers), MACD+SMA200, UT Bot + SSL (agree-only),
     Q Trend Quality (signal/noise), Supertrend, CDC Action Zone, multi-EMA suite, TrueMarket mean.
+18. **Cycle (locked):** analyze → if new LONG/SHORT ticket → **automatically bid on Delta DEMO**
+    (`delta_demo.py`, keys `DELTA_API_KEY` / `DELTA_API_SECRET`) with same Entry / 1% SL / 2% TP.
+    30-min watch → Pass/Fail Cursor alert → analyze next → bid again. Silent while Open.
+    Demo only (`cdn-ind.testnet.deltaex.org`). Do not stack if Delta already has an open position.
 
 ## Manual
 - `python3 btc-paper-bot/analyze.py --simple --show` → force current ticket view.
-- `python3 btc-paper-bot/analyze.py --hourly` → silent unless Pass/Fail (+ next order).
+- `python3 btc-paper-bot/analyze.py --hourly` → silent unless Pass/Fail (+ next order + Delta bid).
 - `python3 btc-paper-bot/analyze.py --performance` → ledger summary.
