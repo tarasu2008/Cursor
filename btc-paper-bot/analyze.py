@@ -761,12 +761,18 @@ def analyze(session: str) -> dict[str, Any]:
 
     shorts = sorted([p for p in proposals if p.side == "sell"], key=_rank_short, reverse=True)
     longs = sorted([p for p in proposals if p.side == "buy"], key=_rank_long, reverse=True)
+    # One ticket only — Pass/Fail tracking breaks if SHORT+LONG are both active.
     chosen: list[OrderProposal] = []
-    if shorts:
-        chosen.append(shorts[0])
-    if longs and not (in_mid and bias == "bearish"):
-        chosen.append(longs[0])
-    chosen = chosen[:2]
+    if bias == "bearish" and shorts:
+        chosen = [shorts[0]]
+    elif bias == "bullish" and longs:
+        chosen = [longs[0]]
+    elif shorts and longs:
+        chosen = [shorts[0] if shorts[0].confluence >= longs[0].confluence else longs[0]]
+    elif shorts:
+        chosen = [shorts[0]]
+    elif longs and not (in_mid and bias == "bearish"):
+        chosen = [longs[0]]
 
     if in_mid:
         notes.append("Price in day mid-range → no market chase; limits only.")

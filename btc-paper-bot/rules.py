@@ -44,6 +44,9 @@ WAIT_FOR_PREV_BEFORE_NEW = True
 ALLOW_1H_TRADES = True
 HOURLY_RECHECK = True
 HOURLY_SILENT_IF_OPEN = True         # hourly: STATUS:SILENT, empty chat reply
+# One active ticket only (never SHORT+LONG together) so Pass/Fail is unambiguous.
+ONE_ACTIVE_TICKET = True
+# Session timers optional — user may disable; hourly is the default Pass/Fail watcher.
 SESSIONS = ("india", "uk", "us")     # ~09:00 / 13:00 / 19:45 IST
 
 # ---------------------------------------------------------------------------

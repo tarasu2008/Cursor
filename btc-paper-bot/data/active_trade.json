@@ -73,13 +73,7 @@
       "stop_loss": 69501.0,
       "take_profit": 67437.0,
       "qty": 0.015
-    },
-    {
-      "side": "LONG",
-      "entry": 68882.0,
-      "stop_loss": 68193.0,
-      "take_profit": 70260.0,
-      "qty": 0.015
     }
-  ]
+  ],
+  "note": "One active ticket only for Pass/Fail clarity"
 }
