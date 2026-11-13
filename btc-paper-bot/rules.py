@@ -1,76 +1,87 @@
-"""Trading rules learned from the BTC analysis chat (Oct–Nov 2026)."""
+"""Trading rules remembered from the BTC analysis chat (Oct–Nov 2026).
+
+This file is the source of truth. Do not drop these without an explicit user change.
+"""
 
 from __future__ import annotations
 
+# ---------------------------------------------------------------------------
+# Size & risk (locked until user says analysis is solid)
+# ---------------------------------------------------------------------------
 NOTIONAL_USD = 1_000.0
-
-# Fixed risk for now (user 12 Nov): 1% loss / 2% profit. Widen later when analysis is solid.
 USE_FIXED_PCT_RISK = True
 STOP_LOSS_PCT = 0.01      # 1% loss
 TAKE_PROFIT_PCT = 0.02    # 2% profit
 
-# Do not sell/buy the middle of the day range.
-MIDRANGE_NO_TRADE = True
+# ---------------------------------------------------------------------------
+# Labels & alert format
+# ---------------------------------------------------------------------------
+USE_LONG_SHORT_LABELS = True          # LONG / SHORT only (never Buy/Sell wording)
+ALERT_TITLE = "Cursor alert"         # never "BTC alert"
+ALERT_INCLUDE_DATETIME = True        # Time: dd Mon YYYY, hh:mm AM/PM IST
+ALERT_ONLY_ON_PASS_FAIL = True       # no spam while PREV is Open
+SILENT_LEAVE_IF_OPEN = True          # never reply "waiting"
+NO_EMAIL_ON_SILENT = True            # no git commit/push/PR on STATUS:SILENT
 
-# Prefer rejection shorts into supply; longs only on confirmed reclaim.
-PREFER_SHORT_AT_SUPPLY = True
-
-# Confirmation style that failed when skipped (29 Oct short into demand).
-REQUIRE_BREAK_CLOSE_FOR_BREAKDOWN = True
-
-# After a target is hit, do not re-enter the same trade.
-NO_REENTRY_SAME_IDEA = True
-
-# Check existing orders before ending them.
-PROTECT_OPEN_ORDERS = True
-
-# EVERY analysis must review the previous signal first, score it, and adjust.
+# ---------------------------------------------------------------------------
+# Review / Pass-Fail / ledger
+# ---------------------------------------------------------------------------
 REVIEW_PREVIOUS_SIGNAL = True
+# Pass/Fail by whether TP/SL *price levels* traded after signal — fill NOT required.
+GRADE_BY_LEVELS_NOT_FILL = True
+# Pass or Fail only — no partial / mixed / open_in_profit grades in user alerts.
+PASS_FAIL_ONLY = True
+# Persist paper PnL as if $1000 real trades: Pass≈+$20, Fail≈−$10.
+TRACK_DAILY_WEEKLY_MONTHLY_PNL = True
+# After Pass or Fail → same run proposes the next LONG/SHORT.
+IMMEDIATE_REANALYZE_ON_CLOSE = True
+# While Open: do not stack a second idea.
+WAIT_FOR_PREV_BEFORE_NEW = True
 
-# Output LONG/SHORT (not Buy/Sell wording) in simple tickets.
-USE_LONG_SHORT_LABELS = True
-
-# --- Lessons from this chat (mistakes to never repeat) ---
-# 1) 29 Oct: shorted mid-range into demand without daily break close → stopped.
-# 2) 11 Nov US: bounce short entry correct but SL too tight (0.8%) under next
-#    liquidity high → stopped before thesis played. Use ATR + structure stop.
-# 3) Bot bug: breakdown tickets used stale FALLBACK TP above entry for shorts.
-# 4) Stale proposed orders (81180/81261) were "protected" after structure broke.
-# 5) Indicators alone (EMA/RSI) without swing/trendline confluence = weak tickets.
-# 6) Always review previous signal before a new one; remember chat rules.
-# 7) User wants simple LONG/SHORT + entry + SL + TP; paper size $1000.
-# 8) Grade previous analysis Pass or Fail only (no partial); save for week/month.
-# 9) Track paper P&L daily/weekly/monthly as if $1000 real trades were taken.
-# 10) Allow 1H timeframe trades; hourly recheck optional.
-# 11) Cursor alert title only — no BTC alert wording.
-# 12) Every Cursor alert must include Time + Date (IST) when triggered.
-# 13) Alert ONLY when previous analysis is Pass or Fail. If Open → leave it (no alert).
-# 14) Hourly: silent check only; if still Open, leave it and check again next hour.
-# 15) Never reply "waiting" / never block the chat — silent leave while Open.
-# 16) No email/notification spam: on STATUS:SILENT do not commit, push, or update PR.
-# 17) Pass/Fail by TP/SL price levels traded after signal — do not require limit fill.
-# 18) When PREV becomes Pass or Fail → immediately analyze again and propose next order.
-
+# ---------------------------------------------------------------------------
+# Schedule behaviour
+# ---------------------------------------------------------------------------
 ALLOW_1H_TRADES = True
 HOURLY_RECHECK = True
-ALERT_INCLUDE_DATETIME = True
-ALERT_ONLY_ON_PASS_FAIL = True
-WAIT_FOR_PREV_BEFORE_NEW = True
-HOURLY_SILENT_IF_OPEN = True
-SILENT_LEAVE_IF_OPEN = True  # no "waiting" messages
-NO_EMAIL_ON_SILENT = True  # no git push / PR update / chat noise while Open
-IMMEDIATE_REANALYZE_ON_CLOSE = True  # after Pass/Fail, propose next order same run
+HOURLY_SILENT_IF_OPEN = True         # hourly: STATUS:SILENT, empty chat reply
+SESSIONS = ("india", "uk", "us")     # ~09:00 / 13:00 / 19:45 IST
 
-# Risk model (ATR used for structure confluence; ticket SL/TP use fixed % when enabled)
+# ---------------------------------------------------------------------------
+# Strategy filters (lessons from this chat)
+# ---------------------------------------------------------------------------
+MIDRANGE_NO_TRADE = True
+PREFER_SHORT_AT_SUPPLY = True
+REQUIRE_BREAK_CLOSE_FOR_BREAKDOWN = True
+NO_REENTRY_SAME_IDEA = True
+PROTECT_OPEN_ORDERS = True
+
+# Risk model (ATR for structure confluence; ticket SL/TP use fixed % when enabled)
 ATR_STOP_MULT = 1.0
 ATR_STOP_MULT_AFTER_STOPOUT = 1.25
-MIN_RR = TAKE_PROFIT_PCT / STOP_LOSS_PCT  # 2.0 with 2%/1%
+MIN_RR = TAKE_PROFIT_PCT / STOP_LOSS_PCT  # 2.0
 MIN_CONFLUENCE = 3
 DEFAULT_STOP_BUFFER_PCT = STOP_LOSS_PCT
 DEFAULT_REWARD_R = TAKE_PROFIT_PCT / STOP_LOSS_PCT
-
-SESSIONS = ("india", "uk", "us")
+# Supply/limit entries must stay near market (avoid far stale bounce shorts).
+MAX_ENTRY_DISTANCE_ATR = 1.0
+MAX_ENTRY_DISTANCE_PCT = 0.02
 
 FALLBACK = {
-    "deep_target": 71_000.0,  # extension below current swing shelf
+    "deep_target": 65_000.0,
 }
+
+# ---------------------------------------------------------------------------
+# Lessons — never repeat
+# ---------------------------------------------------------------------------
+# 1) 29 Oct: shorted mid-range into demand without daily break close → stopped.
+# 2) 11 Nov US: bounce short OK but SL too tight under liquidity → stopped.
+# 3) Bot bug: breakdown TP used stale FALLBACK above entry for shorts.
+# 4) Stale proposed orders stayed "protected" after structure broke.
+# 5) EMA/RSI alone without swing/trendline confluence = weak tickets.
+# 6) Always review previous signal before a new one.
+# 7) Simple ticket: LONG/SHORT + Entry + SL + TP; $1000 paper size.
+# 8) Grade Pass/Fail only; save daily/weekly/monthly counts + $ PnL.
+# 9) Cursor alert + IST Time; never BTC alert / notification chatter.
+# 10) Hourly silent while Open; alert on Pass/Fail then immediate next order.
+# 11) Do not require limit fill to grade TP/SL (12 Nov morning SHORT = Pass).
+# 12) No email spam: silent checks must not commit/push/update PR.

@@ -1,12 +1,19 @@
-Cursor alert ONLY when PREV is Pass or Fail.
-Hourly: silent check. If still Open → leave it (STATUS:SILENT), check again next hour.
-Never reply "waiting". Never spam while Open.
-No email/notification on silent checks: do not commit, push, or update PR when STATUS:SILENT.
+REMEMBERED ALERT RULES
+- Title: Cursor alert (never BTC alert)
+- Include Time: dd Mon YYYY, hh:mm AM/PM IST
+- Alert on Pass/Fail close (and include next LONG/SHORT if ready)
+- Hourly while Open: STATUS:SILENT → empty reply, no git/push/PR/email
+- Never reply "waiting"
+- Labels: LONG | SHORT | FLAT
+- Risk: $1000, 1% SL, 2% TP
+- Pass/Fail by TP/SL levels traded (fill not required)
+- Save Today / Week / Month Pass-Fail + paper PnL
+- After Pass/Fail → immediately propose next order
 
 Cursor alert
 
 Time: <dd Mon YYYY, hh:mm AM/PM IST>
-PREV: Pass | Fail
+PREV: Pass | Fail | Open | —
 PREV PnL: $+/-n
 Today: Pass n Fail n PnL $+/-n
 Week: Pass n Fail n PnL $+/-n

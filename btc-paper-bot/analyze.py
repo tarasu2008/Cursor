@@ -30,6 +30,9 @@ from rules import (
     WAIT_FOR_PREV_BEFORE_NEW,
     HOURLY_SILENT_IF_OPEN,
     IMMEDIATE_REANALYZE_ON_CLOSE,
+    MAX_ENTRY_DISTANCE_ATR,
+    MAX_ENTRY_DISTANCE_PCT,
+    ALERT_TITLE,
 )
 
 ROOT = Path(__file__).resolve().parent
@@ -568,8 +571,8 @@ def analyze(session: str) -> dict[str, Any]:
             len(factors) >= MIN_CONFLUENCE
             and valid_ticket("sell", entry, stop, tp)
             and entry > px
-            # Entry near market (max ~2% or 1.0 ATR) — avoid stale far EMA limits.
-            and (entry - px) < min(daily_atr * 1.0, entry * 0.02)
+            # Entry near market — avoid stale far EMA limits (rules: MAX_ENTRY_*).
+            and (entry - px) < min(daily_atr * MAX_ENTRY_DISTANCE_ATR, entry * MAX_ENTRY_DISTANCE_PCT)
         ):
             proposals.append(
                 OrderProposal(
@@ -941,7 +944,7 @@ def print_simple(report: dict[str, Any], *, force: bool = False) -> bool:
         when_line = dt.strftime("%d %b %Y, %I:%M %p IST")
     except Exception:
         when_line = when
-    print("Cursor alert")
+    print(ALERT_TITLE)
     print("")
     print(f"Time: {when_line}")
     print(f"PREV: {grade}")
