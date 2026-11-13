@@ -1,0 +1,66 @@
+{
+  "timestamp_ist": "2026-11-13T21:05:13.915115+05:30",
+  "price": 68452.4,
+  "bias": "bearish",
+  "previous_review": {
+    "had_previous": false,
+    "grade": "\u2014",
+    "result": "none",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "detail": "Previous was FLAT.",
+    "performance": {
+      "updated_ist": "2026-11-13T21:05:13.899048+05:30",
+      "rules": {
+        "notional_usd": 1000.0,
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+        "grade": "Pass or Fail only (no partial)"
+      },
+      "today": {
+        "trades": 2,
+        "pass": 1,
+        "fail": 1,
+        "pnl_usd": 9.68,
+        "total_profit_usd": 20.0,
+        "total_loss_usd": -10.32
+      },
+      "week": {
+        "trades": 3,
+        "pass": 2,
+        "fail": 1,
+        "pnl_usd": 28.95,
+        "total_profit_usd": 39.27,
+        "total_loss_usd": -10.32
+      },
+      "month": {
+        "trades": 3,
+        "pass": 2,
+        "fail": 1,
+        "pnl_usd": 28.95,
+        "total_profit_usd": 39.27,
+        "total_loss_usd": -10.32
+      },
+      "all_time": {
+        "trades": 3,
+        "pass": 2,
+        "fail": 1,
+        "pnl_usd": 28.95,
+        "total_profit_usd": 39.27,
+        "total_loss_usd": -10.32
+      }
+    }
+  },
+  "waiting_prev": false,
+  "signals": [
+    {
+      "side": "SHORT",
+      "entry": 67432.0,
+      "stop_loss": 68106.0,
+      "take_profit": 66083.0,
+      "qty": 0.015
+    }
+  ]
+}
