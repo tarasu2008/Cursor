@@ -1130,7 +1130,15 @@ def print_simple(report: dict[str, Any], *, force: bool = False) -> bool:
         f"Week: Pass {week.get('pass', 0)} Fail {week.get('fail', 0)} PnL ${week.get('pnl_usd', 0):+.2f}"
     )
     print(
+        f"Week Total Profit: ${float(week.get('total_profit_usd', 0) or 0):+.2f} | "
+        f"Week Total Loss: ${float(week.get('total_loss_usd', 0) or 0):+.2f}"
+    )
+    print(
         f"Month: Pass {month.get('pass', 0)} Fail {month.get('fail', 0)} PnL ${month.get('pnl_usd', 0):+.2f}"
+    )
+    print(
+        f"Month Total Profit: ${float(month.get('total_profit_usd', 0) or 0):+.2f} | "
+        f"Month Total Loss: ${float(month.get('total_loss_usd', 0) or 0):+.2f}"
     )
 
     tickets = report.get("tv_ticket") or []

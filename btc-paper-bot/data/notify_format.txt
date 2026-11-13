@@ -8,6 +8,7 @@ REMEMBERED ALERT RULES
 - Risk: $1000, 1% SL, 2% TP
 - Pass/Fail by TP/SL levels traded (fill not required)
 - Save Today / Week / Month Pass-Fail + paper PnL
+- Show Week Total Profit | Week Total Loss and Month Total Profit | Month Total Loss
 - After Pass/Fail → immediately propose next order
 - After new ticket → automatically bid Delta DEMO (same Entry/SL/TP); cycle repeats
 
@@ -18,9 +19,12 @@ PREV: Pass | Fail | Open | —
 PREV PnL: $+/-n
 Today: Pass n Fail n PnL $+/-n
 Week: Pass n Fail n PnL $+/-n
+Week Total Profit: $+n | Week Total Loss: $-n
 Month: Pass n Fail n PnL $+/-n
+Month Total Profit: $+n | Month Total Loss: $-n
 LONG | SHORT | FLAT
 Entry: n
 Stop Loss: n
 Take Profit: n
 If TP: +$n | If SL: -$n
+DELTA DEMO: placed …   (when a new ticket was bid)

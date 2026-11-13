@@ -33,6 +33,8 @@ GRADE_BY_LEVELS_NOT_FILL = True
 PASS_FAIL_ONLY = True
 # Persist paper PnL as if $1000 real trades: Pass≈+$20, Fail≈−$10.
 TRACK_DAILY_WEEKLY_MONTHLY_PNL = True
+# Alerts + ledger also show Total Profit and Total Loss for week and month.
+TRACK_WEEK_MONTH_TOTAL_PROFIT_LOSS = True
 # After Pass or Fail → same run proposes the next LONG/SHORT.
 IMMEDIATE_REANALYZE_ON_CLOSE = True
 # While Open: do not stack a second idea.
@@ -111,3 +113,4 @@ FALLBACK = {
 #     (paper ticket still uses fixed 1%/2% until user widens risk).
 # 16) Cycle: analyze → on new ticket bid Delta DEMO (API) with same Entry/SL/TP;
 #     30-min watch → Pass/Fail alert → analyze next → bid again. Silent while Open.
+# 17) Cursor alert shows Week/Month Total Profit and Total Loss (not only net PnL).

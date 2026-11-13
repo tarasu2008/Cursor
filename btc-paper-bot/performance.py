@@ -103,15 +103,24 @@ def summarize(ledger: dict[str, Any] | None = None) -> dict[str, Any]:
         rows = [t for t in trades if _in_range(t.get("closed_ist", ""), start, now)]
         wins = [t for t in rows if t.get("outcome") == "Pass"]
         losses = [t for t in rows if t.get("outcome") == "Fail"]
-        pnl = round(sum(t.get("pnl_usd", 0) for t in rows), 2)
+        profit = round(sum(float(t.get("pnl_usd", 0) or 0) for t in wins), 2)
+        # Total loss as negative USD sum of Fail trades.
+        loss = round(sum(float(t.get("pnl_usd", 0) or 0) for t in losses), 2)
+        pnl = round(profit + loss, 2)
         return {
             "trades": len(rows),
             "pass": len(wins),
             "fail": len(losses),
             "pnl_usd": pnl,
+            "total_profit_usd": profit,
+            "total_loss_usd": loss,
         }
 
-    all_pnl = round(sum(t.get("pnl_usd", 0) for t in trades), 2)
+    wins_all = [t for t in trades if t.get("outcome") == "Pass"]
+    losses_all = [t for t in trades if t.get("outcome") == "Fail"]
+    all_profit = round(sum(float(t.get("pnl_usd", 0) or 0) for t in wins_all), 2)
+    all_loss = round(sum(float(t.get("pnl_usd", 0) or 0) for t in losses_all), 2)
+    all_pnl = round(all_profit + all_loss, 2)
     summary = {
         "updated_ist": now.isoformat(),
         "rules": {
@@ -125,9 +134,11 @@ def summarize(ledger: dict[str, Any] | None = None) -> dict[str, Any]:
         "month": bucket(month_start),
         "all_time": {
             "trades": len(trades),
-            "pass": sum(1 for t in trades if t.get("outcome") == "Pass"),
-            "fail": sum(1 for t in trades if t.get("outcome") == "Fail"),
+            "pass": len(wins_all),
+            "fail": len(losses_all),
             "pnl_usd": all_pnl,
+            "total_profit_usd": all_profit,
+            "total_loss_usd": all_loss,
         },
     }
     return summary
