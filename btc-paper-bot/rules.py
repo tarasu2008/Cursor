@@ -42,11 +42,12 @@ WAIT_FOR_PREV_BEFORE_NEW = True
 # Schedule behaviour
 # ---------------------------------------------------------------------------
 ALLOW_1H_TRADES = True
-HOURLY_RECHECK = True
-HOURLY_SILENT_IF_OPEN = True         # hourly: STATUS:SILENT, empty chat reply
+HOURLY_RECHECK = True                # legacy name; actual cadence is every 30 min
+RECHECK_EVERY_MINUTES = 30           # check BTC + PREV Pass/Fail every 30 min
+HOURLY_SILENT_IF_OPEN = True         # while Open: STATUS:SILENT, empty chat reply
 # One active ticket only (never SHORT+LONG together) so Pass/Fail is unambiguous.
 ONE_ACTIVE_TICKET = True
-# Session timers optional — user may disable; hourly is the default Pass/Fail watcher.
+# Session timers optional — user may disable; 30-min timer is the Pass/Fail watcher.
 SESSIONS = ("india", "uk", "us")     # ~09:00 / 13:00 / 19:45 IST
 
 # ---------------------------------------------------------------------------
@@ -85,6 +86,6 @@ FALLBACK = {
 # 7) Simple ticket: LONG/SHORT + Entry + SL + TP; $1000 paper size.
 # 8) Grade Pass/Fail only; save daily/weekly/monthly counts + $ PnL.
 # 9) Cursor alert + IST Time; never BTC alert / notification chatter.
-# 10) Hourly silent while Open; alert on Pass/Fail then immediate next order.
+# 10) Every 30 min: check BTC + PREV status; silent while Open; alert on Pass/Fail then next order.
 # 11) Do not require limit fill to grade TP/SL (12 Nov morning SHORT = Pass).
 # 12) No email spam: silent checks must not commit/push/update PR.
