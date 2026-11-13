@@ -1,12 +1,12 @@
 {
-  "timestamp_ist": "2026-11-13T21:35:25.346482+05:30",
-  "price": 68450.1,
+  "timestamp_ist": "2026-11-13T22:06:46.739156+05:30",
+  "price": 68715.3,
   "bias": "bearish",
   "previous_review": {
     "had_previous": true,
     "grade": "Fail",
-    "previous_timestamp_ist": "2026-11-13T21:05:13.915115+05:30",
-    "previous_price": 68452.4,
+    "previous_timestamp_ist": "2026-11-13T22:05:21.387815+05:30",
+    "previous_price": 68720.3,
     "result": "Fail",
     "mistake": "stop_hit",
     "lesson": "Stop level reached \u2014 Fail.",
@@ -26,13 +26,13 @@
         "grade": "Fail",
         "mistake": "stop_hit",
         "pnl_usd": -10.11,
-        "path_high": 68828.0,
-        "path_low": 68443.6
+        "path_high": 70190.1,
+        "path_low": 67500.0
       }
     ],
     "detail": "SHORT \u2192 Fail",
     "performance": {
-      "updated_ist": "2026-11-13T21:35:25.326843+05:30",
+      "updated_ist": "2026-11-13T22:06:46.720395+05:30",
       "rules": {
         "notional_usd": 1000.0,
         "stop_loss_pct": 0.01,
@@ -40,53 +40,39 @@
         "grade": "Pass or Fail only (no partial)"
       },
       "today": {
-        "trades": 3,
+        "trades": 5,
         "pass": 1,
-        "fail": 2,
-        "pnl_usd": -0.43,
+        "fail": 4,
+        "pnl_usd": -20.65,
         "total_profit_usd": 20.0,
-        "total_loss_usd": -20.43
+        "total_loss_usd": -40.65
       },
       "week": {
-        "trades": 4,
+        "trades": 6,
         "pass": 2,
-        "fail": 2,
-        "pnl_usd": 18.84,
+        "fail": 4,
+        "pnl_usd": -1.38,
         "total_profit_usd": 39.27,
-        "total_loss_usd": -20.43
+        "total_loss_usd": -40.65
       },
       "month": {
-        "trades": 4,
+        "trades": 6,
         "pass": 2,
-        "fail": 2,
-        "pnl_usd": 18.84,
+        "fail": 4,
+        "pnl_usd": -1.38,
         "total_profit_usd": 39.27,
-        "total_loss_usd": -20.43
+        "total_loss_usd": -40.65
       },
       "all_time": {
-        "trades": 4,
+        "trades": 6,
         "pass": 2,
-        "fail": 2,
-        "pnl_usd": 18.84,
+        "fail": 4,
+        "pnl_usd": -1.38,
         "total_profit_usd": 39.27,
-        "total_loss_usd": -20.43
+        "total_loss_usd": -40.65
       }
     }
   },
   "waiting_prev": false,
-  "signals": [
-    {
-      "side": "SHORT",
-      "entry": 67432.0,
-      "stop_loss": 68106.0,
-      "take_profit": 66083.0,
-      "qty": 0.015
-    }
-  ],
-  "delta_demo": {
-    "ok": false,
-    "skipped": true,
-    "reason": "delta_position_already_open",
-    "position_size": -15
-  }
+  "signals": []
 }

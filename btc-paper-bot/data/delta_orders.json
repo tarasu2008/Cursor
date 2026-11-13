@@ -1,5 +1,5 @@
 {
-  "updated_ist": "2026-11-13T21:35:54.418107+05:30",
+  "updated_ist": "2026-11-13T22:06:46.952693+05:30",
   "venue": "delta_demo",
   "base_url": "https://cdn-ind.testnet.deltaex.org",
   "status": "flat",
@@ -12,13 +12,13 @@
     "notional_usd": 1000
   },
   "order": {
-    "id": 2178171924,
-    "client_order_id": "btc-paper-sell-1794584113",
+    "id": 2178180659,
+    "client_order_id": "btc-paper-sell-1794587721",
     "side": "sell",
     "size_contracts": 15,
     "contract_value_btc": 0.001,
     "limit_price": "67432",
-    "average_fill_price": "68453",
+    "average_fill_price": "68760",
     "state": "closed",
     "product_symbol": "BTCUSD",
     "product_id": 84,
@@ -28,5 +28,5 @@
   "position": {
     "size": 0
   },
-  "close_reason": "paper_Fail_sync_close"
+  "close_reason": "paper_Fail"
 }

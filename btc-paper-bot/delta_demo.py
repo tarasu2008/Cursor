@@ -142,6 +142,16 @@ def position_size() -> int | None:
         return None
 
 
+def _mark_price() -> float | None:
+    try:
+        with urllib.request.urlopen(BASE_URL + f"/v2/tickers/{PRODUCT_SYMBOL}", timeout=15) as r:
+            data = json.loads(r.read().decode())
+        res = data.get("result") or {}
+        return float(res.get("mark_price") or res.get("close") or 0) or None
+    except Exception:
+        return None
+
+
 def place_ticket(
     *,
     side: str,
@@ -155,13 +165,23 @@ def place_ticket(
         return {"ok": False, "error": "missing_DELTA_API_KEY_or_SECRET"}
 
     label = str(side).upper()
-    api_side = "sell" if label in {"SHORT", "SELL"} else "buy"
+    if label in {"SHORT", "SELL"}:
+        label = "SHORT"
+        api_side = "sell"
+    else:
+        label = "LONG"
+        api_side = "buy"
     size = contracts_for_qty_btc(qty_btc)
     client_id = f"btc-paper-{api_side}-{int(time.time())}"
 
     prev = load_delta_state()
     if prev.get("status") == "open" and _same_ticket(prev.get("analysis"), label, entry, stop_loss, take_profit):
         return {"ok": True, "skipped": True, "reason": "same_ticket_already_open", "state": prev}
+
+    # Do not re-bid a ticket that just failed (same side/entry/SL/TP).
+    if prev.get("close_reason") in {"paper_Fail", "paper_Fail_sync_close", "invalid_reentry_fill_above_sl"}:
+        if _same_ticket(prev.get("analysis"), label, entry, stop_loss, take_profit):
+            return {"ok": True, "skipped": True, "reason": "same_ticket_just_failed"}
 
     pos = position_size()
     if pos is not None and pos != 0:
@@ -171,6 +191,26 @@ def place_ticket(
             "reason": "delta_position_already_open",
             "position_size": pos,
         }
+
+    mark = _mark_price()
+    if mark is not None:
+        # Limit sells above market fill immediately near mark — SL must stay valid vs mark.
+        if label == "SHORT" and stop_loss <= mark:
+            return {
+                "ok": False,
+                "skipped": True,
+                "reason": "sl_already_invalid_vs_mark",
+                "mark": mark,
+                "stop_loss": stop_loss,
+            }
+        if label == "LONG" and stop_loss >= mark:
+            return {
+                "ok": False,
+                "skipped": True,
+                "reason": "sl_already_invalid_vs_mark",
+                "mark": mark,
+                "stop_loss": stop_loss,
+            }
 
     order = {
         "product_id": PRODUCT_ID,
@@ -255,13 +295,41 @@ def mark_flat(reason: str) -> None:
     save_delta_state(st)
 
 
+def close_position_market() -> dict[str, Any]:
+    """Reduce-only market close of BTCUSD demo position."""
+    psz = position_size()
+    if psz is None:
+        return {"ok": False, "error": "position_unknown"}
+    if psz == 0:
+        mark_flat("already_flat")
+        return {"ok": True, "skipped": True, "reason": "already_flat"}
+    side = "buy" if psz < 0 else "sell"
+    order = {
+        "product_id": PRODUCT_ID,
+        "product_symbol": PRODUCT_SYMBOL,
+        "size": abs(int(psz)),
+        "side": side,
+        "order_type": "market_order",
+        "reduce_only": True,
+        "client_order_id": f"btc-paper-close-{int(time.time())}",
+    }
+    st, body = call("POST", "/v2/orders", body=order)
+    if st == 200 and isinstance(body, dict) and body.get("success"):
+        mark_flat("force_close")
+        return {"ok": True, "raw": body.get("result")}
+    return {"ok": False, "http": st, "error": body}
+
+
 def sync_after_paper_grade(grade: str | None) -> None:
-    """When paper Pass/Fail, mark local Delta state flat (brackets should have closed)."""
+    """When paper Pass/Fail, flatten Delta demo if a leftover position remains."""
     if grade not in {"Pass", "Fail"}:
         return
-    st = load_delta_state()
-    if st.get("status") != "open":
-        return
     psz = position_size()
-    if psz == 0 or psz is None:
+    if psz is None:
+        return
+    if psz == 0:
         mark_flat(f"paper_{grade}")
+        return
+    # Brackets can go missing; force-close so the cycle does not stack.
+    close_position_market()
+    mark_flat(f"paper_{grade}_force_close")

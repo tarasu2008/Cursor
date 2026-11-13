@@ -1295,6 +1295,37 @@ def main() -> None:
     out = LOG_DIR / f"report_{args.session}_{ist_now().strftime('%Y%m%d_%H%M%S')}.json"
     out.write_text(json.dumps(report, indent=2))
     grade = (report.get("previous_review") or {}).get("grade")
+    px = float(report.get("price") or 0)
+
+    def _ticket_valid(t: dict[str, Any]) -> bool:
+        """Drop stale re-entries and tickets whose SL is already invalid at market."""
+        try:
+            side = str(t.get("side", "")).lower()
+            entry = float(t["price"])
+            sl = float(t["stop_loss"])
+        except Exception:
+            return False
+        if side in {"sell", "short"} and px and sl <= px:
+            return False
+        if side in {"buy", "long"} and px and sl >= px:
+            return False
+        # No re-entry of the idea that just failed this run.
+        rev = report.get("previous_review") or {}
+        if grade == "Fail":
+            for r in rev.get("reviews") or []:
+                if (
+                    str(r.get("side", "")).upper() in {str(t.get("side", "")).upper(), "SHORT" if side in {"sell", "short"} else "LONG"}
+                    and abs(float(r.get("entry", 0)) - entry) < 1.0
+                    and r.get("grade") == "Fail"
+                ):
+                    return False
+        return True
+
+    # Strip invalid next tickets before alert / Delta bid / active_trade save.
+    if report.get("tv_ticket"):
+        report["tv_ticket"] = [t for t in report["tv_ticket"] if _ticket_valid(t)]
+        if not report["tv_ticket"]:
+            report["proposals"] = []
 
     # Hourly cycle:
     # - Open → silent, keep watching previous ticket (no stack).
