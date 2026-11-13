@@ -1,8 +1,8 @@
 {
-  "updated_ist": "2026-11-13T21:05:16.191251+05:30",
+  "updated_ist": "2026-11-13T21:35:54.418107+05:30",
   "venue": "delta_demo",
   "base_url": "https://cdn-ind.testnet.deltaex.org",
-  "status": "open",
+  "status": "flat",
   "analysis": {
     "side": "SHORT",
     "entry": 67432.0,
@@ -26,6 +26,7 @@
     "bracket_take_profit_price": "66083"
   },
   "position": {
-    "size": -15
-  }
+    "size": 0
+  },
+  "close_reason": "paper_Fail_sync_close"
 }
