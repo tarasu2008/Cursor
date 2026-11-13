@@ -76,6 +76,12 @@ FURRY_A_LEN = 9
 FURRY_B_LEN = 21
 FURRY_MA_TYPE = "EMA"  # EMA | SMA | RMA | WMA
 
+# Extra BTC frameworks (pine in indicators/ + Python in extra_indicators.py)
+USE_EXTRA_INDICATORS = True
+MIN_ADX = 18.0           # Triple Confluence ADX filter
+MIN_Q_FOR_TRADE = 0.45   # Q Trend Quality: skip ultra-choppy if below
+BLOCK_CHOPPY_Q = True    # if Q choppy and ADX weak → prefer FLAT
+
 FALLBACK = {
     "deep_target": 65_000.0,
 }
@@ -96,3 +102,5 @@ FALLBACK = {
 # 11) Do not require limit fill to grade TP/SL (12 Nov morning SHORT = Pass).
 # 12) No email spam: silent checks must not commit/push/update PR.
 # 13) Furry A (9) / Furry B (21) EMA cloud + cross — confluence for LONG/SHORT.
+# 14) Extra frameworks: Supertrend, ADX, Q quality, MACD+SMA200, CDC Action Zone,
+#     multi-EMA suite, TrueMarket mean proxy — see indicators/*.pine.

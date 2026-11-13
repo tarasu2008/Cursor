@@ -34,8 +34,12 @@ from rules import (
     MAX_ENTRY_DISTANCE_PCT,
     ALERT_TITLE,
     USE_FURRY_AB,
+    USE_EXTRA_INDICATORS,
+    MIN_ADX,
+    BLOCK_CHOPPY_Q,
 )
 from furry import furry_state
+from extra_indicators import suite as indicator_suite
 
 ROOT = Path(__file__).resolve().parent
 STATE_PATH = ROOT / "data" / "orders_state.json"
@@ -520,6 +524,10 @@ def analyze(session: str) -> dict[str, Any]:
     furry_d = furry_state(d_closes) if USE_FURRY_AB else {}
     furry_h1 = furry_state(h1_closes) if USE_FURRY_AB else {}
 
+    # Extra frameworks: Supertrend / ADX / Q / CDC / MACD+SMA200 / EMA suite / TrueMarket
+    ind_d = indicator_suite(daily, d_closes) if USE_EXTRA_INDICATORS else {}
+    ind_h1 = indicator_suite(h1, h1_closes) if USE_EXTRA_INDICATORS else {}
+
     bias = "range"
     if px < e20 and px < e50 and (daily_rsi < 45 or lower_highs):
         bias = "bearish"
@@ -536,6 +544,16 @@ def analyze(session: str) -> dict[str, Any]:
         elif furry_d.get("bullish_cloud") is False and furry_h1.get("bullish_cloud") is False:
             bias = "bearish"
 
+    # Reinforce with Supertrend + CDC + SMA200 when available
+    if USE_EXTRA_INDICATORS:
+        st = ind_d.get("supertrend") or {}
+        cdc = ind_d.get("cdc") or {}
+        ms = ind_d.get("macd_sma200") or {}
+        if st.get("flip_bear") or (cdc.get("score", 0) <= -2 and not ms.get("above_sma200")):
+            bias = "bearish"
+        elif st.get("flip_bull") or (cdc.get("score", 0) >= 2 and ms.get("above_sma200")):
+            bias = "bullish"
+
     in_mid = MIDRANGE_NO_TRADE and (day_low + 0.25 * (day_high - day_low)) < px < (
         day_low + 0.75 * (day_high - day_low)
     )
@@ -544,6 +562,27 @@ def analyze(session: str) -> dict[str, Any]:
 
     notes: list[str] = []
     proposals: list[OrderProposal] = []
+    choppy_block = False
+    if USE_EXTRA_INDICATORS:
+        q = (ind_d.get("q") or {})
+        adx_d = (ind_d.get("adx") or {})
+        st = ind_d.get("supertrend") or {}
+        cdc = ind_d.get("cdc") or {}
+        ms = ind_d.get("macd_sma200") or {}
+        esu = ind_d.get("ema_suite") or {}
+        tm = ind_d.get("truemarket") or {}
+        notes.append(
+            f"ST={'bull' if st.get('bullish') else 'bear'}@{st.get('value')} | "
+            f"ADX={adx_d.get('adx')} trending={adx_d.get('trending')} | "
+            f"Q={q.get('q')} | CDC={cdc.get('zone')} | "
+            f"SMA200={'above' if ms.get('above_sma200') else 'below'} | "
+            f"EMA_suite={'bull' if esu.get('aligned_bull') else ('bear' if esu.get('aligned_bear') else 'chop')} | "
+            f"TM={'accum' if tm.get('accum') else ('distrib' if tm.get('distrib') else 'mid')}"
+        )
+        if BLOCK_CHOPPY_Q and q.get("choppy") and not adx_d.get("trending"):
+            choppy_block = True
+            notes.append("Q choppy + weak ADX → prefer FLAT (noise filter).")
+
     if USE_FURRY_AB and furry_d.get("furry_a") is not None:
         cloud = "bull" if furry_d.get("bullish_cloud") else "bear"
         cross = (
@@ -591,6 +630,24 @@ def analyze(session: str) -> dict[str, Any]:
             factors.append("furry_bear_cross")
         if USE_FURRY_AB and furry_h1.get("bear_cross"):
             factors.append("furry_h1_bear_cross")
+        if USE_EXTRA_INDICATORS:
+            st = ind_d.get("supertrend") or {}
+            adx_d = ind_d.get("adx") or {}
+            cdc = ind_d.get("cdc") or {}
+            ms = ind_d.get("macd_sma200") or {}
+            esu = ind_d.get("ema_suite") or {}
+            if not st.get("bullish"):
+                factors.append("supertrend_bear")
+            if adx_d.get("trending") and (adx_d.get("adx") or 0) >= MIN_ADX:
+                factors.append("adx_trend")
+            if (ind_d.get("q") or {}).get("strong"):
+                factors.append("q_strong")
+            if (cdc.get("score") or 0) < 0:
+                factors.append("cdc_sell_zone")
+            if not ms.get("above_sma200"):
+                factors.append("below_sma200")
+            if esu.get("aligned_bear"):
+                factors.append("ema_suite_bear")
 
         stop = structure_stop("sell", entry, max(day_high, entry), daily_atr)
         swing_tp = min(day_low, swing_low_30)
@@ -744,6 +801,26 @@ def analyze(session: str) -> dict[str, Any]:
             factors.append("furry_bull_cross")
         if USE_FURRY_AB and furry_h1.get("bull_cross"):
             factors.append("furry_h1_bull_cross")
+        if USE_EXTRA_INDICATORS:
+            st = ind_d.get("supertrend") or {}
+            adx_d = ind_d.get("adx") or {}
+            cdc = ind_d.get("cdc") or {}
+            ms = ind_d.get("macd_sma200") or {}
+            esu = ind_d.get("ema_suite") or {}
+            if st.get("bullish"):
+                factors.append("supertrend_bull")
+            if adx_d.get("trending") and (adx_d.get("adx") or 0) >= MIN_ADX:
+                factors.append("adx_trend")
+            if (ind_d.get("q") or {}).get("strong"):
+                factors.append("q_strong")
+            if (cdc.get("score") or 0) > 0:
+                factors.append("cdc_buy_zone")
+            if ms.get("above_sma200"):
+                factors.append("above_sma200")
+            if esu.get("aligned_bull"):
+                factors.append("ema_suite_bull")
+            if (ind_d.get("truemarket") or {}).get("accum"):
+                factors.append("tm_accum")
         rr = risk_reward("buy", entry, stop, tp)
         if len(factors) >= MIN_CONFLUENCE and valid_ticket("buy", entry, stop, tp) and entry >= px:
             proposals.append(
@@ -834,6 +911,9 @@ def analyze(session: str) -> dict[str, Any]:
     if waiting_prev:
         chosen = []
         notes.insert(0, "SILENT: previous still Open — leave it; no new LONG/SHORT until Pass or Fail.")
+    if choppy_block and chosen:
+        notes.append("Cleared tickets due to choppy Q / weak ADX filter.")
+        chosen = []
 
     # Auto-invalidate stale tracked ideas
     state = load_state()
@@ -878,6 +958,15 @@ def analyze(session: str) -> dict[str, Any]:
             "lower_lows": lower_lows,
             "furry_daily": furry_d if USE_FURRY_AB else None,
             "furry_h1": furry_h1 if USE_FURRY_AB else None,
+            "indicators_daily": ind_d if USE_EXTRA_INDICATORS else None,
+            "indicators_h1": {
+                "supertrend": (ind_h1.get("supertrend") if ind_h1 else None),
+                "adx": (ind_h1.get("adx") if ind_h1 else None),
+                "q": (ind_h1.get("q") if ind_h1 else None),
+                "cdc": (ind_h1.get("cdc") if ind_h1 else None),
+            }
+            if USE_EXTRA_INDICATORS
+            else None,
         },
         "in_midrange": in_mid,
         "waiting_prev": waiting_prev,
@@ -888,6 +977,11 @@ def analyze(session: str) -> dict[str, Any]:
             "C_reclaim_long",
             "D_dip_demand",
             "E_furry_ab_cloud_cross",
+            "F_supertrend_adx_q",
+            "G_macd_sma200",
+            "H_cdc_action_zone",
+            "I_multi_ema_suite",
+            "J_truemarket_mean",
         ],
         "filters": {
             "min_rr": MIN_RR,

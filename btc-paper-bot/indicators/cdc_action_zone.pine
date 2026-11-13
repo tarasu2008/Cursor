@@ -1,0 +1,26 @@
+//@version=6
+indicator("CDC Action Zone", overlay=true)
+
+fastLen = input.int(12, "Fast EMA")
+slowLen = input.int(26, "Slow EMA")
+ef = ta.ema(close, fastLen)
+es = ta.ema(close, slowLen)
+
+// Classic CDC Action Zone color logic (simplified)
+bull = ef > es
+priceAboveFast = close > ef
+priceBelowFast = close < ef
+
+// Zones: green (strong buy), blue (weak buy), red (strong sell), orange (weak sell)
+zone = bull ? (priceAboveFast ? 2 : 1) : (priceBelowFast ? -2 : -1)
+col = zone == 2 ? color.new(#00C853, 0) : zone == 1 ? color.new(#82B1FF, 0) : zone == -2 ? color.new(#D50000, 0) : color.new(#FF6D00, 0)
+
+plot(ef, "EMA Fast", color=color.new(#26A69A, 0))
+plot(es, "EMA Slow", color=color.new(#AB47BC, 0))
+barcolor(col)
+
+plotshape(ta.crossover(ef, es), "CDC Bull", shape.circle, location.belowbar, color.new(#00C853, 0), size=size.tiny)
+plotshape(ta.crossunder(ef, es), "CDC Bear", shape.circle, location.abovebar, color.new(#D50000, 0), size=size.tiny)
+
+alertcondition(ta.crossover(ef, es), "CDC Bull Cross", "CDC Action Zone bullish cross")
+alertcondition(ta.crossunder(ef, es), "CDC Bear Cross", "CDC Action Zone bearish cross")
