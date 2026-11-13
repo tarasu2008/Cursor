@@ -1,38 +1,18 @@
 {
-  "timestamp_ist": "2026-11-13T16:05:08.248229+05:30",
-  "price": 69227.2,
+  "timestamp_ist": "2026-11-13T17:05:22.745629+05:30",
+  "price": 69133.8,
   "bias": "bearish",
   "previous_review": {
-    "had_previous": true,
-    "grade": "Open",
-    "previous_timestamp_ist": "2026-11-13T09:00:17.408026+05:30",
-    "previous_price": 69276.1,
-    "result": "Open",
+    "had_previous": false,
+    "grade": "\u2014",
+    "result": "none",
     "mistake": null,
     "lesson": null,
     "adjustment": null,
     "pnl_usd": 0.0,
-    "atr_stop_mult_now": 1.0,
-    "reviews": [
-      {
-        "side": "SHORT",
-        "entry": 68813.0,
-        "stop_loss": 69501.0,
-        "take_profit": 67437.0,
-        "qty": 0.015,
-        "filled": true,
-        "hit_sl": false,
-        "hit_tp": false,
-        "grade": "Open",
-        "mistake": null,
-        "pnl_usd": 0.0,
-        "path_high": 69422.3,
-        "path_low": 67500.0
-      }
-    ],
-    "detail": "SHORT \u2192 Open",
+    "detail": "Previous was FLAT.",
     "performance": {
-      "updated_ist": "2026-11-13T16:05:08.229647+05:30",
+      "updated_ist": "2026-11-13T17:05:22.729616+05:30",
       "rules": {
         "notional_usd": 1000.0,
         "stop_loss_pct": 0.01,
@@ -40,31 +20,31 @@
         "grade": "Pass or Fail only (no partial)"
       },
       "today": {
-        "trades": 1,
+        "trades": 2,
         "pass": 1,
-        "fail": 0,
-        "pnl_usd": 20.0
+        "fail": 1,
+        "pnl_usd": 9.68
       },
       "week": {
-        "trades": 2,
+        "trades": 3,
         "pass": 2,
-        "fail": 0,
-        "pnl_usd": 39.27
+        "fail": 1,
+        "pnl_usd": 28.95
       },
       "month": {
-        "trades": 2,
+        "trades": 3,
         "pass": 2,
-        "fail": 0,
-        "pnl_usd": 39.27
+        "fail": 1,
+        "pnl_usd": 28.95
       },
       "all_time": {
-        "trades": 2,
+        "trades": 3,
         "pass": 2,
-        "fail": 0,
-        "pnl_usd": 39.27
+        "fail": 1,
+        "pnl_usd": 28.95
       }
     }
   },
-  "waiting_prev": true,
+  "waiting_prev": false,
   "signals": []
 }

@@ -1,5 +1,5 @@
 {
-  "updated_ist": "2026-11-13T16:35:36.833939+05:30",
+  "updated_ist": "2026-11-13T17:05:37.047323+05:30",
   "venue": "delta_demo",
   "base_url": "https://cdn-ind.testnet.deltaex.org",
   "analysis": {
@@ -23,8 +23,8 @@
     "product_id": 84
   },
   "position": {
-    "size": -15,
-    "entry_price": 69278.0
+    "size": 0,
+    "entry_price": null
   },
   "brackets": [
     {
@@ -43,5 +43,7 @@
       "stop_price": "69501",
       "state": "pending"
     }
-  ]
+  ],
+  "status": "closed_after_fail",
+  "note": "Paper Fail (SL); Delta demo position size 0"
 }
