@@ -33,7 +33,9 @@ from rules import (
     MAX_ENTRY_DISTANCE_ATR,
     MAX_ENTRY_DISTANCE_PCT,
     ALERT_TITLE,
+    USE_FURRY_AB,
 )
+from furry import furry_state
 
 ROOT = Path(__file__).resolve().parent
 STATE_PATH = ROOT / "data" / "orders_state.json"
@@ -514,11 +516,25 @@ def analyze(session: str) -> dict[str, Any]:
     lower_highs = len(recent_ph) >= 2 and recent_ph[-1] < recent_ph[-2]
     lower_lows = len(recent_pl) >= 2 and recent_pl[-1] < recent_pl[-2]
 
+    # Furry A/B (pine EMA 9/21 by default) on daily + 1H
+    furry_d = furry_state(d_closes) if USE_FURRY_AB else {}
+    furry_h1 = furry_state(h1_closes) if USE_FURRY_AB else {}
+
     bias = "range"
     if px < e20 and px < e50 and (daily_rsi < 45 or lower_highs):
         bias = "bearish"
     elif px > e20 and px > e50 and (daily_rsi > 55 or not lower_lows):
         bias = "bullish"
+    # Furry cloud can reinforce bias (does not override strong EMA structure alone)
+    if USE_FURRY_AB and furry_d.get("bear_cross"):
+        bias = "bearish"
+    elif USE_FURRY_AB and furry_d.get("bull_cross"):
+        bias = "bullish"
+    elif USE_FURRY_AB and bias == "range":
+        if furry_d.get("bullish_cloud") and furry_h1.get("bullish_cloud"):
+            bias = "bullish"
+        elif furry_d.get("bullish_cloud") is False and furry_h1.get("bullish_cloud") is False:
+            bias = "bearish"
 
     in_mid = MIDRANGE_NO_TRADE and (day_low + 0.25 * (day_high - day_low)) < px < (
         day_low + 0.75 * (day_high - day_low)
@@ -528,6 +544,18 @@ def analyze(session: str) -> dict[str, Any]:
 
     notes: list[str] = []
     proposals: list[OrderProposal] = []
+    if USE_FURRY_AB and furry_d.get("furry_a") is not None:
+        cloud = "bull" if furry_d.get("bullish_cloud") else "bear"
+        cross = (
+            "bull_cross"
+            if furry_d.get("bull_cross")
+            else ("bear_cross" if furry_d.get("bear_cross") else "no_cross")
+        )
+        notes.append(
+            f"Furry D A={furry_d['furry_a']} B={furry_d['furry_b']} cloud={cloud} {cross} | "
+            f"H1 A={furry_h1.get('furry_a')} B={furry_h1.get('furry_b')} "
+            f"cloud={'bull' if furry_h1.get('bullish_cloud') else 'bear'}"
+        )
 
     # --- Strategy A: supply rejection short (confluence scored) ---
     if PREFER_SHORT_AT_SUPPLY and bias in {"bearish", "range"}:
@@ -557,6 +585,12 @@ def analyze(session: str) -> dict[str, Any]:
             factors.append("h1_rsi_bounce")
         if vol_spike and today["c"] < today["o"]:
             factors.append("vol_sell_day")
+        if USE_FURRY_AB and not furry_d.get("bullish_cloud"):
+            factors.append("furry_bear_cloud")
+        if USE_FURRY_AB and furry_d.get("bear_cross"):
+            factors.append("furry_bear_cross")
+        if USE_FURRY_AB and furry_h1.get("bear_cross"):
+            factors.append("furry_h1_bear_cross")
 
         stop = structure_stop("sell", entry, max(day_high, entry), daily_atr)
         swing_tp = min(day_low, swing_low_30)
@@ -613,6 +647,10 @@ def analyze(session: str) -> dict[str, Any]:
             factors.append("macd_h1_neg")
         if vol_spike:
             factors.append("vol_spike")
+        if USE_FURRY_AB and not furry_d.get("bullish_cloud"):
+            factors.append("furry_bear_cloud")
+        if USE_FURRY_AB and (furry_d.get("bear_cross") or furry_h1.get("bear_cross")):
+            factors.append("furry_bear_cross")
         rr = risk_reward("sell", entry, stop, tp)
         if len(factors) >= MIN_CONFLUENCE and valid_ticket("sell", entry, stop, tp):
             proposals.append(
@@ -648,6 +686,10 @@ def analyze(session: str) -> dict[str, Any]:
                 factors.append("macd_h1_neg")
             if macd_d < 0:
                 factors.append("macd_daily_neg")
+            if USE_FURRY_AB and not furry_d.get("bullish_cloud"):
+                factors.append("furry_bear_cloud")
+            if USE_FURRY_AB and (furry_d.get("bear_cross") or furry_h1.get("bear_cross")):
+                factors.append("furry_bear_cross")
             rr = risk_reward("sell", entry, stop, tp)
             if len(factors) >= MIN_CONFLUENCE and valid_ticket("sell", entry, stop, tp):
                 proposals.append(
@@ -696,6 +738,12 @@ def analyze(session: str) -> dict[str, Any]:
             factors.append("h1_rsi_reset")
         if px > e200:
             factors.append("above_ema200")
+        if USE_FURRY_AB and furry_d.get("bullish_cloud"):
+            factors.append("furry_bull_cloud")
+        if USE_FURRY_AB and furry_d.get("bull_cross"):
+            factors.append("furry_bull_cross")
+        if USE_FURRY_AB and furry_h1.get("bull_cross"):
+            factors.append("furry_h1_bull_cross")
         rr = risk_reward("buy", entry, stop, tp)
         if len(factors) >= MIN_CONFLUENCE and valid_ticket("buy", entry, stop, tp) and entry >= px:
             proposals.append(
@@ -828,6 +876,8 @@ def analyze(session: str) -> dict[str, Any]:
             "vol_spike": vol_spike,
             "lower_highs": lower_highs,
             "lower_lows": lower_lows,
+            "furry_daily": furry_d if USE_FURRY_AB else None,
+            "furry_h1": furry_h1 if USE_FURRY_AB else None,
         },
         "in_midrange": in_mid,
         "waiting_prev": waiting_prev,
@@ -837,6 +887,7 @@ def analyze(session: str) -> dict[str, Any]:
             "B_breakdown_confirm",
             "C_reclaim_long",
             "D_dip_demand",
+            "E_furry_ab_cloud_cross",
         ],
         "filters": {
             "min_rr": MIN_RR,

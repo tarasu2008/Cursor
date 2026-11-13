@@ -18,6 +18,7 @@ Locked in `rules.py`. Change only when the user explicitly asks.
 13. **One ticket only** at a time (never SHORT+LONG together).
 14. Session timers (India/UK/US) optional; 30-min timer is required for Pass/Fail watching.
 15. No mid-range chase; protect open orders; prefer supply shorts / confirmed breakdowns.
+16. **Furry A & Furry B** (EMA 9/21): use cloud + cross in confluence (`indicators/furry_ab.pine`).
 
 ## Manual
 - `python3 btc-paper-bot/analyze.py --simple --show` → force current ticket view.

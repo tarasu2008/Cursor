@@ -70,6 +70,12 @@ DEFAULT_REWARD_R = TAKE_PROFIT_PCT / STOP_LOSS_PCT
 MAX_ENTRY_DISTANCE_ATR = 1.0
 MAX_ENTRY_DISTANCE_PCT = 0.02
 
+# Furry A & Furry B (pine: indicators/furry_ab.pine) — use in confluence when useful.
+USE_FURRY_AB = True
+FURRY_A_LEN = 9
+FURRY_B_LEN = 21
+FURRY_MA_TYPE = "EMA"  # EMA | SMA | RMA | WMA
+
 FALLBACK = {
     "deep_target": 65_000.0,
 }
@@ -89,3 +95,4 @@ FALLBACK = {
 # 10) Every 30 min: check BTC + PREV status; silent while Open; alert on Pass/Fail then next order.
 # 11) Do not require limit fill to grade TP/SL (12 Nov morning SHORT = Pass).
 # 12) No email spam: silent checks must not commit/push/update PR.
+# 13) Furry A (9) / Furry B (21) EMA cloud + cross — confluence for LONG/SHORT.
