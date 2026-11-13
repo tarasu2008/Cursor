@@ -49,6 +49,7 @@ USE_LONG_SHORT_LABELS = True
 # 15) Never reply "waiting" / never block the chat — silent leave while Open.
 # 16) No email/notification spam: on STATUS:SILENT do not commit, push, or update PR.
 # 17) Pass/Fail by TP/SL price levels traded after signal — do not require limit fill.
+# 18) When PREV becomes Pass or Fail → immediately analyze again and propose next order.
 
 ALLOW_1H_TRADES = True
 HOURLY_RECHECK = True
@@ -58,6 +59,7 @@ WAIT_FOR_PREV_BEFORE_NEW = True
 HOURLY_SILENT_IF_OPEN = True
 SILENT_LEAVE_IF_OPEN = True  # no "waiting" messages
 NO_EMAIL_ON_SILENT = True  # no git push / PR update / chat noise while Open
+IMMEDIATE_REANALYZE_ON_CLOSE = True  # after Pass/Fail, propose next order same run
 
 # Risk model (ATR used for structure confluence; ticket SL/TP use fixed % when enabled)
 ATR_STOP_MULT = 1.0

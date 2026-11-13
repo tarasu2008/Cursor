@@ -29,6 +29,7 @@ from rules import (
     ALERT_ONLY_ON_PASS_FAIL,
     WAIT_FOR_PREV_BEFORE_NEW,
     HOURLY_SILENT_IF_OPEN,
+    IMMEDIATE_REANALYZE_ON_CLOSE,
 )
 
 ROOT = Path(__file__).resolve().parent
@@ -567,8 +568,8 @@ def analyze(session: str) -> dict[str, Any]:
             len(factors) >= MIN_CONFLUENCE
             and valid_ticket("sell", entry, stop, tp)
             and entry > px
-            # Entry must be near market (max ~1.5% or 0.75 ATR) — avoid stale far limits.
-            and (entry - px) < min(daily_atr * 0.75, entry * 0.015)
+            # Entry near market (max ~2% or 1.0 ATR) — avoid stale far EMA limits.
+            and (entry - px) < min(daily_atr * 1.0, entry * 0.02)
         ):
             proposals.append(
                 OrderProposal(
@@ -634,10 +635,45 @@ def analyze(session: str) -> dict[str, Any]:
         stop = structure_stop("sell", entry, day_high, daily_atr)
         tp = round(min(FALLBACK["deep_target"], entry - MIN_RR * max(stop - entry, 1)), 0)
         stop, tp = apply_ticket_risk("sell", entry, stop, tp)
-        notes.append(
-            f"Pending breakdown under {break_level:.0f} → limit {entry} SL {stop} TP {tp} "
-            f"(wait for 1H close; not active yet)"
-        )
+        # If price is pressing the swing, place next SHORT now (esp. after Pass/Fail close).
+        near_break = (px - break_level) <= max(daily_atr * 0.5, px * 0.01)
+        if near_break and IMMEDIATE_REANALYZE_ON_CLOSE:
+            factors = ["near_swing_low", "daily_bearish"]
+            if lower_lows:
+                factors.append("lower_lows")
+            if macd_h1 < 0:
+                factors.append("macd_h1_neg")
+            if macd_d < 0:
+                factors.append("macd_daily_neg")
+            rr = risk_reward("sell", entry, stop, tp)
+            if len(factors) >= MIN_CONFLUENCE and valid_ticket("sell", entry, stop, tp):
+                proposals.append(
+                    OrderProposal(
+                        idea_id=f"short-break-pending-{session}-{ist_now().strftime('%Y%m%d')}",
+                        side="sell",
+                        order_type="limit",
+                        entry=entry,
+                        stop=stop,
+                        take_profit=tp,
+                        qty=qty_for(entry),
+                        notional_usd=NOTIONAL_USD,
+                        reason="Next order: breakdown limit at swing while price presses lows.",
+                        session=session,
+                        confluence=len(factors),
+                        factors=factors,
+                        rr=round(rr, 2),
+                    )
+                )
+                notes.append(f"Breakdown limit ready {entry} SL {stop} TP {tp} RR {rr:.2f}")
+            else:
+                notes.append(
+                    f"Pending breakdown under {break_level:.0f} → limit {entry} SL {stop} TP {tp}"
+                )
+        else:
+            notes.append(
+                f"Pending breakdown under {break_level:.0f} → limit {entry} SL {stop} TP {tp} "
+                f"(wait for 1H close; not active yet)"
+            )
 
     # --- Strategy C: reclaim long ---
     reclaim = max(day_high, e20 if e20 > px else day_high)
@@ -713,9 +749,15 @@ def analyze(session: str) -> dict[str, Any]:
             )
             notes.append(f"Dip long {entry} SL {stop} TP {tp} RR {rr:.2f}")
 
-    # Rank by confluence then RR; keep best short + best long
-    shorts = sorted([p for p in proposals if p.side == "sell"], key=lambda p: (p.confluence, p.rr), reverse=True)
-    longs = sorted([p for p in proposals if p.side == "buy"], key=lambda p: (p.confluence, p.rr), reverse=True)
+    # Rank by confluence, then RR, then nearer-to-price entry (avoid far bounce limits after drops).
+    def _rank_short(p: OrderProposal) -> tuple:
+        return (p.confluence, p.rr, -abs(p.entry - px))
+
+    def _rank_long(p: OrderProposal) -> tuple:
+        return (p.confluence, p.rr, -abs(p.entry - px))
+
+    shorts = sorted([p for p in proposals if p.side == "sell"], key=_rank_short, reverse=True)
+    longs = sorted([p for p in proposals if p.side == "buy"], key=_rank_long, reverse=True)
     chosen: list[OrderProposal] = []
     if shorts:
         chosen.append(shorts[0])
@@ -850,6 +892,28 @@ def confirm_placed(state: dict[str, Any]) -> None:
     save_state(state)
 
 
+def _tickets_from_active() -> list[dict[str, Any]]:
+    """Fallback tickets from active_trade.json while PREV is Open."""
+    if not ACTIVE_TRADE_PATH.exists():
+        return []
+    try:
+        active = json.loads(ACTIVE_TRADE_PATH.read_text())
+    except Exception:
+        return []
+    out = []
+    for s in active.get("signals") or []:
+        out.append(
+            {
+                "side": s.get("side", "SHORT"),
+                "price": s.get("entry"),
+                "stop_loss": s.get("stop_loss"),
+                "take_profit": s.get("take_profit"),
+                "units": s.get("qty"),
+            }
+        )
+    return out
+
+
 def print_simple(report: dict[str, Any], *, force: bool = False) -> bool:
     """Cursor alert format. Returns True if an alert was printed.
 
@@ -894,6 +958,8 @@ def print_simple(report: dict[str, Any], *, force: bool = False) -> bool:
     )
 
     tickets = report.get("tv_ticket") or []
+    if not tickets and grade == "Open":
+        tickets = _tickets_from_active()
     if not tickets:
         print("FLAT")
         print("Entry: —")
@@ -1007,9 +1073,14 @@ def main() -> None:
     parser.add_argument("--status", action="store_true")
     parser.add_argument("--simple", action="store_true", help="Print Cursor alert when Pass/Fail (or new after close)")
     parser.add_argument(
+        "--show",
+        action="store_true",
+        help="Force Cursor alert even if PREV is Open (manual check)",
+    )
+    parser.add_argument(
         "--hourly",
         action="store_true",
-        help="Silent status check while Open; Cursor alert only on Pass/Fail",
+        help="Silent status check while Open; on Pass/Fail alert + next order",
     )
     parser.add_argument("--performance", action="store_true", help="Show Pass/Fail and PnL summary")
     args = parser.parse_args()
@@ -1041,26 +1112,35 @@ def main() -> None:
     out.write_text(json.dumps(report, indent=2))
     grade = (report.get("previous_review") or {}).get("grade")
 
-    # Hourly = status check only: never open a new ticket / active trade here.
-    if args.hourly:
+    # Hourly: silent while Open. On Pass/Fail keep next tickets (immediate re-analyze).
+    if args.hourly and grade == "Open":
         report["tv_ticket"] = []
         report["proposals"] = []
-        report["waiting_prev"] = grade == "Open"
+        report["waiting_prev"] = True
+    elif args.hourly and grade in {"Pass", "Fail"} and IMMEDIATE_REANALYZE_ON_CLOSE:
+        # Keep new LONG/SHORT from same run — do not strip tickets.
+        report["waiting_prev"] = False
+    elif args.hourly:
+        # Flat / no close this hour — do not open a fresh trade on silent hourly.
+        report["tv_ticket"] = []
+        report["proposals"] = []
 
     latest = save_latest_signal(report)
 
     if args.hourly:
-        # Alert ONLY on Pass/Fail. Otherwise silent leave (no new-trade spam).
         if grade in {"Pass", "Fail"}:
+            # Alert close + next order (if any)
             print_simple(report, force=True)
         else:
             print("STATUS:SILENT")
-    elif args.simple:
-        if HOURLY_SILENT_IF_OPEN and grade == "Open":
+    elif args.simple or args.show:
+        if args.show:
+            print_simple(report, force=True)
+        elif HOURLY_SILENT_IF_OPEN and grade == "Open":
             print("STATUS:SILENT")
         else:
-            # Sessions: alert on Pass/Fail, or new setup when no open prev (—)
-            force = grade in {"Pass", "Fail", "—", None}
+            # After Pass/Fail or when flat: show next ticket immediately
+            force = grade in {"Pass", "Fail", "—", None} or bool(report.get("tv_ticket"))
             printed = print_simple(report, force=bool(force))
             if not printed:
                 print("STATUS:SILENT")

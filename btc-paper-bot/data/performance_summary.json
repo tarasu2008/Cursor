@@ -1,5 +1,5 @@
 {
-  "updated_ist": "2026-11-12T21:36:02.319641+05:30",
+  "updated_ist": "2026-11-13T08:36:01.559679+05:30",
   "rules": {
     "notional_usd": 1000.0,
     "stop_loss_pct": 0.01,
@@ -7,10 +7,10 @@
     "grade": "Pass or Fail only (no partial)"
   },
   "today": {
-    "trades": 1,
-    "pass": 1,
+    "trades": 0,
+    "pass": 0,
     "fail": 0,
-    "pnl_usd": 19.27
+    "pnl_usd": 0
   },
   "week": {
     "trades": 1,
