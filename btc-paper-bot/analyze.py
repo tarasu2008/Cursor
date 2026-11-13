@@ -1309,16 +1309,29 @@ def main() -> None:
             return False
         if side in {"buy", "long"} and px and sl >= px:
             return False
-        # No re-entry of the idea that just failed this run.
+        # No re-entry of an idea that failed recently (this run or ledger).
         rev = report.get("previous_review") or {}
+        want = "SHORT" if side in {"sell", "short"} else "LONG"
         if grade == "Fail":
             for r in rev.get("reviews") or []:
                 if (
-                    str(r.get("side", "")).upper() in {str(t.get("side", "")).upper(), "SHORT" if side in {"sell", "short"} else "LONG"}
+                    str(r.get("side", "")).upper() == want
                     and abs(float(r.get("entry", 0)) - entry) < 1.0
                     and r.get("grade") == "Fail"
                 ):
                     return False
+        try:
+            from performance import _load_ledger
+
+            for row in (_load_ledger().get("trades") or [])[-12:]:
+                if (
+                    row.get("outcome") == "Fail"
+                    and str(row.get("side", "")).upper() == want
+                    and abs(float(row.get("entry", 0)) - entry) < 1.0
+                ):
+                    return False
+        except Exception:
+            pass
         return True
 
     # Strip invalid next tickets before alert / Delta bid / active_trade save.
