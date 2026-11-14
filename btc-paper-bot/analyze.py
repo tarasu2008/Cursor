@@ -43,11 +43,19 @@ from rules import (
     GRADE_BOTH_BY_FIRST_TOUCH,
     REQUIRE_LIMIT_RESTING,
     MIN_STOP_CLEAR_OF_RECENT_RANGE,
+    DEEP_LEARN_EVERY_TRADE,
+    FAIL_AUTO_FIX_THEN_BID,
 )
 from furry import furry_state
 from extra_indicators import suite as indicator_suite, tiered_targets
 from delta_demo import maybe_place_from_report, sync_after_paper_grade
-from learn import deep_review_closed_trade, brain_notes_for_next_trade
+from learn import (
+    deep_review_closed_trade,
+    brain_notes_for_next_trade,
+    apply_fail_fixes,
+    clear_runtime_fixes_on_pass,
+    load_runtime_fixes,
+)
 
 ROOT = Path(__file__).resolve().parent
 STATE_PATH = ROOT / "data" / "orders_state.json"
@@ -532,6 +540,7 @@ def invalidate_stale(state: dict[str, Any], px: float, atr14: float) -> list[str
 
 
 def analyze(session: str) -> dict[str, Any]:
+    global _active_atr_stop_mult
     daily = load_ohlc(1440)
     h1 = load_ohlc(60)
     h4 = load_ohlc(240)
@@ -627,6 +636,15 @@ def analyze(session: str) -> dict[str, Any]:
 
     notes: list[str] = []
     proposals: list[OrderProposal] = []
+    # Fail → auto-fix bumps apply to this analysis pass.
+    runtime = load_runtime_fixes()
+    conf_needed = MIN_CONFLUENCE + int(runtime.get("min_confluence_bump") or 0)
+    if runtime.get("active"):
+        _active_atr_stop_mult = max(_active_atr_stop_mult, float(runtime.get("atr_stop_mult") or 1.0))
+        notes.append(
+            f"FAIL-FIX applied: min_conf={conf_needed} atr_stop_mult={_active_atr_stop_mult} "
+            f"({runtime.get('reason')})"
+        )
     choppy_block = False
     if USE_EXTRA_INDICATORS:
         q = (ind_d.get("q") or {})
@@ -733,7 +751,7 @@ def analyze(session: str) -> dict[str, Any]:
 
         rr = risk_reward("sell", entry, stop, tp)
         if (
-            len(factors) >= MIN_CONFLUENCE
+            len(factors) >= conf_needed
             and valid_ticket("sell", entry, stop, tp)
             and entry > px
             # Entry near market — avoid stale far EMA limits (rules: MAX_ENTRY_*).
@@ -761,7 +779,7 @@ def analyze(session: str) -> dict[str, Any]:
             )
         else:
             notes.append(
-                f"Skipped supply short (conf={len(factors)}/{MIN_CONFLUENCE}, rr={rr:.2f}, valid={valid_ticket('sell', entry, stop, tp)})"
+                f"Skipped supply short (conf={len(factors)}/{conf_needed}, rr={rr:.2f}, valid={valid_ticket('sell', entry, stop, tp)})"
             )
 
     # --- Strategy B: breakdown short (only after 1H close under swing) ---
@@ -786,7 +804,7 @@ def analyze(session: str) -> dict[str, Any]:
             factors.append("furry_bear_cross")
         rr = risk_reward("sell", entry, stop, tp)
         stop_ok = (not MIN_STOP_CLEAR_OF_RECENT_RANGE) or (stop > recent_high)
-        if len(factors) >= MIN_CONFLUENCE and valid_ticket("sell", entry, stop, tp) and stop_ok:
+        if len(factors) >= conf_needed and valid_ticket("sell", entry, stop, tp) and stop_ok:
             proposals.append(
                 OrderProposal(
                     idea_id=f"short-break-{session}-{ist_now().strftime('%Y%m%d')}",
@@ -830,7 +848,7 @@ def analyze(session: str) -> dict[str, Any]:
             if USE_FURRY_AB and (furry_d.get("bear_cross") or furry_h1.get("bear_cross")):
                 factors.append("furry_bear_cross")
             rr = risk_reward("sell", entry, stop, tp)
-            if len(factors) >= MIN_CONFLUENCE and valid_ticket("sell", entry, stop, tp):
+            if len(factors) >= conf_needed and valid_ticket("sell", entry, stop, tp):
                 proposals.append(
                     OrderProposal(
                         idea_id=f"short-break-pending-{session}-{ist_now().strftime('%Y%m%d')}",
@@ -911,7 +929,7 @@ def analyze(session: str) -> dict[str, Any]:
             if ms.get("bull_impulse"):
                 factors.append("macd_sma200_bull")
         rr = risk_reward("buy", entry, stop, tp)
-        if len(factors) >= MIN_CONFLUENCE and valid_ticket("buy", entry, stop, tp) and entry >= px:
+        if len(factors) >= conf_needed and valid_ticket("buy", entry, stop, tp) and entry >= px:
             proposals.append(
                 OrderProposal(
                     idea_id=f"long-reclaim-{session}-{ist_now().strftime('%Y%m%d')}",
@@ -946,7 +964,7 @@ def analyze(session: str) -> dict[str, Any]:
         if h1_rsi < 35:
             factors.append("h1_oversold")
         rr = risk_reward("buy", entry, stop, tp)
-        if len(factors) >= MIN_CONFLUENCE and valid_ticket("buy", entry, stop, tp):
+        if len(factors) >= conf_needed and valid_ticket("buy", entry, stop, tp):
             proposals.append(
                 OrderProposal(
                     idea_id=f"long-dip-{session}-{ist_now().strftime('%Y%m%d')}",
@@ -1095,7 +1113,7 @@ def analyze(session: str) -> dict[str, Any]:
         ],
         "filters": {
             "min_rr": MIN_RR,
-            "min_confluence": MIN_CONFLUENCE,
+            "min_confluence": conf_needed,
             "atr_stop_mult": ATR_STOP_MULT,
         },
         "proposals": [asdict(p) for p in chosen],
@@ -1379,6 +1397,38 @@ def main() -> None:
         return
 
     report = analyze(args.session)
+    grade = (report.get("previous_review") or {}).get("grade")
+
+    # Fail → deep-fix already in review; apply runtime fixes and re-analyze once, then bid.
+    if (
+        FAIL_AUTO_FIX_THEN_BID
+        and grade == "Fail"
+        and DEEP_LEARN_EVERY_TRADE
+    ):
+        rev = report.get("previous_review") or {}
+        reviews = rev.get("reviews") or []
+        r0 = reviews[0] if reviews else {}
+        fixes = apply_fail_fixes(
+            mistake=rev.get("mistake"),
+            side=r0.get("side"),
+            entry=r0.get("entry"),
+            deep=r0.get("deep") if isinstance(r0.get("deep"), dict) else None,
+        )
+        report["fail_fixes"] = fixes
+        # Second pass with tighter filters for the next ticket.
+        report2 = analyze(args.session)
+        # Keep Fail review from first pass; take fresh tickets from second pass.
+        report2["previous_review"] = rev
+        report2["fail_fixes"] = fixes
+        report2["fail_fix_reanalyzed"] = True
+        report = report2
+        grade = "Fail"
+    elif grade == "Pass":
+        try:
+            clear_runtime_fixes_on_pass()
+        except Exception:
+            pass
+
     if args.propose:
         report = merge_proposals(state, report, force_replace=args.force_replace)
 
@@ -1483,6 +1533,12 @@ def main() -> None:
             print(f"DELTA DEMO: skipped ({dd.get('reason')})")
         elif not dd.get("ok"):
             print(f"DELTA DEMO: place failed — {dd.get('error') or dd}")
+        if report.get("fail_fix_reanalyzed"):
+            fx = report.get("fail_fixes") or {}
+            print(
+                f"FAIL-FIX: re-analyzed (conf+{fx.get('min_confluence_bump', 0)}, "
+                f"atr×{fx.get('atr_stop_mult', 1)}) then next bid attempt"
+            )
 
     if args.hourly:
         if grade in {"Pass", "Fail"} or report.get("tv_ticket"):

@@ -44,6 +44,11 @@ Locked in `rules.py` + this file. Change only when the user explicitly asks.
     - Next analysis **must** inject BRAIN notes / hard_rules before proposing a ticket.
     - Never forget prior mistakes; deepen analysis after each close before the next bid.
     - Agent timer: after Pass/Fail, deep-review findings stay in the Cursor alert lesson line.
+23. **On Fail → auto-fix → bid next (locked):**
+    - `FAIL_AUTO_FIX_THEN_BID=True`: after Fail, apply `runtime_fixes.json` (confluence bump,
+      ATR stop mult, block pending breakdown), **re-analyze**, then auto-bid the next
+      **valid** ticket on Delta DEMO (never the same failed entry).
+    - On Pass, ease temporary Fail bumps (hard_rules in brain stay forever).
 
 ## Manual
 - `python3 btc-paper-bot/analyze.py --simple --show` → force current ticket view.

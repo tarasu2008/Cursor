@@ -12,6 +12,7 @@ REMEMBERED ALERT RULES
 - After Pass/Fail → immediately propose next order
 - After new ticket → automatically bid Delta DEMO (same Entry/SL/TP); cycle repeats
 - After every Pass/Fail → deep-learn into lessons_brain.json; next trade uses hard_rules
+- On Fail → auto-fix runtime filters → re-analyze → bid next valid ticket (FAIL-FIX line)
 - Never forget Nov autopsy: no pending breakdown, resting limits, SL/TP from fill, first-touch grade
 
 Cursor alert

@@ -13,6 +13,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parent
 LESSONS_PATH = ROOT / "data" / "lessons_brain.json"
+RUNTIME_FIXES_PATH = ROOT / "data" / "runtime_fixes.json"
 IST = timezone(timedelta(hours=5, minutes=30))
 
 
@@ -161,4 +162,80 @@ def brain_notes_for_next_trade() -> list[str]:
         notes.append(f"BRAIN hard_rules({len(hard)}): {hard[-1]}")
     stats = f"BRAIN record P{brain.get('pass', 0)}/F{brain.get('fail', 0)} over {brain.get('trade_count', 0)} reviewed"
     notes.append(stats)
+    fixes = load_runtime_fixes()
+    if fixes.get("active"):
+        notes.append(
+            f"FAIL-FIX active: conf+{fixes.get('min_confluence_bump', 0)} "
+            f"atr_stop×{fixes.get('atr_stop_mult', 1)} "
+            f"block_pending_break={fixes.get('block_pending_breakdown', True)}"
+        )
     return notes
+
+
+def load_runtime_fixes() -> dict[str, Any]:
+    if not RUNTIME_FIXES_PATH.exists():
+        return {"active": False}
+    try:
+        return json.loads(RUNTIME_FIXES_PATH.read_text())
+    except Exception:
+        return {"active": False}
+
+
+def save_runtime_fixes(fixes: dict[str, Any]) -> None:
+    RUNTIME_FIXES_PATH.parent.mkdir(parents=True, exist_ok=True)
+    fixes["updated_ist"] = _now().isoformat()
+    RUNTIME_FIXES_PATH.write_text(json.dumps(fixes, indent=2))
+
+
+def apply_fail_fixes(
+    *,
+    mistake: str | None,
+    side: str | None,
+    entry: float | None,
+    deep: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """After Fail: tighten runtime filters before the next bid.
+
+    User lock: Fail → auto analysis/fix → then bid next trade.
+    """
+    prev = load_runtime_fixes()
+    bump = int(prev.get("min_confluence_bump") or 0) + 1
+    atr_mult = float(prev.get("atr_stop_mult") or 1.0)
+    if mistake in {"stop_hit", "stop_hit_before_tp"} or (
+        deep and any("Stop hunted" in f for f in (deep.get("findings") or []))
+    ):
+        atr_mult = max(atr_mult, 1.25)
+        bump = max(bump, 1)
+    if mistake in {"both_sides_tagged", "expired"}:
+        bump = max(bump, 2)
+
+    fixes = {
+        "active": True,
+        "reason": f"auto_fix_after_fail:{mistake or 'unknown'}",
+        "failed_side": side,
+        "failed_entry": entry,
+        "min_confluence_bump": min(bump, 3),  # cap so we can still trade
+        "atr_stop_mult": atr_mult,
+        "block_pending_breakdown": True,
+        "require_resting_limits": True,
+        "require_stop_clear_of_recent_range": True,
+        "block_same_entry": entry,
+        "source_deep_findings": (deep or {}).get("findings") if deep else [],
+    }
+    save_runtime_fixes(fixes)
+    return fixes
+
+
+def clear_runtime_fixes_on_pass() -> None:
+    """Ease temporary Fail bumps after a Pass (keep hard_rules in brain)."""
+    save_runtime_fixes(
+        {
+            "active": False,
+            "reason": "cleared_after_pass",
+            "min_confluence_bump": 0,
+            "atr_stop_mult": 1.0,
+            "block_pending_breakdown": True,
+            "require_resting_limits": True,
+            "require_stop_clear_of_recent_range": True,
+        }
+    )

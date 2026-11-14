@@ -39,6 +39,8 @@ TRACK_WEEK_MONTH_TOTAL_PROFIT_LOSS = True
 IMMEDIATE_REANALYZE_ON_CLOSE = True
 # Every closed trade runs deep review into lessons_brain.json before the next idea.
 DEEP_LEARN_EVERY_TRADE = True
+# On Fail: auto deep-fix runtime filters, re-analyze, then bid the next valid trade.
+FAIL_AUTO_FIX_THEN_BID = True
 # While Open: do not stack a second idea.
 WAIT_FOR_PREV_BEFORE_NEW = True
 
@@ -135,3 +137,5 @@ FALLBACK = {
 #     SL/TP from fill, grade from issued, first-touch, stronger confluence, idea dedupe.
 # 19) Enhance brain every trade: deep_review_closed_trade() → data/lessons_brain.json;
 #     next analysis must read hard_rules / last findings (never forget prior mistakes).
+# 20) On Fail: auto-fix (runtime_fixes.json) → re-analyze → bid next valid ticket
+#     (FAIL_AUTO_FIX_THEN_BID). Do not re-bid the same failed entry.
