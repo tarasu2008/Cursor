@@ -47,6 +47,7 @@ from rules import (
 from furry import furry_state
 from extra_indicators import suite as indicator_suite, tiered_targets
 from delta_demo import maybe_place_from_report, sync_after_paper_grade
+from learn import deep_review_closed_trade, brain_notes_for_next_trade
 
 ROOT = Path(__file__).resolve().parent
 STATE_PATH = ROOT / "data" / "orders_state.json"
@@ -381,6 +382,7 @@ def review_previous_signal(h1: list[dict], px: float, session: str = "ad_hoc") -
             mistake = None
             lesson = None
 
+        deep = None
         if outcome in {"Pass", "Fail"}:
             row = record_closed_trade(
                 side=label,
@@ -394,10 +396,31 @@ def review_previous_signal(h1: list[dict], px: float, session: str = "ad_hoc") -
             )
             pnl_usd = row["pnl_usd"] if row else 0.0
             grade = outcome
+            # Enhance brain on every closed trade (deep analysis → durable lessons).
+            try:
+                deep = deep_review_closed_trade(
+                    side=label,
+                    entry=entry,
+                    stop_loss=stop,
+                    take_profit=tp,
+                    qty=qty,
+                    outcome=outcome,
+                    mistake=mistake,
+                    lesson=lesson,
+                    path_high=round(hi, 1),
+                    path_low=round(lo, 1),
+                    fill_price=float(sig.get("fill_price") or entry),
+                    px=px,
+                )
+                if deep.get("findings"):
+                    lesson = (lesson or "") + " | DEEP: " + "; ".join(deep["findings"][:3])
+            except Exception as e:
+                deep = {"error": str(e)}
             prev["graded_outcome"] = outcome
             prev["graded_mistake"] = mistake
             prev["graded_lesson"] = lesson
             prev["graded_pnl_usd"] = pnl_usd
+            prev["graded_deep"] = deep
             prev_path.write_text(json.dumps(prev, indent=2))
             # Clear active trade once closed
             if ACTIVE_TRADE_PATH.exists() and outcome in {"Pass", "Fail"}:
@@ -418,6 +441,7 @@ def review_previous_signal(h1: list[dict], px: float, session: str = "ad_hoc") -
                 "pnl_usd": pnl_usd if outcome in {"Pass", "Fail"} else 0.0,
                 "path_high": round(hi, 1),
                 "path_low": round(lo, 1),
+                "deep": deep,
             }
         )
 
@@ -1006,6 +1030,8 @@ def analyze(session: str) -> dict[str, Any]:
         notes.insert(0, f"PREV REVIEW: {review.get('detail')}")
         if review.get("lesson"):
             notes.insert(1, f"LESSON: {review['lesson']}")
+        for bn in brain_notes_for_next_trade():
+            notes.insert(1, bn)
         if review.get("adjustment"):
             notes.insert(2, f"ADJUSTED: {review['adjustment']}")
 

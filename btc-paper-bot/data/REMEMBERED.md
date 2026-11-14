@@ -31,7 +31,7 @@ Locked in `rules.py` + this file. Change only when the user explicitly asks.
 19. FLAT alert = **no bid** (no Entry/SL/TP).
 20. Lessons: no mid-range shorts into demand; don’t require fill to grade TP/SL;
     silent checks must not email; after close re-analyze immediately.
-21. **Nov 13–14 loss autopsy (locked fixes):**
+21. **Nov 13–14 loss autopsy (locked forever):**
     - Pending breakdown shorts without 1H close → OFF (`ALLOW_PENDING_BREAKDOWN_TICKET=False`).
     - Limit SHORT below mark filled as market with SL from lower limit (stop too tight) →
       require resting limits; confirmed breaks use mark entry; Delta SL/TP from **fill**.
@@ -39,6 +39,11 @@ Locked in `rules.py` + this file. Change only when the user explicitly asks.
     - Grading used bars *before* signal → grade from issued time only; if both SL+TP tagged,
       decide by first touch.
     - Raise min confluence to **4**; skip if 1% SL sits inside recent 3H range.
+22. **Enhance brain every trade (locked):**
+    - On every Pass/Fail run `learn.deep_review_closed_trade()` → `data/lessons_brain.json`.
+    - Next analysis **must** inject BRAIN notes / hard_rules before proposing a ticket.
+    - Never forget prior mistakes; deepen analysis after each close before the next bid.
+    - Agent timer: after Pass/Fail, deep-review findings stay in the Cursor alert lesson line.
 
 ## Manual
 - `python3 btc-paper-bot/analyze.py --simple --show` → force current ticket view.

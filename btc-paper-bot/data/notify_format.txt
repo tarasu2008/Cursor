@@ -11,6 +11,8 @@ REMEMBERED ALERT RULES
 - Show Week Total Profit | Week Total Loss and Month Total Profit | Month Total Loss
 - After Pass/Fail → immediately propose next order
 - After new ticket → automatically bid Delta DEMO (same Entry/SL/TP); cycle repeats
+- After every Pass/Fail → deep-learn into lessons_brain.json; next trade uses hard_rules
+- Never forget Nov autopsy: no pending breakdown, resting limits, SL/TP from fill, first-touch grade
 
 Cursor alert
 

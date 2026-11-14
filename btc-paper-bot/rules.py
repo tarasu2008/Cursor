@@ -37,6 +37,8 @@ TRACK_DAILY_WEEKLY_MONTHLY_PNL = True
 TRACK_WEEK_MONTH_TOTAL_PROFIT_LOSS = True
 # After Pass or Fail → same run proposes the next LONG/SHORT.
 IMMEDIATE_REANALYZE_ON_CLOSE = True
+# Every closed trade runs deep review into lessons_brain.json before the next idea.
+DEEP_LEARN_EVERY_TRADE = True
 # While Open: do not stack a second idea.
 WAIT_FOR_PREV_BEFORE_NEW = True
 
@@ -131,3 +133,5 @@ FALLBACK = {
 #     with SL from lower limit (stop too tight); same Fail counted 3x; grading used bars
 #     before signal; both-sides always Fail. Fixes: confirmed break only, resting limits,
 #     SL/TP from fill, grade from issued, first-touch, stronger confluence, idea dedupe.
+# 19) Enhance brain every trade: deep_review_closed_trade() → data/lessons_brain.json;
+#     next analysis must read hard_rules / last findings (never forget prior mistakes).
