@@ -1,32 +1,31 @@
 {
-  "updated_ist": "2026-11-13T22:06:46.952693+05:30",
+  "updated_ist": "2026-11-14T09:05:24.635685+05:30",
   "venue": "delta_demo",
   "base_url": "https://cdn-ind.testnet.deltaex.org",
-  "status": "flat",
+  "status": "open",
   "analysis": {
     "side": "SHORT",
-    "entry": 67432.0,
-    "stop_loss": 68106.0,
-    "take_profit": 66083.0,
+    "entry": 66506.0,
+    "stop_loss": 67171.0,
+    "take_profit": 65176.0,
     "qty_btc": 0.015,
     "notional_usd": 1000
   },
   "order": {
-    "id": 2178180659,
-    "client_order_id": "btc-paper-sell-1794587721",
+    "id": 2178208697,
+    "client_order_id": "btc-paper-sell-1794627323",
     "side": "sell",
     "size_contracts": 15,
     "contract_value_btc": 0.001,
-    "limit_price": "67432",
-    "average_fill_price": "68760",
+    "limit_price": "66506",
+    "average_fill_price": "66763",
     "state": "closed",
     "product_symbol": "BTCUSD",
     "product_id": 84,
-    "bracket_stop_loss_price": "68106",
-    "bracket_take_profit_price": "66083"
+    "bracket_stop_loss_price": "67171",
+    "bracket_take_profit_price": "65176"
   },
   "position": {
-    "size": 0
-  },
-  "close_reason": "paper_Fail"
+    "size": -15
+  }
 }

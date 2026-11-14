@@ -1,6 +1,6 @@
 {
-  "timestamp_ist": "2026-11-14T04:35:28.201991+05:30",
-  "price": 67962.7,
+  "timestamp_ist": "2026-11-14T09:05:23.102837+05:30",
+  "price": 66717.2,
   "bias": "bearish",
   "previous_review": {
     "had_previous": false,
@@ -12,7 +12,7 @@
     "pnl_usd": 0.0,
     "detail": "Previous was FLAT.",
     "performance": {
-      "updated_ist": "2026-11-14T04:35:28.184193+05:30",
+      "updated_ist": "2026-11-14T09:05:23.086467+05:30",
       "rules": {
         "notional_usd": 1000.0,
         "stop_loss_pct": 0.01,
@@ -54,11 +54,91 @@
     }
   },
   "waiting_prev": false,
-  "signals": [],
+  "signals": [
+    {
+      "side": "SHORT",
+      "entry": 66506.0,
+      "stop_loss": 67171.0,
+      "take_profit": 65176.0,
+      "qty": 0.015
+    }
+  ],
   "delta_demo": {
     "ok": true,
-    "skipped": true,
-    "reason": "same_ticket_just_failed"
-  },
-  "note": "Cleared stale SHORT 67432 (same ticket previously failed; Delta skipped)"
+    "skipped": false,
+    "state": {
+      "updated_ist": "2026-11-14T09:05:24.635685+05:30",
+      "venue": "delta_demo",
+      "base_url": "https://cdn-ind.testnet.deltaex.org",
+      "status": "open",
+      "analysis": {
+        "side": "SHORT",
+        "entry": 66506.0,
+        "stop_loss": 67171.0,
+        "take_profit": 65176.0,
+        "qty_btc": 0.015,
+        "notional_usd": 1000
+      },
+      "order": {
+        "id": 2178208697,
+        "client_order_id": "btc-paper-sell-1794627323",
+        "side": "sell",
+        "size_contracts": 15,
+        "contract_value_btc": 0.001,
+        "limit_price": "66506",
+        "average_fill_price": "66763",
+        "state": "closed",
+        "product_symbol": "BTCUSD",
+        "product_id": 84,
+        "bracket_stop_loss_price": "67171",
+        "bracket_take_profit_price": "65176"
+      },
+      "position": {
+        "size": -15
+      }
+    },
+    "raw": {
+      "limit_price": "66506",
+      "bracket_order": null,
+      "product_symbol": "BTCUSD",
+      "bracket_take_profit_price": "65176",
+      "user_id": 89017776,
+      "bracket_stop_loss_limit_price": null,
+      "updated_at": "2026-11-14T03:35:24.410889Z",
+      "bracket_trail_amount": null,
+      "average_fill_price": "66763",
+      "mmp": "disabled",
+      "size": 15,
+      "order_type": "limit_order",
+      "stop_order_type": null,
+      "created_at": "2026-11-14T03:35:24.253589Z",
+      "trail_amount": null,
+      "unfilled_size": 0,
+      "margin_mode": "isolated",
+      "cancellation_reason": null,
+      "bracket_take_profit_limit_price": null,
+      "time_in_force": "gtc",
+      "id": 2178208697,
+      "commission": "0",
+      "paid_commission": "0.59085255",
+      "client_order_id": "btc-paper-sell-1794627323",
+      "stop_price": null,
+      "stop_trigger_method": null,
+      "meta_data": {
+        "bracket_stop_trigger_method": "last_traded_price",
+        "cashflow": "0",
+        "ip": "32.192.159.40",
+        "otc": false,
+        "pnl": "0",
+        "source": "api"
+      },
+      "state": "closed",
+      "bracket_stop_loss_price": "67171",
+      "side": "sell",
+      "product_id": 84,
+      "credits_used": "0",
+      "reduce_only": false,
+      "quote_size": null
+    }
+  }
 }
