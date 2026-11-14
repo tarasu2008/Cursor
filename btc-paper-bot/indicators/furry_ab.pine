@@ -1,0 +1,40 @@
+//@version=6
+indicator("Furry A & Furry B", overlay=true)
+
+// --- Inputs ---
+lenA = input.int(9, title="Furry A Length (Fast)", minval=1)
+lenB = input.int(21, title="Furry B Length (Slow)", minval=1)
+src  = input.source(close, title="Source")
+maType = input.string("EMA", title="Smoothing Type", options=["EMA", "SMA", "RMA", "WMA"])
+
+// --- Calculation Function ---
+getMA(source, length, type) =>
+    switch type
+        "EMA" => ta.ema(source, length)
+        "SMA" => ta.sma(source, length)
+        "RMA" => ta.rma(source, length)
+        "WMA" => ta.wma(source, length)
+
+furryA = getMA(src, lenA, maType)
+furryB = getMA(src, lenB, maType)
+
+// --- Trend & Signals ---
+isBullish = furryA > furryB
+bullCross = ta.crossover(furryA, furryB)
+bearCross = ta.crossunder(furryA, furryB)
+
+// --- Plotting ---
+plotA = plot(furryA, title="Furry A", color=color.new(#00E676, 0), linewidth=2)
+plotB = plot(furryB, title="Furry B", color=color.new(#FF5252, 0), linewidth=2)
+
+// Cloud fill between Furry A and Furry B
+fillColor = isBullish ? color.new(#00E676, 85) : color.new(#FF5252, 85)
+fill(plotA, plotB, color=fillColor, title="Trend Cloud")
+
+// Crossover Markers
+plotshape(bullCross, title="Buy Signal", location=location.belowbar, color=color.new(#00E676, 0), style=shape.labelup, text="BUY", textcolor=color.black, size=size.small)
+plotshape(bearCross, title="Sell Signal", location=location.abovebar, color=color.new(#FF5252, 0), style=shape.labeldown, text="SELL", textcolor=color.white, size=size.small)
+
+// --- Alerts ---
+alertcondition(bullCross, title="Furry A Crossed Above Furry B", message="Bullish Crossover: Furry A > Furry B")
+alertcondition(bearCross, title="Furry A Crossed Below Furry B", message="Bearish Crossover: Furry A < Furry B")

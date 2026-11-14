@@ -1,0 +1,14 @@
+//@version=6
+indicator("BTC Supertrend", overlay=true, max_labels_count=500)
+
+atrLen = input.int(10, "ATR Length")
+factor = input.float(3.0, "Factor", step=0.1)
+src = input.source(hl2, "Source")
+
+[st, dir] = ta.supertrend(factor, atrLen)
+bull = dir < 0
+plot(st, "Supertrend", color=bull ? color.new(#00E676, 0) : color.new(#FF5252, 0), linewidth=2)
+plotshape(ta.change(dir) < 0, "Bull flip", shape.triangleup, location.belowbar, color.new(#00E676, 0), size=size.tiny)
+plotshape(ta.change(dir) > 0, "Bear flip", shape.triangledown, location.abovebar, color.new(#FF5252, 0), size=size.tiny)
+alertcondition(ta.change(dir) < 0, "Supertrend Bull", "Supertrend flipped bullish")
+alertcondition(ta.change(dir) > 0, "Supertrend Bear", "Supertrend flipped bearish")

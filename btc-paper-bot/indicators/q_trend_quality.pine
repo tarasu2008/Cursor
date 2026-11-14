@@ -1,0 +1,20 @@
+//@version=6
+indicator("Q Trend Quality", overlay=false)
+
+len = input.int(20, "Lookback (semicycle proxy)")
+smooth = input.int(5, "Smooth")
+
+// Signal = net price change; Noise = path length of absolute changes
+chg = close - close[1]
+signal = math.abs(close - close[len])
+noise = math.sum(math.abs(chg), len)
+qRaw = noise == 0 ? 0.0 : signal / noise
+q = ta.sma(qRaw, smooth)
+
+hline(0.5, "Weak", color=color.gray)
+hline(0.7, "Strong", color=color.green)
+plot(q, "Q", color=q >= 0.7 ? color.new(#00E676, 0) : q >= 0.5 ? color.new(#FFD54F, 0) : color.new(#FF5252, 0), linewidth=2)
+bgcolor(q < 0.45 ? color.new(#FF5252, 90) : na, title="Choppy filter")
+
+alertcondition(q >= 0.7, "Q Strong Trend", "Trend quality strong")
+alertcondition(q < 0.45, "Q Choppy", "Trend quality weak / choppy")

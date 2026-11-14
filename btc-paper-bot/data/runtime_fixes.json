@@ -1,0 +1,16 @@
+{
+  "active": true,
+  "reason": "auto_fix_after_fail:stop_hit",
+  "failed_side": "SHORT",
+  "failed_entry": 67000.0,
+  "min_confluence_bump": 1,
+  "atr_stop_mult": 1.25,
+  "block_pending_breakdown": true,
+  "require_resting_limits": true,
+  "require_stop_clear_of_recent_range": true,
+  "block_same_entry": 67000.0,
+  "source_deep_findings": [
+    "Stop hunted"
+  ],
+  "updated_ist": "2026-11-14T10:06:46.550341+05:30"
+}

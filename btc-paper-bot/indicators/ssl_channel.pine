@@ -1,0 +1,22 @@
+//@version=6
+indicator("SSL Channel", overlay=true)
+
+len = input.int(10, "SSL Length")
+smaHigh = ta.sma(high, len)
+smaLow = ta.sma(low, len)
+
+var int hlv = 0
+hlv := close > smaHigh ? 1 : close < smaLow ? -1 : hlv[1]
+sslDown = hlv < 0 ? smaHigh : smaLow
+sslUp = hlv < 0 ? smaLow : smaHigh
+
+p1 = plot(sslDown, "SSL Down", color=color.new(#FF5252, 0), linewidth=2)
+p2 = plot(sslUp, "SSL Up", color=color.new(#00E676, 0), linewidth=2)
+fill(p1, p2, color=hlv > 0 ? color.new(#00E676, 85) : color.new(#FF5252, 85), title="SSL Cloud")
+
+bull = ta.crossover(sslUp, sslDown)
+bear = ta.crossunder(sslUp, sslDown)
+plotshape(bull, "SSL Bull", shape.triangleup, location.belowbar, color.new(#00E676, 0), size=size.tiny)
+plotshape(bear, "SSL Bear", shape.triangledown, location.abovebar, color.new(#FF5252, 0), size=size.tiny)
+alertcondition(bull, "SSL Bull", "SSL Channel bullish")
+alertcondition(bear, "SSL Bear", "SSL Channel bearish")

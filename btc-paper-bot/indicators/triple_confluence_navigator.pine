@@ -1,0 +1,44 @@
+//@version=6
+indicator("Triple Confluence Navigator", overlay=true)
+
+// 1) Adaptive RSI (RSI + EMA of RSI)
+rsiLen = input.int(14, "RSI Length")
+rsiMaLen = input.int(9, "RSI MA Length")
+rsiVal = ta.rsi(close, rsiLen)
+rsiMa = ta.ema(rsiVal, rsiMaLen)
+rsiBull = rsiVal > rsiMa and rsiVal > 50
+rsiBear = rsiVal < rsiMa and rsiVal < 50
+
+// 2) Supertrend directional filter
+stFactor = input.float(3.0, "Supertrend Factor")
+stAtr = input.int(10, "Supertrend ATR")
+[st, dir] = ta.supertrend(stFactor, stAtr)
+stBull = dir < 0
+
+// 3) Market structure swing (pivot high/low)
+swingLen = input.int(2, "Swing Pivot")
+ph = ta.pivothigh(high, swingLen, swingLen)
+pl = ta.pivotlow(low, swingLen, swingLen)
+var float lastPh = na
+var float lastPl = na
+if not na(ph)
+    lastPh := ph
+if not na(pl)
+    lastPl := pl
+lowerHigh = not na(lastPh) and not na(ph) and ph < lastPh[1]
+higherLow = not na(lastPl) and not na(pl) and pl > lastPl[1]
+
+// ADX filter
+adxLen = input.int(14, "ADX Length")
+[diPlus, diMinus, adx] = ta.dmi(adxLen, adxLen)
+adxOk = adx >= input.float(18.0, "Min ADX")
+
+longOK = rsiBull and stBull and adxOk
+shortOK = rsiBear and not stBull and adxOk
+
+plot(st, "Supertrend", color=stBull ? color.new(#00E676, 0) : color.new(#FF5252, 0))
+plotshape(longOK and ta.change(stBull ? 1 : 0) != 0, "Long confluence", shape.labelup, location.belowbar, color.new(#00E676, 0), text="TC L", size=size.tiny)
+plotshape(shortOK and ta.change(stBull ? 1 : 0) != 0, "Short confluence", shape.labeldown, location.abovebar, color.new(#FF5252, 0), text="TC S", size=size.tiny)
+
+alertcondition(longOK, "TC Long", "Triple Confluence long bias")
+alertcondition(shortOK, "TC Short", "Triple Confluence short bias")
