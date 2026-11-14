@@ -61,19 +61,32 @@ SESSIONS = ("india", "uk", "us")     # ~09:00 / 13:00 / 19:45 IST
 MIDRANGE_NO_TRADE = True
 PREFER_SHORT_AT_SUPPLY = True
 REQUIRE_BREAK_CLOSE_FOR_BREAKDOWN = True
+# Do NOT place "near swing" breakdown tickets before a confirmed 1H close under the level.
+# (Lesson Nov 13–14: pending breakdown shorts were stopped out repeatedly.)
+ALLOW_PENDING_BREAKDOWN_TICKET = False
 NO_REENTRY_SAME_IDEA = True
 PROTECT_OPEN_ORDERS = True
+# Grade only on bars AFTER signal time (not pre-signal lookback).
+GRADE_FROM_ISSUED_ONLY = True
+# If both SL and TP tagged, decide by which level traded first on the path.
+GRADE_BOTH_BY_FIRST_TOUCH = True
+# SHORT/LONG limit must not instantly market-fill into a 1% stop (entry on correct side of mark).
+REQUIRE_LIMIT_RESTING = True
+# Recalculate Delta demo SL/TP from average fill (keep 1%/2% from real fill, not stale limit).
+DELTA_SL_TP_FROM_FILL = True
+# Reject tickets whose 1% stop sits inside recent 3H range noise.
+MIN_STOP_CLEAR_OF_RECENT_RANGE = True
 
 # Risk model (ATR for structure confluence; ticket SL/TP use fixed % when enabled)
 ATR_STOP_MULT = 1.0
 ATR_STOP_MULT_AFTER_STOPOUT = 1.25
 MIN_RR = TAKE_PROFIT_PCT / STOP_LOSS_PCT  # 2.0
-MIN_CONFLUENCE = 3
+MIN_CONFLUENCE = 4  # was 3 — require stronger agreement after Nov Fail streak
 DEFAULT_STOP_BUFFER_PCT = STOP_LOSS_PCT
 DEFAULT_REWARD_R = TAKE_PROFIT_PCT / STOP_LOSS_PCT
 # Supply/limit entries must stay near market (avoid far stale bounce shorts).
-MAX_ENTRY_DISTANCE_ATR = 1.0
-MAX_ENTRY_DISTANCE_PCT = 0.02
+MAX_ENTRY_DISTANCE_ATR = 0.75
+MAX_ENTRY_DISTANCE_PCT = 0.015
 
 # Furry A & Furry B (pine: indicators/furry_ab.pine) — use in confluence when useful.
 USE_FURRY_AB = True
@@ -114,3 +127,7 @@ FALLBACK = {
 # 16) Cycle: analyze → on new ticket bid Delta DEMO (API) with same Entry/SL/TP;
 #     30-min watch → Pass/Fail alert → analyze next → bid again. Silent while Open.
 # 17) Cursor alert shows Week/Month Total Profit and Total Loss (not only net PnL).
+# 18) Mistakes Nov 13–14: pending breakdown without 1H close; limit shorts filled as market
+#     with SL from lower limit (stop too tight); same Fail counted 3x; grading used bars
+#     before signal; both-sides always Fail. Fixes: confirmed break only, resting limits,
+#     SL/TP from fill, grade from issued, first-touch, stronger confluence, idea dedupe.

@@ -31,6 +31,14 @@ Locked in `rules.py` + this file. Change only when the user explicitly asks.
 19. FLAT alert = **no bid** (no Entry/SL/TP).
 20. Lessons: no mid-range shorts into demand; don’t require fill to grade TP/SL;
     silent checks must not email; after close re-analyze immediately.
+21. **Nov 13–14 loss autopsy (locked fixes):**
+    - Pending breakdown shorts without 1H close → OFF (`ALLOW_PENDING_BREAKDOWN_TICKET=False`).
+    - Limit SHORT below mark filled as market with SL from lower limit (stop too tight) →
+      require resting limits; confirmed breaks use mark entry; Delta SL/TP from **fill**.
+    - Same Fail counted 3× (re-issued ticket) → idea dedupe in ledger (24h).
+    - Grading used bars *before* signal → grade from issued time only; if both SL+TP tagged,
+      decide by first touch.
+    - Raise min confluence to **4**; skip if 1% SL sits inside recent 3H range.
 
 ## Manual
 - `python3 btc-paper-bot/analyze.py --simple --show` → force current ticket view.

@@ -231,6 +231,51 @@ def place_ticket(
         return {"ok": False, "http": st, "error": body, "request": order}
 
     result = body.get("result") or {}
+    fill = result.get("average_fill_price")
+    try:
+        fill_f = float(fill) if fill not in (None, "", "0") else float(entry)
+    except Exception:
+        fill_f = float(entry)
+
+    # Keep risk honest: 1% SL / 2% TP from actual fill, not the stale limit price.
+    if api_side == "sell":
+        fill_sl = round(fill_f * 1.01, 1)
+        fill_tp = round(fill_f * 0.98, 1)
+    else:
+        fill_sl = round(fill_f * 0.99, 1)
+        fill_tp = round(fill_f * 1.02, 1)
+
+    # If brackets were attached to the wrong (pre-fill) prices, cancel open stops and re-place.
+    try:
+        st_o, open_orders = call("GET", "/v2/orders", "state=open&product_id=84")
+        if st_o == 200 and isinstance(open_orders, dict):
+            for o in open_orders.get("result") or []:
+                if o.get("bracket_order") or o.get("stop_order_type") in {
+                    "stop_loss_order",
+                    "take_profit_order",
+                }:
+                    oid = o.get("id")
+                    if oid:
+                        call("DELETE", f"/v2/orders/{oid}")
+        # Place fresh reduce-only stops from fill.
+        for stop_type, price in (("stop_loss_order", fill_sl), ("take_profit_order", fill_tp)):
+            close_side = "buy" if api_side == "sell" else "sell"
+            br = {
+                "product_id": PRODUCT_ID,
+                "product_symbol": PRODUCT_SYMBOL,
+                "size": size,
+                "side": close_side,
+                "order_type": "market_order",
+                "stop_order_type": stop_type,
+                "stop_price": str(price),
+                "stop_trigger_method": "last_traded_price",
+                "reduce_only": True,
+                "client_order_id": f"btc-paper-{stop_type[:2]}-{int(time.time())}",
+            }
+            call("POST", "/v2/orders", body=br)
+    except Exception:
+        pass
+
     state = {
         "updated_ist": ist_now().isoformat(),
         "venue": "delta_demo",
@@ -239,10 +284,13 @@ def place_ticket(
         "analysis": {
             "side": "SHORT" if api_side == "sell" else "LONG",
             "entry": float(entry),
-            "stop_loss": float(stop_loss),
-            "take_profit": float(take_profit),
+            "stop_loss": float(fill_sl),
+            "take_profit": float(fill_tp),
             "qty_btc": float(qty_btc),
             "notional_usd": 1000,
+            "planned_stop_loss": float(stop_loss),
+            "planned_take_profit": float(take_profit),
+            "fill_price": fill_f,
         },
         "order": {
             "id": result.get("id"),
@@ -251,12 +299,12 @@ def place_ticket(
             "size_contracts": size,
             "contract_value_btc": CONTRACT_VALUE_BTC,
             "limit_price": result.get("limit_price"),
-            "average_fill_price": result.get("average_fill_price"),
+            "average_fill_price": result.get("average_fill_price") or fill_f,
             "state": result.get("state"),
             "product_symbol": PRODUCT_SYMBOL,
             "product_id": PRODUCT_ID,
-            "bracket_stop_loss_price": result.get("bracket_stop_loss_price"),
-            "bracket_take_profit_price": result.get("bracket_take_profit_price"),
+            "bracket_stop_loss_price": fill_sl,
+            "bracket_take_profit_price": fill_tp,
         },
     }
     # refresh position

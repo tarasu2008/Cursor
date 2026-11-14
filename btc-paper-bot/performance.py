@@ -57,9 +57,24 @@ def record_closed_trade(
         return None
     ledger = _load_ledger()
     key = f"{issued_ist}|{side}|{entry}|{outcome}"
+    idea_key = f"{side}|{round(float(entry), 0)}|{outcome}"
     for t in ledger.get("trades", []):
         if t.get("dedupe_key") == key:
             return t
+        # Same idea re-issued under a new timestamp must not count again within 24h.
+        if t.get("idea_key") == idea_key or (
+            str(t.get("side")) == side
+            and abs(float(t.get("entry", 0)) - float(entry)) < 1.0
+            and t.get("outcome") == outcome
+        ):
+            try:
+                prev_closed = datetime.fromisoformat(t.get("closed_ist") or "")
+                if prev_closed.tzinfo is None:
+                    prev_closed = prev_closed.replace(tzinfo=IST)
+                if (_now() - prev_closed).total_seconds() < 24 * 3600:
+                    return t
+            except Exception:
+                return t
     pnl = trade_pnl(side, entry, qty, outcome)
     row = {
         "dedupe_key": key,
@@ -74,6 +89,7 @@ def record_closed_trade(
         "outcome": outcome,  # Pass | Fail only
         "pnl_usd": pnl,
         "notional_usd": round(qty * entry, 2) if qty and entry else NOTIONAL_USD,
+        "idea_key": idea_key,
     }
     ledger.setdefault("trades", []).append(row)
     _save_ledger(ledger)

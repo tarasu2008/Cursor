@@ -38,6 +38,11 @@ from rules import (
     MIN_ADX,
     BLOCK_CHOPPY_Q,
     AUTO_PLACE_DELTA_DEMO,
+    ALLOW_PENDING_BREAKDOWN_TICKET,
+    GRADE_FROM_ISSUED_ONLY,
+    GRADE_BOTH_BY_FIRST_TOUCH,
+    REQUIRE_LIMIT_RESTING,
+    MIN_STOP_CLEAR_OF_RECENT_RANGE,
 )
 from furry import furry_state
 from extra_indicators import suite as indicator_suite, tiered_targets
@@ -286,14 +291,38 @@ def review_previous_signal(h1: list[dict], px: float, session: str = "ad_hoc") -
     except Exception:
         issued = ist_now() - timedelta(hours=6)
 
-    bars = [b for b in h1 if b["dt"] >= issued - timedelta(minutes=30)]
+    # Grade only on path AFTER the signal (pre-signal highs/lows must not Fail us).
+    if GRADE_FROM_ISSUED_ONLY:
+        bars = [b for b in h1 if b["dt"] >= issued]
+    else:
+        bars = [b for b in h1 if b["dt"] >= issued - timedelta(minutes=30)]
     if not bars:
-        bars = h1[-12:]
+        bars = h1[-6:]
     hi = max(b["h"] for b in bars)
     lo = min(b["l"] for b in bars)
 
     # Age: if still open after 24h without SL/TP, count as Fail (expired) — user asked Pass/Fail only.
     age_h = (ist_now() - issued).total_seconds() / 3600
+
+    def _first_touch(is_short: bool, stop: float, tp: float) -> str | None:
+        """Return 'sl' or 'tp' for the first level touched on bar path; None if neither."""
+        for b in bars:
+            if is_short:
+                # Conservative intrabar: if both in same candle, SL first for shorts (rally).
+                if b["h"] >= stop and b["l"] <= tp:
+                    return "sl"
+                if b["h"] >= stop:
+                    return "sl"
+                if b["l"] <= tp:
+                    return "tp"
+            else:
+                if b["l"] <= stop and b["h"] >= tp:
+                    return "sl"
+                if b["l"] <= stop:
+                    return "sl"
+                if b["h"] >= tp:
+                    return "tp"
+        return None
 
     reviews = []
     grade = "—"
@@ -319,10 +348,20 @@ def review_previous_signal(h1: list[dict], px: float, session: str = "ad_hoc") -
 
         # Pass/Fail only — no partial.
         if hit_tp and hit_sl:
-            # Both levels traded: Fail (conservative — no partial credit)
-            outcome = "Fail"
-            mistake = "both_sides_tagged"
-            lesson = "Price tagged both SL and TP — counted Fail only."
+            if GRADE_BOTH_BY_FIRST_TOUCH:
+                first = _first_touch(is_short, stop, tp)
+                if first == "tp":
+                    outcome = "Pass"
+                    mistake = None
+                    lesson = "TP traded before SL on path — Pass."
+                else:
+                    outcome = "Fail"
+                    mistake = "stop_hit_before_tp" if first == "sl" else "both_sides_tagged"
+                    lesson = "SL traded before TP (or same bar) — Fail."
+            else:
+                outcome = "Fail"
+                mistake = "both_sides_tagged"
+                lesson = "Price tagged both SL and TP — counted Fail only."
         elif hit_tp:
             outcome = "Pass"
             lesson = "Take profit level reached — Pass."
@@ -703,11 +742,13 @@ def analyze(session: str) -> dict[str, Any]:
 
     # --- Strategy B: breakdown short (only after 1H close under swing) ---
     break_level = swing_low_30
+    recent3 = h1[-3:] if len(h1) >= 3 else h1
+    recent_high = max(b["h"] for b in recent3) if recent3 else px
+    recent_low = min(b["l"] for b in recent3) if recent3 else px
     if REQUIRE_BREAK_CLOSE_FOR_BREAKDOWN and last_h1["c"] < break_level:
-        entry = round(break_level * 0.999, 0)
-        stop = structure_stop("sell", entry, max(day_high, last_h1["h"]), daily_atr)
-        tp = round(min(FALLBACK["deep_target"], entry - MIN_RR * max(stop - entry, 1)), 0)
-        stop, tp = apply_ticket_risk("sell", entry, stop, tp)
+        # Enter near mark (not a stale limit far below that instantly market-fills with a tight SL).
+        entry = round(px, 0)
+        stop, tp = apply_ticket_risk("sell", entry, entry * 1.01, entry * 0.98)
         factors = ["break_close_1h", "below_swing_low"]
         if bias == "bearish":
             factors.append("daily_bearish")
@@ -720,7 +761,8 @@ def analyze(session: str) -> dict[str, Any]:
         if USE_FURRY_AB and (furry_d.get("bear_cross") or furry_h1.get("bear_cross")):
             factors.append("furry_bear_cross")
         rr = risk_reward("sell", entry, stop, tp)
-        if len(factors) >= MIN_CONFLUENCE and valid_ticket("sell", entry, stop, tp):
+        stop_ok = (not MIN_STOP_CLEAR_OF_RECENT_RANGE) or (stop > recent_high)
+        if len(factors) >= MIN_CONFLUENCE and valid_ticket("sell", entry, stop, tp) and stop_ok:
             proposals.append(
                 OrderProposal(
                     idea_id=f"short-break-{session}-{ist_now().strftime('%Y%m%d')}",
@@ -731,7 +773,7 @@ def analyze(session: str) -> dict[str, Any]:
                     take_profit=tp,
                     qty=qty_for(entry),
                     notional_usd=NOTIONAL_USD,
-                    reason="Confirmed breakdown: 1H close under swing low.",
+                    reason="Confirmed breakdown: 1H close under swing low; SL/TP from mark.",
                     session=session,
                     confluence=len(factors),
                     factors=factors,
@@ -739,14 +781,19 @@ def analyze(session: str) -> dict[str, Any]:
                 )
             )
             notes.append(f"Breakdown short {entry} SL {stop} TP {tp} RR {rr:.2f}")
+        elif not stop_ok:
+            notes.append(
+                f"Skipped breakdown short: 1% SL {stop} still inside recent 3H high {recent_high:.0f}"
+            )
     elif bias == "bearish":
         entry = round(break_level * 0.999, 0)
         stop = structure_stop("sell", entry, day_high, daily_atr)
         tp = round(min(FALLBACK["deep_target"], entry - MIN_RR * max(stop - entry, 1)), 0)
         stop, tp = apply_ticket_risk("sell", entry, stop, tp)
-        # If price is pressing the swing, place next SHORT now (esp. after Pass/Fail close).
+        # Pending (no 1H close yet): only propose if explicitly allowed — default OFF after
+        # Nov Fail streak from premature breakdown shorts.
         near_break = (px - break_level) <= max(daily_atr * 0.5, px * 0.01)
-        if near_break and IMMEDIATE_REANALYZE_ON_CLOSE:
+        if ALLOW_PENDING_BREAKDOWN_TICKET and near_break and IMMEDIATE_REANALYZE_ON_CLOSE:
             factors = ["near_swing_low", "daily_bearish"]
             if lower_lows:
                 factors.append("lower_lows")
@@ -785,7 +832,7 @@ def analyze(session: str) -> dict[str, Any]:
         else:
             notes.append(
                 f"Pending breakdown under {break_level:.0f} → limit {entry} SL {stop} TP {tp} "
-                f"(wait for 1H close; not active yet)"
+                f"(wait for confirmed 1H close; not active yet)"
             )
 
     # --- Strategy C: reclaim long ---
@@ -902,8 +949,25 @@ def analyze(session: str) -> dict[str, Any]:
     def _rank_long(p: OrderProposal) -> tuple:
         return (p.confluence, p.rr, -abs(p.entry - px))
 
-    shorts = sorted([p for p in proposals if p.side == "sell"], key=_rank_short, reverse=True)
-    longs = sorted([p for p in proposals if p.side == "buy"], key=_rank_long, reverse=True)
+    def _quality_ok(p: OrderProposal) -> bool:
+        if REQUIRE_LIMIT_RESTING:
+            # Limit sell below mark → instant market fill into a too-tight planned SL.
+            if p.side == "sell" and p.entry < px * 0.999:
+                return False
+            if p.side == "buy" and p.entry > px * 1.001:
+                return False
+        if MIN_STOP_CLEAR_OF_RECENT_RANGE:
+            if p.side == "sell" and p.stop <= recent_high:
+                return False
+            if p.side == "buy" and p.stop >= recent_low:
+                return False
+        return True
+
+    filtered = [p for p in proposals if _quality_ok(p)]
+    if proposals and not filtered:
+        notes.append("All proposals rejected by resting-limit / recent-range stop filters.")
+    shorts = sorted([p for p in filtered if p.side == "sell"], key=_rank_short, reverse=True)
+    longs = sorted([p for p in filtered if p.side == "buy"], key=_rank_long, reverse=True)
     # One ticket only — Pass/Fail tracking breaks if SHORT+LONG are both active.
     chosen: list[OrderProposal] = []
     if bias == "bearish" and shorts:
