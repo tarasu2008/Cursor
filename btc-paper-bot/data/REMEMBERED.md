@@ -15,7 +15,11 @@ Locked in `rules.py` + this file. Change only when the user explicitly asks.
 10. **Every 10 min** timer ON — watches BTC + previous SL/TP (`*/10 * * * *`).
     Entries still need **1H structure** (do not chase sub-hour noise).
 11. If still Open → **STATUS:SILENT** (empty reply). No git/commit/push/PR/email.
-12. **Alert** only when Pass/Fail (or new ticket while flat); then **immediately analyze next order**.
+12. **MUST show a Cursor alert message** when previous trade is **Pass or Fail**
+    (or new ticket while flat) — never stay silent on close. Paste the full alert
+    in chat (title + IST Time + PREV Pass/Fail + PnL + Week/Month totals + next
+    LONG/SHORT if ready + DELTA DEMO / FAIL-FIX lines). Then commit/push.
+    After Pass/Fail → **immediately analyze next order**.
 13. While Open → do not stack a new trade; one ticket only (never SHORT+LONG together).
 14. Session timers (India/UK/US) optional; 10-min timer is required for Pass/Fail watching.
 15. No mid-range chase; protect open orders; prefer **mark continuation shorts in dumps** /

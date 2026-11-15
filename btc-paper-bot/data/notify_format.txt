@@ -1,7 +1,9 @@
 REMEMBERED ALERT RULES
 - Title: Cursor alert (never BTC alert)
 - Include Time: dd Mon YYYY, hh:mm AM/PM IST
-- Alert on Pass/Fail close (and include next LONG/SHORT if ready)
+- MUST show Cursor alert message when trade is Pass or Fail (never silent on close)
+- Paste full alert in chat: title + IST Time + PREV Pass/Fail + PnL + Week/Month + next ticket
+- Alert on Pass/Fail close (and include next LONG/SHORT if ready); then commit/push
 - Every 10 min: check BTC + PREV status; while Open STATUS:SILENT → empty reply, no git/push/PR/email
 - Never reply "waiting"
 - Labels: LONG | SHORT | FLAT

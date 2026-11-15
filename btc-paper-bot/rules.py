@@ -125,7 +125,8 @@ FALLBACK = {
 # 7) Simple ticket: LONG/SHORT + Entry + SL + TP; $1000 paper size.
 # 8) Grade Pass/Fail only; save daily/weekly/monthly counts + $ PnL.
 # 9) Cursor alert + IST Time; never BTC alert / notification chatter.
-# 10) Every 10 min: watch BTC + PREV SL/TP; silent while Open; alert on Pass/Fail then next order.
+# 10) Every 10 min: watch BTC + PREV SL/TP; silent while Open; MUST show Cursor alert
+#     message on Pass/Fail (never silent on close), then next order + commit/push.
 #     New entries still require 1H structure (don't chase sub-hour noise).
 # 10b) Missed 66→63 dump: breakdown used 30d low (always chasing); add bear-continuation
 #      short on confirmed red 1H + LH/LL; fix 1%/2% RR rounding < 2.0; prefer mark shorts in dumps.
