@@ -1,6 +1,6 @@
 {
-  "timestamp_ist": "2026-11-14T09:50:14.443452+05:30",
-  "price": 66859.3,
+  "timestamp_ist": "2026-11-15T06:14:39.656641+05:30",
+  "price": 63781.6,
   "bias": "bearish",
   "previous_review": {
     "had_previous": false,
@@ -12,7 +12,7 @@
     "pnl_usd": 0.0,
     "detail": "Previous was FLAT.",
     "performance": {
-      "updated_ist": "2026-11-14T09:50:14.427146+05:30",
+      "updated_ist": "2026-11-15T06:14:39.640180+05:30",
       "rules": {
         "notional_usd": 1000.0,
         "stop_loss_pct": 0.01,
@@ -28,31 +28,66 @@
         "total_loss_usd": 0
       },
       "week": {
-        "trades": 4,
+        "trades": 5,
         "pass": 2,
-        "fail": 2,
-        "pnl_usd": 18.84,
+        "fail": 3,
+        "pnl_usd": 8.83,
         "total_profit_usd": 39.27,
-        "total_loss_usd": -20.43
+        "total_loss_usd": -30.44
       },
       "month": {
-        "trades": 4,
+        "trades": 5,
         "pass": 2,
-        "fail": 2,
-        "pnl_usd": 18.84,
+        "fail": 3,
+        "pnl_usd": 8.83,
         "total_profit_usd": 39.27,
-        "total_loss_usd": -20.43
+        "total_loss_usd": -30.44
       },
       "all_time": {
-        "trades": 4,
+        "trades": 5,
         "pass": 2,
-        "fail": 2,
-        "pnl_usd": 18.84,
+        "fail": 3,
+        "pnl_usd": 8.83,
         "total_profit_usd": 39.27,
-        "total_loss_usd": -20.43
+        "total_loss_usd": -30.44
       }
     }
   },
   "waiting_prev": false,
-  "signals": []
+  "signals": [
+    {
+      "side": "SHORT",
+      "entry": 63782.0,
+      "stop_loss": 64420.0,
+      "take_profit": 62506.0,
+      "qty": 0.016
+    }
+  ],
+  "delta_demo": {
+    "ok": false,
+    "http": 401,
+    "error": {
+      "error": {
+        "code": "ip_not_whitelisted_for_api_key",
+        "context": {
+          "client_ip": "54.236.146.182"
+        }
+      },
+      "success": false
+    },
+    "request": {
+      "product_id": 84,
+      "product_symbol": "BTCUSD",
+      "size": 16,
+      "side": "sell",
+      "order_type": "limit_order",
+      "limit_price": "63782.0",
+      "time_in_force": "gtc",
+      "reduce_only": false,
+      "client_order_id": "btc-paper-sell-1794703479",
+      "bracket_stop_loss_price": "64420.0",
+      "bracket_take_profit_price": "62506.0",
+      "bracket_stop_trigger_method": "last_traded_price"
+    }
+  }
 }
