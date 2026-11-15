@@ -327,7 +327,7 @@ def review_previous_signal(h1: list[dict], px: float, session: str = "ad_hoc") -
         run_hi = max(run_hi, max(b["h"] for b in closed_after))
         run_lo = min(run_lo, min(b["l"] for b in closed_after))
     hi, lo = run_hi, run_lo
-    # Persist running path so 5-min checks accumulate without pre-signal wicks.
+    # Persist running path so 10-min checks accumulate without pre-signal wicks.
     prev["path_high_since"] = round(hi, 1)
     prev["path_low_since"] = round(lo, 1)
     prev_path.write_text(json.dumps(prev, indent=2))
