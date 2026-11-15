@@ -209,6 +209,15 @@ def apply_fail_fixes(
     if mistake in {"both_sides_tagged", "expired"}:
         bump = max(bump, 2)
 
+    from rules import PROFIT_V2_FAIL_COOLDOWN_MIN
+    from profit_v2 import feature_on
+
+    cooldown_until = None
+    if feature_on("fail_cooldown"):
+        cooldown_until = (
+            _now() + timedelta(minutes=int(PROFIT_V2_FAIL_COOLDOWN_MIN))
+        ).isoformat()
+
     fixes = {
         "active": True,
         "reason": f"auto_fix_after_fail:{mistake or 'unknown'}",
@@ -220,6 +229,7 @@ def apply_fail_fixes(
         "require_resting_limits": True,
         "require_stop_clear_of_recent_range": True,
         "block_same_entry": entry,
+        "fail_cooldown_until_ist": cooldown_until,
         "source_deep_findings": (deep or {}).get("findings") if deep else [],
     }
     save_runtime_fixes(fixes)
@@ -237,5 +247,6 @@ def clear_runtime_fixes_on_pass() -> None:
             "block_pending_breakdown": True,
             "require_resting_limits": True,
             "require_stop_clear_of_recent_range": True,
+            "fail_cooldown_until_ist": None,
         }
     )

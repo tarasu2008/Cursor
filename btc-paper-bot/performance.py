@@ -31,12 +31,25 @@ def _save_ledger(ledger: dict[str, Any]) -> None:
     LEDGER_PATH.write_text(json.dumps(ledger, indent=2))
 
 
-def trade_pnl(side: str, entry: float, qty: float, outcome: str) -> float:
-    """Paper P&L in USD for a closed trade. Pass=+2% notional, Fail=-1% notional."""
+def trade_pnl(
+    side: str,
+    entry: float,
+    qty: float,
+    outcome: str,
+    stop_loss: float | None = None,
+    take_profit: float | None = None,
+) -> float:
+    """Paper P&L in USD. Prefer actual SL/TP distances (ATR trial); else fixed 1%/2%."""
     notional = qty * entry if qty and entry else NOTIONAL_USD
     if outcome == "Pass":
+        if take_profit is not None and entry:
+            move = abs(float(entry) - float(take_profit))
+            return round(qty * move if qty else notional * (move / entry), 2)
         return round(notional * TAKE_PROFIT_PCT, 2)
     if outcome == "Fail":
+        if stop_loss is not None and entry:
+            move = abs(float(entry) - float(stop_loss))
+            return round(-(qty * move if qty else notional * (move / entry)), 2)
         return round(-notional * STOP_LOSS_PCT, 2)
     return 0.0
 
@@ -75,7 +88,7 @@ def record_closed_trade(
                     return t
             except Exception:
                 return t
-    pnl = trade_pnl(side, entry, qty, outcome)
+    pnl = trade_pnl(side, entry, qty, outcome, stop_loss=stop_loss, take_profit=take_profit)
     row = {
         "dedupe_key": key,
         "closed_ist": _now().isoformat(),
@@ -94,6 +107,20 @@ def record_closed_trade(
     ledger.setdefault("trades", []).append(row)
     _save_ledger(ledger)
     write_summary(ledger)
+    try:
+        from profit_v2 import record_trial_close
+
+        record_trial_close(
+            outcome=outcome,
+            side=side,
+            entry=entry,
+            stop_loss=stop_loss,
+            take_profit=take_profit,
+            pnl_usd=pnl,
+            issued_ist=issued_ist,
+        )
+    except Exception:
+        pass
     return row
 
 

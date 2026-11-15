@@ -14,6 +14,23 @@ STOP_LOSS_PCT = 0.01      # 1% loss
 TAKE_PROFIT_PCT = 0.02    # 2% profit
 
 # ---------------------------------------------------------------------------
+# Profit-v2 trial (15 Nov) — next 10 trades, else REMOVE
+# ATR-aware risk, Fail cooldown, bounce regime FLAT, reclaim LONG, Delta sync.
+# When trial expires/remove → features off; fixed 1%/2% again.
+# ---------------------------------------------------------------------------
+PROFIT_V2_TRIAL_ENABLED = True
+PROFIT_V2_TRIAL_TRADES = 10
+PROFIT_V2_ATR_SL_MULT = 1.0          # SL floor = max(1%*entry, mult * 1H ATR * atr_stop_mult)
+PROFIT_V2_FAIL_COOLDOWN_MIN = 90     # minutes after Fail before new short (unless dump impulse)
+PROFIT_V2_FEATURES = (
+    "atr_aware_stops",
+    "fail_cooldown",
+    "bounce_regime_flat",
+    "reclaim_long_in_bear",
+    "delta_sync_before_rebid",
+)
+
+# ---------------------------------------------------------------------------
 # Labels & alert format
 # ---------------------------------------------------------------------------
 USE_LONG_SHORT_LABELS = True          # LONG / SHORT only (never Buy/Sell wording)
@@ -149,3 +166,7 @@ FALLBACK = {
 #     next analysis must read hard_rules / last findings (never forget prior mistakes).
 # 20) On Fail: auto-fix (runtime_fixes.json) → re-analyze → bid next valid ticket
 #     (FAIL_AUTO_FIX_THEN_BID). Do not re-bid the same failed entry.
+# 21) Profit-v2 trial (15 Nov): for next 10 trades — ATR-aware SL/TP (max 1%, 1×1H ATR),
+#     90m Fail cooldown (unless dump continuation), bounce-regime FLAT for non-dump shorts,
+#     reclaim LONG allowed in bear on 1H close > local swing + EMA20, Delta flatten-before-rebid.
+#     After 10 closes: keep only if clearly better; else REMOVE and revert to fixed 1%/2%.

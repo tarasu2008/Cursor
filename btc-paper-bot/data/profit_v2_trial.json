@@ -1,0 +1,21 @@
+{
+  "enabled": true,
+  "status": "active",
+  "max_trades": 10,
+  "trades_completed": 0,
+  "started_ist": "2026-11-15T19:40:27.499115+05:30",
+  "features": [
+    "atr_aware_stops",
+    "fail_cooldown",
+    "bounce_regime_flat",
+    "reclaim_long_in_bear",
+    "delta_sync_before_rebid"
+  ],
+  "closed": [],
+  "pass": 0,
+  "fail": 0,
+  "pnl_usd": 0.0,
+  "verdict": null,
+  "note": "Trial: next 10 trades under profit-v2. If not clearly better \u2192 remove / revert to fixed 1%/2%.",
+  "updated_ist": "2026-11-15T19:40:45.722853+05:30"
+}

@@ -47,6 +47,7 @@ from rules import (
     MIN_STOP_CLEAR_OF_RECENT_RANGE,
     DEEP_LEARN_EVERY_TRADE,
     FAIL_AUTO_FIX_THEN_BID,
+    PROFIT_V2_ATR_SL_MULT,
 )
 from furry import furry_state
 from extra_indicators import suite as indicator_suite, tiered_targets
@@ -58,6 +59,7 @@ from learn import (
     clear_runtime_fixes_on_pass,
     load_runtime_fixes,
 )
+from profit_v2 import feature_on, trial_notes, trial_active
 
 ROOT = Path(__file__).resolve().parent
 STATE_PATH = ROOT / "data" / "orders_state.json"
@@ -250,7 +252,31 @@ def pct_stop_tp(side: str, entry: float) -> tuple[float, float]:
     return float(stop), float(tp)
 
 
-def apply_ticket_risk(side: str, entry: float, stop: float, tp: float) -> tuple[float, float]:
+def atr_aware_stop_tp(side: str, entry: float, atr_1h: float) -> tuple[float, float]:
+    """Profit-v2: SL = max(1% entry, ATR_SL_MULT * 1H ATR * atr_stop_mult); TP = MIN_RR * risk."""
+    floor_pct = entry * STOP_LOSS_PCT
+    atr_pad = max(float(atr_1h or 0) * PROFIT_V2_ATR_SL_MULT * _active_atr_stop_mult, 0.0)
+    risk = max(floor_pct, atr_pad, 1.0)
+    if side == "sell":
+        stop = int(entry + risk + 0.999)
+        risk_i = max(stop - entry, 1)
+        tp = int(entry - MIN_RR * risk_i)
+    else:
+        stop = int(entry - risk)
+        risk_i = max(entry - stop, 1)
+        tp = int(entry + MIN_RR * risk_i + 0.999)
+    return float(stop), float(tp)
+
+
+def apply_ticket_risk(
+    side: str,
+    entry: float,
+    stop: float,
+    tp: float,
+    atr_1h: float | None = None,
+) -> tuple[float, float]:
+    if feature_on("atr_aware_stops") and atr_1h is not None:
+        return atr_aware_stop_tp(side, entry, float(atr_1h))
     if USE_FIXED_PCT_RISK:
         return pct_stop_tp(side, entry)
     return stop, tp
@@ -787,7 +813,7 @@ def analyze(session: str) -> dict[str, Any]:
         tp = round(min(swing_tp, entry - MIN_RR * r_dist), 0)
         if tp >= entry:
             tp = round(entry - MIN_RR * r_dist, 0)
-        stop, tp = apply_ticket_risk("sell", entry, stop, tp)
+        stop, tp = apply_ticket_risk("sell", entry, stop, tp, atr_1h=h1_atr)
 
         rr = risk_reward("sell", entry, stop, tp)
         if (
@@ -835,7 +861,7 @@ def analyze(session: str) -> dict[str, Any]:
     if REQUIRE_BREAK_CLOSE_FOR_BREAKDOWN and last_h1["c"] < break_level:
         # Enter near mark (not a stale limit far below that instantly market-fills with a tight SL).
         entry = round(px, 0)
-        stop, tp = apply_ticket_risk("sell", entry, entry * 1.01, entry * 0.98)
+        stop, tp = apply_ticket_risk("sell", entry, entry * 1.01, entry * 0.98, atr_1h=h1_atr)
         factors = ["break_close_1h", "below_swing_low"]
         if bias == "bearish":
             factors.append("daily_bearish")
@@ -876,7 +902,7 @@ def analyze(session: str) -> dict[str, Any]:
         entry = round(break_level * 0.999, 0)
         stop = structure_stop("sell", entry, day_high, daily_atr)
         tp = round(min(FALLBACK["deep_target"], entry - MIN_RR * max(stop - entry, 1)), 0)
-        stop, tp = apply_ticket_risk("sell", entry, stop, tp)
+        stop, tp = apply_ticket_risk("sell", entry, stop, tp, atr_1h=h1_atr)
         # Pending (no 1H close yet): only propose if explicitly allowed — default OFF after
         # Nov Fail streak from premature breakdown shorts.
         near_break = (px - break_level) <= max(daily_atr * 0.5, px * 0.01)
@@ -935,7 +961,7 @@ def analyze(session: str) -> dict[str, Any]:
         extending_ll = lower_lows or lower_highs or px < e20
         if dump_impulse and extending_ll:
             entry = round(px, 0)
-            stop, tp = apply_ticket_risk("sell", entry, entry * 1.01, entry * 0.98)
+            stop, tp = apply_ticket_risk("sell", entry, entry * 1.01, entry * 0.98, atr_1h=h1_atr)
             factors = ["bear_continuation", "dump_impulse"]
             if cur_dumping or (prior_h1["c"] < prior_h1["o"]):
                 factors.append("red_1h_close")
@@ -1008,11 +1034,17 @@ def analyze(session: str) -> dict[str, Any]:
 
     # --- Strategy C: reclaim long ---
     reclaim = max(day_high, e20 if e20 > px else day_high)
-    if last_h1["c"] > h1_e20 and (bias != "bearish" or px > e200):
+    local_swing_high = max(b["h"] for b in h1[-6:-1]) if len(h1) >= 6 else last_h1["h"]
+    reclaim_in_bear = (
+        feature_on("reclaim_long_in_bear")
+        and last_h1["c"] > h1_e20
+        and last_h1["c"] >= local_swing_high * 0.999
+    )
+    if last_h1["c"] > h1_e20 and (bias != "bearish" or px > e200 or reclaim_in_bear):
         entry = round(reclaim * 1.001, 0)
         stop = structure_stop("buy", entry, day_low, daily_atr)
         tp = round(max(e50, entry + MIN_RR * max(entry - stop, 1)), 0)
-        stop, tp = apply_ticket_risk("buy", entry, stop, tp)
+        stop, tp = apply_ticket_risk("buy", entry, stop, tp, atr_1h=h1_atr)
         factors = []
         if last_h1["c"] > h1_e20:
             factors.append("h1_above_ema20")
@@ -1058,6 +1090,8 @@ def analyze(session: str) -> dict[str, Any]:
             if ms.get("bull_impulse"):
                 factors.append("macd_sma200_bull")
         rr = risk_reward("buy", entry, stop, tp)
+        if reclaim_in_bear and "reclaim_1h_swing" not in factors:
+            factors.append("reclaim_1h_swing")
         if len(factors) >= conf_needed and valid_ticket("buy", entry, stop, tp) and entry >= px:
             proposals.append(
                 OrderProposal(
@@ -1084,7 +1118,7 @@ def analyze(session: str) -> dict[str, Any]:
         entry = dip
         stop = structure_stop("buy", entry, dip, daily_atr)
         tp = round(min(day_high, e20), 0)
-        stop, tp = apply_ticket_risk("buy", entry, stop, tp)
+        stop, tp = apply_ticket_risk("buy", entry, stop, tp, atr_1h=h1_atr)
         factors = ["swing_demand"]
         if daily_rsi < 35:
             factors.append("rsi_oversold")
@@ -1206,6 +1240,71 @@ def analyze(session: str) -> dict[str, Any]:
     if choppy_block and chosen:
         notes.append("Cleared tickets due to choppy Q / weak ADX filter.")
         chosen = []
+
+    # Profit-v2: bounce regime — bearish but 1H above EMA20 → no supply/bounce shorts.
+    bounce_regime = bool(
+        feature_on("bounce_regime_flat")
+        and bias == "bearish"
+        and px > h1_e20
+        and not waiting_prev
+    )
+    if bounce_regime:
+        dump_ok = [
+            p
+            for p in (shorts if shorts else [])
+            if "bear_continuation" in (p.factors or [])
+            or "break_close_1h" in (p.factors or [])
+        ]
+        reclaim_longs = [
+            p
+            for p in (longs if longs else [])
+            if "reclaim_1h_swing" in (p.factors or []) or "h1_above_ema20" in (p.factors or [])
+        ]
+        if dump_ok:
+            chosen = [dump_ok[0]]
+            notes.append("PROFIT-V2 bounce regime: dump/break SHORT only.")
+        elif reclaim_longs:
+            chosen = [reclaim_longs[0]]
+            notes.append("PROFIT-V2 bounce regime: reclaim LONG (no bounce short).")
+        else:
+            if chosen:
+                notes.append(
+                    "PROFIT-V2 bounce regime: FLAT — no supply/bounce shorts above 1H EMA20 "
+                    "(wait dump continuation or reclaim LONG)."
+                )
+            chosen = []
+
+    # Profit-v2: Fail cooldown — block new shorts for N minutes unless dump continuation.
+    if feature_on("fail_cooldown") and chosen and not waiting_prev:
+        until = runtime.get("fail_cooldown_until_ist")
+        if until:
+            try:
+                until_dt = datetime.fromisoformat(str(until))
+                if until_dt.tzinfo is None:
+                    until_dt = until_dt.replace(tzinfo=IST)
+                if ist_now() < until_dt:
+                    kept = [
+                        p
+                        for p in chosen
+                        if p.side == "buy"
+                        or "bear_continuation" in (p.factors or [])
+                        or "break_close_1h" in (p.factors or [])
+                    ]
+                    if not kept:
+                        notes.append(
+                            f"PROFIT-V2 Fail cooldown until {until_dt.strftime('%H:%M IST')} "
+                            "— no new bounce short."
+                        )
+                        chosen = []
+                    elif kept != chosen:
+                        notes.append("PROFIT-V2 Fail cooldown: dump/break/LONG only.")
+                        chosen = kept
+            except Exception:
+                pass
+
+    for tn in trial_notes():
+        if tn:
+            notes.insert(0, tn)
 
     # Auto-invalidate stale tracked ideas
     state = load_state()
