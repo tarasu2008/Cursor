@@ -74,7 +74,22 @@
       "pnl_usd": -10.01,
       "notional_usd": 1001.44,
       "idea_key": "SHORT|66763.0|Fail"
+    },
+    {
+      "dedupe_key": "2026-11-15T06:14:39.656641+05:30|SHORT|63782.0|Pass",
+      "closed_ist": "2026-11-15T06:55:16.189531+05:30",
+      "issued_ist": "2026-11-15T06:14:39.656641+05:30",
+      "session": "ad_hoc",
+      "side": "SHORT",
+      "entry": 63782.0,
+      "stop_loss": 64420.0,
+      "take_profit": 62506.0,
+      "qty": 0.016,
+      "outcome": "Pass",
+      "pnl_usd": 20.41,
+      "notional_usd": 1020.51,
+      "idea_key": "SHORT|63782.0|Pass"
     }
   ],
-  "updated_ist": "2026-11-15T06:10:05.911780+05:30"
+  "updated_ist": "2026-11-15T06:55:16.189552+05:30"
 }
