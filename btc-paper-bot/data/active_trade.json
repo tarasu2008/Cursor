@@ -1,39 +1,61 @@
 {
-  "timestamp_ist": "2026-11-15T07:55:19.521464+05:30",
-  "price": 64208.1,
+  "timestamp_ist": "2026-11-15T08:30:20.205235+05:30",
+  "price": 64870.3,
   "bias": "bearish",
   "previous_review": {
     "had_previous": true,
-    "grade": "\u2014",
-    "previous_timestamp_ist": "2026-11-15T07:40:07.578026+05:30",
-    "previous_price": 63733.2,
-    "result": "Open",
-    "mistake": null,
-    "lesson": null,
-    "adjustment": null,
-    "pnl_usd": 0.0,
-    "atr_stop_mult_now": 1.0,
+    "grade": "Fail",
+    "previous_timestamp_ist": "2026-11-15T07:55:19.521464+05:30",
+    "previous_price": 64208.1,
+    "result": "Fail",
+    "mistake": "stop_hit",
+    "lesson": "Stop level reached \u2014 Fail. | DEEP: Stop hunted \u2014 next ticket needs SL clear of recent range / liquidity.; Fixed 1% stop was tight vs BTC noise \u2014 demand stronger confluence.",
+    "adjustment": "ATR_STOP_MULT -> 1.25",
+    "pnl_usd": -10.27,
+    "atr_stop_mult_now": 1.25,
     "reviews": [
       {
         "side": "SHORT",
-        "entry": 64572.0,
-        "stop_loss": 65218.0,
-        "take_profit": 63280.0,
-        "qty": 0.015,
-        "filled": false,
-        "hit_sl": false,
+        "entry": 64208.0,
+        "stop_loss": 64851.0,
+        "take_profit": 62922.0,
+        "qty": 0.016,
+        "filled": true,
+        "hit_sl": true,
         "hit_tp": false,
-        "grade": "Open",
-        "mistake": null,
-        "pnl_usd": 0.0,
-        "path_high": 64285.0,
-        "path_low": 63733.2,
-        "deep": null
+        "grade": "Fail",
+        "mistake": "stop_hit",
+        "pnl_usd": -10.27,
+        "path_high": 64870.5,
+        "path_low": 64208.1,
+        "deep": {
+          "closed_ist": "2026-11-15T08:30:19.836230+05:30",
+          "side": "SHORT",
+          "entry": 64208.0,
+          "fill_price": 64208.0,
+          "stop_loss": 64851.0,
+          "take_profit": 62922.0,
+          "qty": 0.016,
+          "outcome": "Fail",
+          "mistake": "stop_hit",
+          "base_lesson": "Stop level reached \u2014 Fail.",
+          "path_high": 64870.5,
+          "path_low": 64208.1,
+          "price_at_review": 64870.3,
+          "stop_pct": 0.01001,
+          "fill_slip_pct": 0.0,
+          "room_from_fill_pct": 0.01001,
+          "findings": [
+            "Stop hunted \u2014 next ticket needs SL clear of recent range / liquidity.",
+            "Fixed 1% stop was tight vs BTC noise \u2014 demand stronger confluence."
+          ],
+          "brain_trade_n": 4
+        }
       }
     ],
-    "detail": "Replaced unfilled far SHORT with mark continuation (not graded).",
+    "detail": "SHORT \u2192 Fail",
     "performance": {
-      "updated_ist": "2026-11-15T07:55:19.498713+05:30",
+      "updated_ist": "2026-11-15T08:30:19.836716+05:30",
       "rules": {
         "notional_usd": 1000.0,
         "stop_loss_pct": 0.01,
@@ -41,36 +63,36 @@
         "grade": "Pass or Fail only (no partial)"
       },
       "today": {
-        "trades": 1,
+        "trades": 2,
         "pass": 1,
-        "fail": 0,
-        "pnl_usd": 20.41,
+        "fail": 1,
+        "pnl_usd": 10.14,
         "total_profit_usd": 20.41,
-        "total_loss_usd": 0
+        "total_loss_usd": -10.27
       },
       "week": {
-        "trades": 6,
+        "trades": 7,
         "pass": 3,
-        "fail": 3,
-        "pnl_usd": 29.24,
+        "fail": 4,
+        "pnl_usd": 18.97,
         "total_profit_usd": 59.68,
-        "total_loss_usd": -30.44
+        "total_loss_usd": -40.71
       },
       "month": {
-        "trades": 6,
+        "trades": 7,
         "pass": 3,
-        "fail": 3,
-        "pnl_usd": 29.24,
+        "fail": 4,
+        "pnl_usd": 18.97,
         "total_profit_usd": 59.68,
-        "total_loss_usd": -30.44
+        "total_loss_usd": -40.71
       },
       "all_time": {
-        "trades": 6,
+        "trades": 7,
         "pass": 3,
-        "fail": 3,
-        "pnl_usd": 29.24,
+        "fail": 4,
+        "pnl_usd": 18.97,
         "total_profit_usd": 59.68,
-        "total_loss_usd": -30.44
+        "total_loss_usd": -40.71
       }
     }
   },
@@ -78,10 +100,10 @@
   "signals": [
     {
       "side": "SHORT",
-      "entry": 64208.0,
-      "stop_loss": 64851.0,
-      "take_profit": 62922.0,
-      "qty": 0.016
+      "entry": 64870.0,
+      "stop_loss": 65519.0,
+      "take_profit": 63572.0,
+      "qty": 0.015
     }
   ]
 }

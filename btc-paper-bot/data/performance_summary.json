@@ -1,5 +1,5 @@
 {
-  "updated_ist": "2026-11-15T07:55:19.498713+05:30",
+  "updated_ist": "2026-11-15T08:30:20.185967+05:30",
   "rules": {
     "notional_usd": 1000.0,
     "stop_loss_pct": 0.01,
@@ -7,35 +7,35 @@
     "grade": "Pass or Fail only (no partial)"
   },
   "today": {
-    "trades": 1,
+    "trades": 2,
     "pass": 1,
-    "fail": 0,
-    "pnl_usd": 20.41,
+    "fail": 1,
+    "pnl_usd": 10.14,
     "total_profit_usd": 20.41,
-    "total_loss_usd": 0
+    "total_loss_usd": -10.27
   },
   "week": {
-    "trades": 6,
+    "trades": 7,
     "pass": 3,
-    "fail": 3,
-    "pnl_usd": 29.24,
+    "fail": 4,
+    "pnl_usd": 18.97,
     "total_profit_usd": 59.68,
-    "total_loss_usd": -30.44
+    "total_loss_usd": -40.71
   },
   "month": {
-    "trades": 6,
+    "trades": 7,
     "pass": 3,
-    "fail": 3,
-    "pnl_usd": 29.24,
+    "fail": 4,
+    "pnl_usd": 18.97,
     "total_profit_usd": 59.68,
-    "total_loss_usd": -30.44
+    "total_loss_usd": -40.71
   },
   "all_time": {
-    "trades": 6,
+    "trades": 7,
     "pass": 3,
-    "fail": 3,
-    "pnl_usd": 29.24,
+    "fail": 4,
+    "pnl_usd": 18.97,
     "total_profit_usd": 59.68,
-    "total_loss_usd": -30.44
+    "total_loss_usd": -40.71
   }
 }

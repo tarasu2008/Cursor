@@ -1,10 +1,17 @@
 {
-  "active": false,
-  "reason": "cleared_after_pass",
-  "min_confluence_bump": 0,
-  "atr_stop_mult": 1.0,
+  "active": true,
+  "reason": "auto_fix_after_fail:stop_hit",
+  "failed_side": "SHORT",
+  "failed_entry": 64208.0,
+  "min_confluence_bump": 1,
+  "atr_stop_mult": 1.25,
   "block_pending_breakdown": true,
   "require_resting_limits": true,
   "require_stop_clear_of_recent_range": true,
-  "updated_ist": "2026-11-15T06:55:16.215772+05:30"
+  "block_same_entry": 64208.0,
+  "source_deep_findings": [
+    "Stop hunted \u2014 next ticket needs SL clear of recent range / liquidity.",
+    "Fixed 1% stop was tight vs BTC noise \u2014 demand stronger confluence."
+  ],
+  "updated_ist": "2026-11-15T08:30:19.859621+05:30"
 }
