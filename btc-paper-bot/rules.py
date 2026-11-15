@@ -48,16 +48,20 @@ WAIT_FOR_PREV_BEFORE_NEW = True
 # Schedule behaviour
 # ---------------------------------------------------------------------------
 ALLOW_1H_TRADES = True
-HOURLY_RECHECK = True                # legacy name; actual cadence is every 30 min
-RECHECK_EVERY_MINUTES = 30           # check BTC + PREV Pass/Fail every 30 min
+HOURLY_RECHECK = True                # legacy name; actual cadence is every 10 min
+RECHECK_EVERY_MINUTES = 10           # watch open SL/TP + flat setups every 10 min
 HOURLY_SILENT_IF_OPEN = True         # while Open: STATUS:SILENT, empty chat reply
 # One active ticket only (never SHORT+LONG together) so Pass/Fail is unambiguous.
 ONE_ACTIVE_TICKET = True
 # After analysis produces a new LONG/SHORT → place it on Delta DEMO automatically.
 AUTO_PLACE_DELTA_DEMO = True
 DELTA_DEMO_BASE = "https://cdn-ind.testnet.deltaex.org"
-# Session timers optional — user may disable; 30-min timer is the Pass/Fail watcher.
+# Session timers optional — 10-min timer watches Pass/Fail; entries still use 1H structure.
 SESSIONS = ("india", "uk", "us")     # ~09:00 / 13:00 / 19:45 IST
+# Catch cascading dumps: short continuation after confirmed bearish 1H close (not only 30d low).
+ALLOW_BEAR_CONTINUATION_SHORT = True
+# Pro rule: prefer near-mark continuation shorts in a dump over far supply bounce limits.
+PREFER_MARK_SHORT_IN_DUMP = True
 
 # ---------------------------------------------------------------------------
 # Strategy filters (lessons from this chat)
@@ -105,7 +109,8 @@ MIN_Q_FOR_TRADE = 0.45   # Q Trend Quality: skip ultra-choppy if below
 BLOCK_CHOPPY_Q = True    # if Q choppy and ADX weak → prefer FLAT
 
 FALLBACK = {
-    "deep_target": 65_000.0,
+    # Floor target only used as a soft cap; ticket TP is still 2% when USE_FIXED_PCT_RISK.
+    "deep_target": 55_000.0,
 }
 
 # ---------------------------------------------------------------------------
@@ -120,7 +125,12 @@ FALLBACK = {
 # 7) Simple ticket: LONG/SHORT + Entry + SL + TP; $1000 paper size.
 # 8) Grade Pass/Fail only; save daily/weekly/monthly counts + $ PnL.
 # 9) Cursor alert + IST Time; never BTC alert / notification chatter.
-# 10) Every 30 min: check BTC + PREV status; silent while Open; alert on Pass/Fail then next order.
+# 10) Every 10 min: watch BTC + PREV SL/TP; silent while Open; MUST show Cursor alert
+#     message on Pass/Fail (never silent on close), then next order + commit/push.
+#     New entries still require 1H structure (don't chase sub-hour noise).
+# 10b) Missed 66→63 dump: breakdown used 30d low (always chasing); add bear-continuation
+#      short on confirmed red 1H + LH/LL; fix 1%/2% RR rounding < 2.0; prefer mark shorts in dumps.
+# 10c) Never grade mid-bar with full H1 wick from before signal (track path hi/lo since issue).
 # 11) Do not require limit fill to grade TP/SL (12 Nov morning SHORT = Pass).
 # 12) No email spam: silent checks must not commit/push/update PR.
 # 13) Furry A (9) / Furry B (21) EMA cloud + cross — confluence for LONG/SHORT.
@@ -129,7 +139,7 @@ FALLBACK = {
 # 15) Triple Confluence: trend + HTF/ADX filter; ATR stop reference + tiered TPs
 #     (paper ticket still uses fixed 1%/2% until user widens risk).
 # 16) Cycle: analyze → on new ticket bid Delta DEMO (API) with same Entry/SL/TP;
-#     30-min watch → Pass/Fail alert → analyze next → bid again. Silent while Open.
+#     10-min watch → Pass/Fail alert → analyze next → bid again. Silent while Open.
 # 17) Cursor alert shows Week/Month Total Profit and Total Loss (not only net PnL).
 # 18) Mistakes Nov 13–14: pending breakdown without 1H close; limit shorts filled as market
 #     with SL from lower limit (stop too tight); same Fail counted 3x; grading used bars

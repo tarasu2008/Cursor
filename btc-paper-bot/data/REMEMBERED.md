@@ -12,12 +12,19 @@ Locked in `rules.py` + this file. Change only when the user explicitly asks.
 7. Pass/Fail = TP or SL **price level** traded after signal (**fill not required**).
 8. Save Pass/Fail + paper **$ PnL** for **today / week / month / all-time**.
 9. Also show **Week Total Profit**, **Week Total Loss**, **Month Total Profit**, **Month Total Loss**.
-10. **Every 30 min** timer ON — checks BTC price + previous analysis/trade status (`5,35 * * * *`).
+10. **Every 10 min** timer ON — watches BTC + previous SL/TP (`*/10 * * * *`).
+    Entries still need **1H structure** (do not chase sub-hour noise).
 11. If still Open → **STATUS:SILENT** (empty reply). No git/commit/push/PR/email.
-12. **Alert** only when Pass/Fail (or new ticket while flat); then **immediately analyze next order**.
+12. **MUST show a Cursor alert message** when previous trade is **Pass or Fail**
+    (or new ticket while flat) — never stay silent on close. Paste the full alert
+    in chat (title + IST Time + PREV Pass/Fail + PnL + Week/Month totals + next
+    LONG/SHORT if ready + DELTA DEMO / FAIL-FIX lines). Then commit/push.
+    After Pass/Fail → **immediately analyze next order**.
 13. While Open → do not stack a new trade; one ticket only (never SHORT+LONG together).
-14. Session timers (India/UK/US) optional; 30-min timer is required for Pass/Fail watching.
-15. No mid-range chase; protect open orders; prefer supply shorts / confirmed breakdowns.
+14. Session timers (India/UK/US) optional; 10-min timer is required for Pass/Fail watching.
+15. No mid-range chase; protect open orders; prefer **mark continuation shorts in dumps** /
+    confirmed breakdowns / supply only when near. Cascading dumps like 66→63 must not be missed.
+    Breakdown uses prior H1/local swing (not chasing live 30d low). Grade path = hi/lo since issue only.
 16. **Furry A & Furry B** (EMA 9/21) confluence (`indicators/furry_ab.pine` + `furry.py`).
 17. Extra frameworks (`indicators/*.pine` + `extra_indicators.py`):
     Triple Confluence (trend + ADX + ATR tiers), MACD+SMA200, UT Bot + SSL (agree-only),
@@ -26,7 +33,7 @@ Locked in `rules.py` + this file. Change only when the user explicitly asks.
     analyze → new LONG/SHORT → **auto-bid Delta DEMO** (`delta_demo.py`,
     `DELTA_API_KEY` / `DELTA_API_SECRET`) with same Entry / 1% SL / 2% TP on
     `cdn-ind.testnet.deltaex.org` (BTCUSD product_id 84, ~15 contracts for $1k).
-    30-min watch → Pass/Fail → analyze next → bid again. Skip if Delta already open.
+    10-min watch → Pass/Fail → analyze next → bid again. Skip if Delta already open.
     Delta trading API needs whitelisted IPs; webhook is TradingView-only (not Cloud Agent).
 19. FLAT alert = **no bid** (no Entry/SL/TP).
 20. Lessons: no mid-range shorts into demand; don’t require fill to grade TP/SL;

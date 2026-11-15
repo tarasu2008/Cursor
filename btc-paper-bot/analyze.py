@@ -39,6 +39,8 @@ from rules import (
     BLOCK_CHOPPY_Q,
     AUTO_PLACE_DELTA_DEMO,
     ALLOW_PENDING_BREAKDOWN_TICKET,
+    ALLOW_BEAR_CONTINUATION_SHORT,
+    PREFER_MARK_SHORT_IN_DUMP,
     GRADE_FROM_ISSUED_ONLY,
     GRADE_BOTH_BY_FIRST_TOUCH,
     REQUIRE_LIMIT_RESTING,
@@ -225,14 +227,27 @@ def structure_stop(side: str, entry: float, structure: float, atr14: float) -> f
 
 
 def pct_stop_tp(side: str, entry: float) -> tuple[float, float]:
-    """Fixed % risk: 1% SL / 2% TP (user request 12 Nov)."""
+    """Fixed % risk: 1% SL / 2% TP (user request 12 Nov).
+
+    Round away from entry so RR stays >= MIN_RR after integer rounding
+    (e.g. entry 64572 previously rounded to RR 1.998 and was rejected).
+    """
     if side == "sell":
-        stop = round(entry * (1 + STOP_LOSS_PCT), 0)
-        tp = round(entry * (1 - TAKE_PROFIT_PCT), 0)
+        stop = int(entry * (1 + STOP_LOSS_PCT) + 0.999)  # ceil
+        tp = int(entry * (1 - TAKE_PROFIT_PCT))  # floor
+        # Guarantee reward/risk >= MIN_RR after ints
+        risk = max(stop - entry, 1)
+        need_tp = entry - MIN_RR * risk
+        if tp > need_tp:
+            tp = int(need_tp)
     else:
-        stop = round(entry * (1 - STOP_LOSS_PCT), 0)
-        tp = round(entry * (1 + TAKE_PROFIT_PCT), 0)
-    return stop, tp
+        stop = int(entry * (1 - STOP_LOSS_PCT))  # floor
+        tp = int(entry * (1 + TAKE_PROFIT_PCT) + 0.999)  # ceil
+        risk = max(entry - stop, 1)
+        need_tp = entry + MIN_RR * risk
+        if tp < need_tp:
+            tp = int(need_tp + 0.999)
+    return float(stop), float(tp)
 
 
 def apply_ticket_risk(side: str, entry: float, stop: float, tp: float) -> tuple[float, float]:
@@ -301,23 +316,29 @@ def review_previous_signal(h1: list[dict], px: float, session: str = "ad_hoc") -
         issued = ist_now() - timedelta(hours=6)
 
     # Grade only on path AFTER the signal (pre-signal highs/lows must not Fail us).
-    if GRADE_FROM_ISSUED_ONLY:
-        bars = [b for b in h1 if b["dt"] >= issued]
-    else:
-        bars = [b for b in h1 if b["dt"] >= issued - timedelta(minutes=30)]
-    if not bars:
-        bars = h1[-6:]
-    hi = max(b["h"] for b in bars)
-    lo = min(b["l"] for b in bars)
+    # Kraken H1 dt = candle OPEN. A mid-bar signal must NOT inherit that candle's full wick.
+    # Closed bars with open >= issued use full H/L; otherwise track running hi/lo vs ticker.
+    closed_after = [b for b in h1 if b["dt"] >= issued]
+    run_hi = float(prev.get("path_high_since") or prev.get("price") or px)
+    run_lo = float(prev.get("path_low_since") or prev.get("price") or px)
+    run_hi = max(run_hi, px)
+    run_lo = min(run_lo, px)
+    if closed_after:
+        run_hi = max(run_hi, max(b["h"] for b in closed_after))
+        run_lo = min(run_lo, min(b["l"] for b in closed_after))
+    hi, lo = run_hi, run_lo
+    # Persist running path so 10-min checks accumulate without pre-signal wicks.
+    prev["path_high_since"] = round(hi, 1)
+    prev["path_low_since"] = round(lo, 1)
+    prev_path.write_text(json.dumps(prev, indent=2))
 
     # Age: if still open after 24h without SL/TP, count as Fail (expired) — user asked Pass/Fail only.
     age_h = (ist_now() - issued).total_seconds() / 3600
 
     def _first_touch(is_short: bool, stop: float, tp: float) -> str | None:
-        """Return 'sl' or 'tp' for the first level touched on bar path; None if neither."""
-        for b in bars:
+        """Return 'sl' or 'tp' from closed post-signal bars, else from running path order."""
+        for b in closed_after:
             if is_short:
-                # Conservative intrabar: if both in same candle, SL first for shorts (rally).
                 if b["h"] >= stop and b["l"] <= tp:
                     return "sl"
                 if b["h"] >= stop:
@@ -331,6 +352,21 @@ def review_previous_signal(h1: list[dict], px: float, session: str = "ad_hoc") -
                     return "sl"
                 if b["h"] >= tp:
                     return "tp"
+        # No closed bar yet: use current path vs levels (can't know intrabar order → Open unless only one side).
+        if is_short:
+            if hi >= stop and lo <= tp:
+                return None  # ambiguous without ticks → keep Open
+            if hi >= stop:
+                return "sl"
+            if lo <= tp:
+                return "tp"
+        else:
+            if lo <= stop and hi >= tp:
+                return None
+            if lo <= stop:
+                return "sl"
+            if hi >= tp:
+                return "tp"
         return None
 
     reviews = []
@@ -355,7 +391,7 @@ def review_previous_signal(h1: list[dict], px: float, session: str = "ad_hoc") -
         hit_sl = hi >= stop if is_short else lo <= stop
         hit_tp = lo <= tp if is_short else hi >= tp
 
-        # Pass/Fail only — no partial.
+        # Pass/Fail only — no partial. Ambiguous both-sides without clear first touch → stay Open.
         if hit_tp and hit_sl:
             if GRADE_BOTH_BY_FIRST_TOUCH:
                 first = _first_touch(is_short, stop, tp)
@@ -363,10 +399,14 @@ def review_previous_signal(h1: list[dict], px: float, session: str = "ad_hoc") -
                     outcome = "Pass"
                     mistake = None
                     lesson = "TP traded before SL on path — Pass."
-                else:
+                elif first == "sl":
                     outcome = "Fail"
-                    mistake = "stop_hit_before_tp" if first == "sl" else "both_sides_tagged"
-                    lesson = "SL traded before TP (or same bar) — Fail."
+                    mistake = "stop_hit_before_tp"
+                    lesson = "SL traded before TP on path — Fail."
+                else:
+                    outcome = "Open"
+                    mistake = None
+                    lesson = None
             else:
                 outcome = "Fail"
                 mistake = "both_sides_tagged"
@@ -782,8 +822,13 @@ def analyze(session: str) -> dict[str, Any]:
                 f"Skipped supply short (conf={len(factors)}/{conf_needed}, rr={rr:.2f}, valid={valid_ticket('sell', entry, stop, tp)})"
             )
 
-    # --- Strategy B: breakdown short (only after 1H close under swing) ---
-    break_level = swing_low_30
+    # --- Strategy B: breakdown short (1H close under PRIOR local swing, not live 30d low) ---
+    # Using swing_low_30 alone chased new lows during 66→63 and never armed a short.
+    h1_prior = h1[-25:-1] if len(h1) >= 26 else h1[:-1]
+    local_swing_low = min(b["l"] for b in h1_prior) if h1_prior else swing_low_30
+    # Prefer last confirmed daily pivot low when available (structure), else H1 local.
+    pivot_swing = recent_pl[-2] if len(recent_pl) >= 2 else (recent_pl[-1] if recent_pl else local_swing_low)
+    break_level = min(local_swing_low, pivot_swing)
     recent3 = h1[-3:] if len(h1) >= 3 else h1
     recent_high = max(b["h"] for b in recent3) if recent3 else px
     recent_low = min(b["l"] for b in recent3) if recent3 else px
@@ -875,6 +920,90 @@ def analyze(session: str) -> dict[str, Any]:
             notes.append(
                 f"Pending breakdown under {break_level:.0f} → limit {entry} SL {stop} TP {tp} "
                 f"(wait for confirmed 1H close; not active yet)"
+            )
+
+    # --- Strategy B2: bear continuation (pro: short the dump at mark, don't wait for bounce) ---
+    # Trigger = dump impulse (2+ of last 3H red, or current bar dumping) + LH/LL or below EMAs.
+    if ALLOW_BEAR_CONTINUATION_SHORT and bias == "bearish" and not in_mid:
+        prior_h1 = h1[-2] if len(h1) >= 2 else last_h1
+        recent_closed = h1[-4:-1] if len(h1) >= 4 else h1[:-1]
+        red_count = sum(1 for b in recent_closed if b["c"] < b["o"])
+        cur_dumping = last_h1["c"] < last_h1["o"] and (last_h1["o"] - last_h1["c"]) / max(
+            last_h1["o"], 1
+        ) >= 0.002
+        dump_impulse = red_count >= 2 or (red_count >= 1 and cur_dumping)
+        extending_ll = lower_lows or lower_highs or px < e20
+        if dump_impulse and extending_ll:
+            entry = round(px, 0)
+            stop, tp = apply_ticket_risk("sell", entry, entry * 1.01, entry * 0.98)
+            factors = ["bear_continuation", "dump_impulse"]
+            if cur_dumping or (prior_h1["c"] < prior_h1["o"]):
+                factors.append("red_1h_close")
+            if bias == "bearish":
+                factors.append("daily_bearish")
+            if lower_highs:
+                factors.append("lower_highs")
+            if lower_lows:
+                factors.append("lower_lows")
+            if macd_d < 0:
+                factors.append("macd_daily_neg")
+            if macd_h1 < 0:
+                factors.append("macd_h1_neg")
+            if USE_FURRY_AB and not furry_d.get("bullish_cloud"):
+                factors.append("furry_bear_cloud")
+            if USE_EXTRA_INDICATORS:
+                st = ind_d.get("supertrend") or {}
+                cdc = ind_d.get("cdc") or {}
+                esu = ind_d.get("ema_suite") or {}
+                if not st.get("bullish"):
+                    factors.append("supertrend_bear")
+                if (cdc.get("score") or 0) < 0:
+                    factors.append("cdc_sell_zone")
+                if esu.get("aligned_bear"):
+                    factors.append("ema_suite_bear")
+            rr = risk_reward("sell", entry, stop, tp)
+            # Ref high = max of last completed hour (not noisy 3H range in a cascade).
+            ref_high = float(prior_h1["h"])
+            stop_ok = (not MIN_STOP_CLEAR_OF_RECENT_RANGE) or (stop > ref_high * 0.998)
+            blocked_same = runtime.get("block_same_entry") and abs(
+                float(runtime.get("block_same_entry") or 0) - entry
+            ) < 50
+            if (
+                len(factors) >= conf_needed
+                and valid_ticket("sell", entry, stop, tp)
+                and stop_ok
+                and not blocked_same
+            ):
+                proposals.append(
+                    OrderProposal(
+                        idea_id=f"short-cont-{session}-{ist_now().strftime('%Y%m%d%H')}",
+                        side="sell",
+                        order_type="limit",
+                        entry=entry,
+                        stop=stop,
+                        take_profit=tp,
+                        qty=qty_for(entry),
+                        notional_usd=NOTIONAL_USD,
+                        reason="Bear continuation: dump impulse + structure; mark entry 1%/2%.",
+                        session=session,
+                        confluence=len(factors),
+                        factors=factors,
+                        rr=round(rr, 2),
+                    )
+                )
+                notes.append(f"Continuation SHORT {entry} SL {stop} TP {tp} RR {rr:.2f} conf {len(factors)}")
+            elif not stop_ok:
+                notes.append(
+                    f"Skipped continuation short: 1% SL {stop} inside prior 1H high {ref_high:.0f}"
+                )
+            else:
+                notes.append(
+                    f"Skipped continuation short (conf={len(factors)}/{conf_needed}, "
+                    f"rr={rr:.2f}, valid={valid_ticket('sell', entry, stop, tp)})"
+                )
+        else:
+            notes.append(
+                f"No dump-impulse continuation yet (reds={red_count}/3 cur_dump={cur_dumping})"
             )
 
     # --- Strategy C: reclaim long ---
@@ -984,9 +1113,15 @@ def analyze(session: str) -> dict[str, Any]:
             )
             notes.append(f"Dip long {entry} SL {stop} TP {tp} RR {rr:.2f}")
 
-    # Rank by confluence, then RR, then nearer-to-price entry (avoid far bounce limits after drops).
+    # Rank: in dumps prefer mark/continuation shorts; else confluence → RR → nearer entry.
     def _rank_short(p: OrderProposal) -> tuple:
-        return (p.confluence, p.rr, -abs(p.entry - px))
+        mark_bonus = 0
+        if PREFER_MARK_SHORT_IN_DUMP and bias == "bearish":
+            if "bear_continuation" in (p.factors or []) or "break_close_1h" in (p.factors or []):
+                mark_bonus = 3
+            elif abs(p.entry - px) <= px * 0.003:
+                mark_bonus = 2
+        return (mark_bonus, p.confluence, p.rr, -abs(p.entry - px))
 
     def _rank_long(p: OrderProposal) -> tuple:
         return (p.confluence, p.rr, -abs(p.entry - px))
@@ -994,11 +1129,15 @@ def analyze(session: str) -> dict[str, Any]:
     def _quality_ok(p: OrderProposal) -> bool:
         if REQUIRE_LIMIT_RESTING:
             # Limit sell below mark → instant market fill into a too-tight planned SL.
-            if p.side == "sell" and p.entry < px * 0.999:
+            # Mark/continuation shorts at ~px are allowed (resting-or-touch).
+            if p.side == "sell" and p.entry < px * 0.997:
                 return False
-            if p.side == "buy" and p.entry > px * 1.001:
+            if p.side == "buy" and p.entry > px * 1.003:
                 return False
         if MIN_STOP_CLEAR_OF_RECENT_RANGE:
+            # Continuation / confirmed break already checked vs prior 1H high.
+            if "bear_continuation" in (p.factors or []) or "break_close_1h" in (p.factors or []):
+                return True
             if p.side == "sell" and p.stop <= recent_high:
                 return False
             if p.side == "buy" and p.stop >= recent_low:
@@ -1031,7 +1170,36 @@ def analyze(session: str) -> dict[str, Any]:
         notes.append(f"Rising support trendline ≈ {rise_line:.0f}")
 
     # Wait for previous Open trade to Pass/Fail before proposing a new one.
+    # Exception (pro): unfilled far bounce SHORT in an active dump → upgrade to mark short.
     waiting_prev = WAIT_FOR_PREV_BEFORE_NEW and review.get("grade") == "Open"
+    upgrade_far_short = False
+    if waiting_prev and PREFER_MARK_SHORT_IN_DUMP and bias == "bearish" and chosen:
+        try:
+            prev_sigs = []
+            if ACTIVE_TRADE_PATH.exists():
+                prev_sigs = (json.loads(ACTIVE_TRADE_PATH.read_text()).get("signals") or [])
+            elif LATEST_SIGNAL_PATH.exists():
+                prev_sigs = (json.loads(LATEST_SIGNAL_PATH.read_text()).get("signals") or [])
+            if prev_sigs:
+                pe = float(prev_sigs[0].get("entry") or 0)
+                ps = str(prev_sigs[0].get("side") or "").upper()
+                best = chosen[0]
+                if (
+                    ps == "SHORT"
+                    and pe > px * 1.005
+                    and "bear_continuation" in (best.factors or [])
+                    and best.entry <= px * 1.002
+                ):
+                    upgrade_far_short = True
+                    waiting_prev = False
+                    notes.insert(
+                        0,
+                        f"UPGRADE: cancel unfilled far SHORT @{pe:.0f} → mark continuation @{best.entry:.0f}",
+                    )
+                    if ACTIVE_TRADE_PATH.exists():
+                        ACTIVE_TRADE_PATH.unlink(missing_ok=True)
+        except Exception:
+            pass
     if waiting_prev:
         chosen = []
         notes.insert(0, "SILENT: previous still Open — leave it; no new LONG/SHORT until Pass or Fail.")
@@ -1059,6 +1227,7 @@ def analyze(session: str) -> dict[str, Any]:
         "price": px,
         "bias": bias,
         "previous_review": review,
+        "replace_open": upgrade_far_short,
         "levels": {
             "ema20": round(e20, 1),
             "ema50": round(e50, 1),
@@ -1484,7 +1653,7 @@ def main() -> None:
     # - Open → silent, keep watching previous ticket (no stack).
     # - Pass/Fail → keep next tickets from same run + bid Delta DEMO.
     # - Flat → allow a fresh ticket if confluence fires (restart cycle) + bid.
-    if args.hourly and grade == "Open":
+    if args.hourly and grade == "Open" and not report.get("replace_open"):
         report["tv_ticket"] = []
         report["proposals"] = []
         report["waiting_prev"] = True
@@ -1492,6 +1661,16 @@ def main() -> None:
         report["waiting_prev"] = False
     elif args.hourly:
         report["waiting_prev"] = False
+    if report.get("replace_open"):
+        # Treat upgrade as a fresh flat→ticket cycle (old far limit discarded, not graded).
+        report["waiting_prev"] = False
+        if report.get("previous_review"):
+            report["previous_review"] = {
+                **report["previous_review"],
+                "grade": "—",
+                "detail": "Replaced unfilled far SHORT with mark continuation (not graded).",
+            }
+        grade = "—"
 
     latest = save_latest_signal(report)
 

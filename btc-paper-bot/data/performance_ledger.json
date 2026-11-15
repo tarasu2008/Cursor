@@ -74,7 +74,52 @@
       "pnl_usd": -10.01,
       "notional_usd": 1001.44,
       "idea_key": "SHORT|66763.0|Fail"
+    },
+    {
+      "dedupe_key": "2026-11-15T06:14:39.656641+05:30|SHORT|63782.0|Pass",
+      "closed_ist": "2026-11-15T06:55:16.189531+05:30",
+      "issued_ist": "2026-11-15T06:14:39.656641+05:30",
+      "session": "ad_hoc",
+      "side": "SHORT",
+      "entry": 63782.0,
+      "stop_loss": 64420.0,
+      "take_profit": 62506.0,
+      "qty": 0.016,
+      "outcome": "Pass",
+      "pnl_usd": 20.41,
+      "notional_usd": 1020.51,
+      "idea_key": "SHORT|63782.0|Pass"
+    },
+    {
+      "dedupe_key": "2026-11-15T07:55:19.521464+05:30|SHORT|64208.0|Fail",
+      "closed_ist": "2026-11-15T08:30:19.835352+05:30",
+      "issued_ist": "2026-11-15T07:55:19.521464+05:30",
+      "session": "ad_hoc",
+      "side": "SHORT",
+      "entry": 64208.0,
+      "stop_loss": 64851.0,
+      "take_profit": 62922.0,
+      "qty": 0.016,
+      "outcome": "Fail",
+      "pnl_usd": -10.27,
+      "notional_usd": 1027.33,
+      "idea_key": "SHORT|64208.0|Fail"
+    },
+    {
+      "dedupe_key": "2026-11-15T08:30:20.205235+05:30|SHORT|64870.0|Fail",
+      "closed_ist": "2026-11-15T14:40:08.736961+05:30",
+      "issued_ist": "2026-11-15T08:30:20.205235+05:30",
+      "session": "ad_hoc",
+      "side": "SHORT",
+      "entry": 64870.0,
+      "stop_loss": 65519.0,
+      "take_profit": 63572.0,
+      "qty": 0.015,
+      "outcome": "Fail",
+      "pnl_usd": -9.73,
+      "notional_usd": 973.05,
+      "idea_key": "SHORT|64870.0|Fail"
     }
   ],
-  "updated_ist": "2026-11-14T09:50:25.251160+05:30"
+  "updated_ist": "2026-11-15T14:40:08.736979+05:30"
 }

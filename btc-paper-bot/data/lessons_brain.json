@@ -1,8 +1,8 @@
 {
-  "updated_ist": "2026-11-14T10:05:12.999962+05:30",
-  "trade_count": 2,
-  "pass": 0,
-  "fail": 2,
+  "updated_ist": "2026-11-15T14:40:08.737276+05:30",
+  "trade_count": 5,
+  "pass": 1,
+  "fail": 4,
   "hard_rules": [
     "Never place SHORT/LONG if 1% SL sits inside recent 3H high/low.",
     "Min confluence 4+; pending breakdown without 1H close is forbidden.",
@@ -57,29 +57,98 @@
         "Fixed 1% stop was tight vs BTC noise \u2014 demand stronger confluence."
       ],
       "brain_trade_n": 2
+    },
+    {
+      "closed_ist": "2026-11-15T06:55:16.189891+05:30",
+      "side": "SHORT",
+      "entry": 63782.0,
+      "fill_price": 63782.0,
+      "stop_loss": 64420.0,
+      "take_profit": 62506.0,
+      "qty": 0.016,
+      "outcome": "Pass",
+      "mistake": null,
+      "base_lesson": "Take profit level reached \u2014 Pass.",
+      "path_high": 63850.1,
+      "path_low": 62482.5,
+      "price_at_review": 62720.5,
+      "stop_pct": 0.01,
+      "fill_slip_pct": 0.0,
+      "room_from_fill_pct": 0.01,
+      "findings": [
+        "Pass \u2014 keep the same structure filters that produced this win.",
+        "Risk distance respected (~1%); keep fill-based SL/TP."
+      ],
+      "brain_trade_n": 3
+    },
+    {
+      "closed_ist": "2026-11-15T08:30:19.836230+05:30",
+      "side": "SHORT",
+      "entry": 64208.0,
+      "fill_price": 64208.0,
+      "stop_loss": 64851.0,
+      "take_profit": 62922.0,
+      "qty": 0.016,
+      "outcome": "Fail",
+      "mistake": "stop_hit",
+      "base_lesson": "Stop level reached \u2014 Fail.",
+      "path_high": 64870.5,
+      "path_low": 64208.1,
+      "price_at_review": 64870.3,
+      "stop_pct": 0.01001,
+      "fill_slip_pct": 0.0,
+      "room_from_fill_pct": 0.01001,
+      "findings": [
+        "Stop hunted \u2014 next ticket needs SL clear of recent range / liquidity.",
+        "Fixed 1% stop was tight vs BTC noise \u2014 demand stronger confluence."
+      ],
+      "brain_trade_n": 4
+    },
+    {
+      "closed_ist": "2026-11-15T14:40:08.737260+05:30",
+      "side": "SHORT",
+      "entry": 64870.0,
+      "fill_price": 64870.0,
+      "stop_loss": 65519.0,
+      "take_profit": 63572.0,
+      "qty": 0.015,
+      "outcome": "Fail",
+      "mistake": "stop_hit",
+      "base_lesson": "Stop level reached \u2014 Fail.",
+      "path_high": 65970.3,
+      "path_low": 63730.7,
+      "price_at_review": 65783.1,
+      "stop_pct": 0.01,
+      "fill_slip_pct": 0.0,
+      "room_from_fill_pct": 0.01,
+      "findings": [
+        "Stop hunted \u2014 next ticket needs SL clear of recent range / liquidity.",
+        "Fixed 1% stop was tight vs BTC noise \u2014 demand stronger confluence."
+      ],
+      "brain_trade_n": 5
     }
   ],
   "last_lesson": {
-    "closed_ist": "2026-11-14T10:05:12.999938+05:30",
+    "closed_ist": "2026-11-15T14:40:08.737260+05:30",
     "side": "SHORT",
-    "entry": 67432.0,
-    "fill_price": 68760.0,
-    "stop_loss": 68106.0,
-    "take_profit": 66083.0,
+    "entry": 64870.0,
+    "fill_price": 64870.0,
+    "stop_loss": 65519.0,
+    "take_profit": 63572.0,
     "qty": 0.015,
     "outcome": "Fail",
     "mistake": "stop_hit",
-    "base_lesson": "Pending breakdown / non-resting limit autopsy",
-    "path_high": 70190.0,
-    "path_low": 67500.0,
-    "price_at_review": 68000.0,
+    "base_lesson": "Stop level reached \u2014 Fail.",
+    "path_high": 65970.3,
+    "path_low": 63730.7,
+    "price_at_review": 65783.1,
     "stop_pct": 0.01,
-    "fill_slip_pct": 0.01969,
-    "room_from_fill_pct": 0.00951,
+    "fill_slip_pct": 0.0,
+    "room_from_fill_pct": 0.01,
     "findings": [
       "Stop hunted \u2014 next ticket needs SL clear of recent range / liquidity.",
       "Fixed 1% stop was tight vs BTC noise \u2014 demand stronger confluence."
     ],
-    "brain_trade_n": 2
+    "brain_trade_n": 5
   }
 }
