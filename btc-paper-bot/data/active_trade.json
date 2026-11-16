@@ -1,12 +1,12 @@
 {
-  "timestamp_ist": "2026-11-15T15:10:20.167998+05:30",
-  "price": 65364.0,
+  "timestamp_ist": "2026-11-16T05:50:18.067521+05:30",
+  "price": 64991.9,
   "bias": "bearish",
   "previous_review": {
     "had_previous": true,
     "grade": "\u2014",
-    "previous_timestamp_ist": "2026-11-15T14:40:08.951136+05:30",
-    "previous_price": 65783.1,
+    "previous_timestamp_ist": "2026-11-15T15:10:20.167998+05:30",
+    "previous_price": 65364.0,
     "result": "Open",
     "mistake": null,
     "lesson": null,
@@ -16,9 +16,9 @@
     "reviews": [
       {
         "side": "SHORT",
-        "entry": 65783.0,
-        "stop_loss": 66441.0,
-        "take_profit": 64467.0,
+        "entry": 65364.0,
+        "stop_loss": 66018.0,
+        "take_profit": 64056.0,
         "qty": 0.015,
         "filled": true,
         "hit_sl": false,
@@ -26,14 +26,14 @@
         "grade": "Open",
         "mistake": null,
         "pnl_usd": 0.0,
-        "path_high": 65783.1,
-        "path_low": 65364.0,
+        "path_high": 65781.6,
+        "path_low": 64228.9,
         "deep": null
       }
     ],
     "detail": "Replaced unfilled far SHORT with mark continuation (not graded).",
     "performance": {
-      "updated_ist": "2026-11-15T15:10:20.144140+05:30",
+      "updated_ist": "2026-11-16T05:50:18.044555+05:30",
       "rules": {
         "notional_usd": 1000.0,
         "stop_loss_pct": 0.01,
@@ -41,20 +41,20 @@
         "grade": "Pass or Fail only (no partial)"
       },
       "today": {
-        "trades": 3,
-        "pass": 1,
-        "fail": 2,
-        "pnl_usd": 0.41,
-        "total_profit_usd": 20.41,
-        "total_loss_usd": -20.0
+        "trades": 0,
+        "pass": 0,
+        "fail": 0,
+        "pnl_usd": 0,
+        "total_profit_usd": 0,
+        "total_loss_usd": 0
       },
       "week": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
+        "trades": 0,
+        "pass": 0,
+        "fail": 0,
+        "pnl_usd": 0,
+        "total_profit_usd": 0,
+        "total_loss_usd": 0
       },
       "month": {
         "trades": 8,
@@ -78,9 +78,9 @@
   "signals": [
     {
       "side": "SHORT",
-      "entry": 65364.0,
-      "stop_loss": 66018.0,
-      "take_profit": 64056.0,
+      "entry": 64992.0,
+      "stop_loss": 65642.0,
+      "take_profit": 63692.0,
       "qty": 0.015
     }
   ]
