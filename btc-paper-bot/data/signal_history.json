@@ -1,3653 +1,5 @@
 [
   {
-    "reviewed_at_ist": "2026-11-15T13:00:20.473288+05:30",
-    "current_price": 64307.6,
-    "had_previous": true,
-    "grade": "Open",
-    "previous_timestamp_ist": "2026-11-15T08:30:20.205235+05:30",
-    "previous_price": 64870.3,
-    "result": "Open",
-    "mistake": null,
-    "lesson": null,
-    "adjustment": null,
-    "pnl_usd": 0.0,
-    "atr_stop_mult_now": 1.0,
-    "reviews": [
-      {
-        "side": "SHORT",
-        "entry": 64870.0,
-        "stop_loss": 65519.0,
-        "take_profit": 63572.0,
-        "qty": 0.015,
-        "filled": true,
-        "hit_sl": false,
-        "hit_tp": false,
-        "grade": "Open",
-        "mistake": null,
-        "pnl_usd": 0.0,
-        "path_high": 65293.4,
-        "path_low": 64153.5,
-        "deep": null
-      }
-    ],
-    "detail": "SHORT \u2192 Open",
-    "performance": {
-      "updated_ist": "2026-11-15T13:00:20.472227+05:30",
-      "rules": {
-        "notional_usd": 1000.0,
-        "stop_loss_pct": 0.01,
-        "take_profit_pct": 0.02,
-        "grade": "Pass or Fail only (no partial)"
-      },
-      "today": {
-        "trades": 2,
-        "pass": 1,
-        "fail": 1,
-        "pnl_usd": 10.14,
-        "total_profit_usd": 20.41,
-        "total_loss_usd": -10.27
-      },
-      "week": {
-        "trades": 7,
-        "pass": 3,
-        "fail": 4,
-        "pnl_usd": 18.97,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -40.71
-      },
-      "month": {
-        "trades": 7,
-        "pass": 3,
-        "fail": 4,
-        "pnl_usd": 18.97,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -40.71
-      },
-      "all_time": {
-        "trades": 7,
-        "pass": 3,
-        "fail": 4,
-        "pnl_usd": 18.97,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -40.71
-      }
-    }
-  },
-  {
-    "reviewed_at_ist": "2026-11-15T13:05:18.105647+05:30",
-    "current_price": 64194.0,
-    "had_previous": true,
-    "grade": "Open",
-    "previous_timestamp_ist": "2026-11-15T08:30:20.205235+05:30",
-    "previous_price": 64870.3,
-    "result": "Open",
-    "mistake": null,
-    "lesson": null,
-    "adjustment": null,
-    "pnl_usd": 0.0,
-    "atr_stop_mult_now": 1.0,
-    "reviews": [
-      {
-        "side": "SHORT",
-        "entry": 64870.0,
-        "stop_loss": 65519.0,
-        "take_profit": 63572.0,
-        "qty": 0.015,
-        "filled": true,
-        "hit_sl": false,
-        "hit_tp": false,
-        "grade": "Open",
-        "mistake": null,
-        "pnl_usd": 0.0,
-        "path_high": 65293.4,
-        "path_low": 64153.5,
-        "deep": null
-      }
-    ],
-    "detail": "SHORT \u2192 Open",
-    "performance": {
-      "updated_ist": "2026-11-15T13:05:18.104164+05:30",
-      "rules": {
-        "notional_usd": 1000.0,
-        "stop_loss_pct": 0.01,
-        "take_profit_pct": 0.02,
-        "grade": "Pass or Fail only (no partial)"
-      },
-      "today": {
-        "trades": 2,
-        "pass": 1,
-        "fail": 1,
-        "pnl_usd": 10.14,
-        "total_profit_usd": 20.41,
-        "total_loss_usd": -10.27
-      },
-      "week": {
-        "trades": 7,
-        "pass": 3,
-        "fail": 4,
-        "pnl_usd": 18.97,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -40.71
-      },
-      "month": {
-        "trades": 7,
-        "pass": 3,
-        "fail": 4,
-        "pnl_usd": 18.97,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -40.71
-      },
-      "all_time": {
-        "trades": 7,
-        "pass": 3,
-        "fail": 4,
-        "pnl_usd": 18.97,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -40.71
-      }
-    }
-  },
-  {
-    "reviewed_at_ist": "2026-11-15T13:10:17.292444+05:30",
-    "current_price": 64038.1,
-    "had_previous": true,
-    "grade": "Open",
-    "previous_timestamp_ist": "2026-11-15T08:30:20.205235+05:30",
-    "previous_price": 64870.3,
-    "result": "Open",
-    "mistake": null,
-    "lesson": null,
-    "adjustment": null,
-    "pnl_usd": 0.0,
-    "atr_stop_mult_now": 1.0,
-    "reviews": [
-      {
-        "side": "SHORT",
-        "entry": 64870.0,
-        "stop_loss": 65519.0,
-        "take_profit": 63572.0,
-        "qty": 0.015,
-        "filled": true,
-        "hit_sl": false,
-        "hit_tp": false,
-        "grade": "Open",
-        "mistake": null,
-        "pnl_usd": 0.0,
-        "path_high": 65293.4,
-        "path_low": 64020.2,
-        "deep": null
-      }
-    ],
-    "detail": "SHORT \u2192 Open",
-    "performance": {
-      "updated_ist": "2026-11-15T13:10:17.291414+05:30",
-      "rules": {
-        "notional_usd": 1000.0,
-        "stop_loss_pct": 0.01,
-        "take_profit_pct": 0.02,
-        "grade": "Pass or Fail only (no partial)"
-      },
-      "today": {
-        "trades": 2,
-        "pass": 1,
-        "fail": 1,
-        "pnl_usd": 10.14,
-        "total_profit_usd": 20.41,
-        "total_loss_usd": -10.27
-      },
-      "week": {
-        "trades": 7,
-        "pass": 3,
-        "fail": 4,
-        "pnl_usd": 18.97,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -40.71
-      },
-      "month": {
-        "trades": 7,
-        "pass": 3,
-        "fail": 4,
-        "pnl_usd": 18.97,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -40.71
-      },
-      "all_time": {
-        "trades": 7,
-        "pass": 3,
-        "fail": 4,
-        "pnl_usd": 18.97,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -40.71
-      }
-    }
-  },
-  {
-    "reviewed_at_ist": "2026-11-15T13:15:16.121943+05:30",
-    "current_price": 63869.9,
-    "had_previous": true,
-    "grade": "Open",
-    "previous_timestamp_ist": "2026-11-15T08:30:20.205235+05:30",
-    "previous_price": 64870.3,
-    "result": "Open",
-    "mistake": null,
-    "lesson": null,
-    "adjustment": null,
-    "pnl_usd": 0.0,
-    "atr_stop_mult_now": 1.0,
-    "reviews": [
-      {
-        "side": "SHORT",
-        "entry": 64870.0,
-        "stop_loss": 65519.0,
-        "take_profit": 63572.0,
-        "qty": 0.015,
-        "filled": true,
-        "hit_sl": false,
-        "hit_tp": false,
-        "grade": "Open",
-        "mistake": null,
-        "pnl_usd": 0.0,
-        "path_high": 65293.4,
-        "path_low": 63851.0,
-        "deep": null
-      }
-    ],
-    "detail": "SHORT \u2192 Open",
-    "performance": {
-      "updated_ist": "2026-11-15T13:15:16.120775+05:30",
-      "rules": {
-        "notional_usd": 1000.0,
-        "stop_loss_pct": 0.01,
-        "take_profit_pct": 0.02,
-        "grade": "Pass or Fail only (no partial)"
-      },
-      "today": {
-        "trades": 2,
-        "pass": 1,
-        "fail": 1,
-        "pnl_usd": 10.14,
-        "total_profit_usd": 20.41,
-        "total_loss_usd": -10.27
-      },
-      "week": {
-        "trades": 7,
-        "pass": 3,
-        "fail": 4,
-        "pnl_usd": 18.97,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -40.71
-      },
-      "month": {
-        "trades": 7,
-        "pass": 3,
-        "fail": 4,
-        "pnl_usd": 18.97,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -40.71
-      },
-      "all_time": {
-        "trades": 7,
-        "pass": 3,
-        "fail": 4,
-        "pnl_usd": 18.97,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -40.71
-      }
-    }
-  },
-  {
-    "reviewed_at_ist": "2026-11-15T13:20:13.812023+05:30",
-    "current_price": 63857.0,
-    "had_previous": true,
-    "grade": "Open",
-    "previous_timestamp_ist": "2026-11-15T08:30:20.205235+05:30",
-    "previous_price": 64870.3,
-    "result": "Open",
-    "mistake": null,
-    "lesson": null,
-    "adjustment": null,
-    "pnl_usd": 0.0,
-    "atr_stop_mult_now": 1.0,
-    "reviews": [
-      {
-        "side": "SHORT",
-        "entry": 64870.0,
-        "stop_loss": 65519.0,
-        "take_profit": 63572.0,
-        "qty": 0.015,
-        "filled": true,
-        "hit_sl": false,
-        "hit_tp": false,
-        "grade": "Open",
-        "mistake": null,
-        "pnl_usd": 0.0,
-        "path_high": 65293.4,
-        "path_low": 63773.3,
-        "deep": null
-      }
-    ],
-    "detail": "SHORT \u2192 Open",
-    "performance": {
-      "updated_ist": "2026-11-15T13:20:13.810970+05:30",
-      "rules": {
-        "notional_usd": 1000.0,
-        "stop_loss_pct": 0.01,
-        "take_profit_pct": 0.02,
-        "grade": "Pass or Fail only (no partial)"
-      },
-      "today": {
-        "trades": 2,
-        "pass": 1,
-        "fail": 1,
-        "pnl_usd": 10.14,
-        "total_profit_usd": 20.41,
-        "total_loss_usd": -10.27
-      },
-      "week": {
-        "trades": 7,
-        "pass": 3,
-        "fail": 4,
-        "pnl_usd": 18.97,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -40.71
-      },
-      "month": {
-        "trades": 7,
-        "pass": 3,
-        "fail": 4,
-        "pnl_usd": 18.97,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -40.71
-      },
-      "all_time": {
-        "trades": 7,
-        "pass": 3,
-        "fail": 4,
-        "pnl_usd": 18.97,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -40.71
-      }
-    }
-  },
-  {
-    "reviewed_at_ist": "2026-11-15T13:25:19.852357+05:30",
-    "current_price": 63881.1,
-    "had_previous": true,
-    "grade": "Open",
-    "previous_timestamp_ist": "2026-11-15T08:30:20.205235+05:30",
-    "previous_price": 64870.3,
-    "result": "Open",
-    "mistake": null,
-    "lesson": null,
-    "adjustment": null,
-    "pnl_usd": 0.0,
-    "atr_stop_mult_now": 1.0,
-    "reviews": [
-      {
-        "side": "SHORT",
-        "entry": 64870.0,
-        "stop_loss": 65519.0,
-        "take_profit": 63572.0,
-        "qty": 0.015,
-        "filled": true,
-        "hit_sl": false,
-        "hit_tp": false,
-        "grade": "Open",
-        "mistake": null,
-        "pnl_usd": 0.0,
-        "path_high": 65293.4,
-        "path_low": 63730.7,
-        "deep": null
-      }
-    ],
-    "detail": "SHORT \u2192 Open",
-    "performance": {
-      "updated_ist": "2026-11-15T13:25:19.851340+05:30",
-      "rules": {
-        "notional_usd": 1000.0,
-        "stop_loss_pct": 0.01,
-        "take_profit_pct": 0.02,
-        "grade": "Pass or Fail only (no partial)"
-      },
-      "today": {
-        "trades": 2,
-        "pass": 1,
-        "fail": 1,
-        "pnl_usd": 10.14,
-        "total_profit_usd": 20.41,
-        "total_loss_usd": -10.27
-      },
-      "week": {
-        "trades": 7,
-        "pass": 3,
-        "fail": 4,
-        "pnl_usd": 18.97,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -40.71
-      },
-      "month": {
-        "trades": 7,
-        "pass": 3,
-        "fail": 4,
-        "pnl_usd": 18.97,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -40.71
-      },
-      "all_time": {
-        "trades": 7,
-        "pass": 3,
-        "fail": 4,
-        "pnl_usd": 18.97,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -40.71
-      }
-    }
-  },
-  {
-    "reviewed_at_ist": "2026-11-15T13:30:15.380803+05:30",
-    "current_price": 63942.7,
-    "had_previous": true,
-    "grade": "Open",
-    "previous_timestamp_ist": "2026-11-15T08:30:20.205235+05:30",
-    "previous_price": 64870.3,
-    "result": "Open",
-    "mistake": null,
-    "lesson": null,
-    "adjustment": null,
-    "pnl_usd": 0.0,
-    "atr_stop_mult_now": 1.0,
-    "reviews": [
-      {
-        "side": "SHORT",
-        "entry": 64870.0,
-        "stop_loss": 65519.0,
-        "take_profit": 63572.0,
-        "qty": 0.015,
-        "filled": true,
-        "hit_sl": false,
-        "hit_tp": false,
-        "grade": "Open",
-        "mistake": null,
-        "pnl_usd": 0.0,
-        "path_high": 65293.4,
-        "path_low": 63730.7,
-        "deep": null
-      }
-    ],
-    "detail": "SHORT \u2192 Open",
-    "performance": {
-      "updated_ist": "2026-11-15T13:30:15.379740+05:30",
-      "rules": {
-        "notional_usd": 1000.0,
-        "stop_loss_pct": 0.01,
-        "take_profit_pct": 0.02,
-        "grade": "Pass or Fail only (no partial)"
-      },
-      "today": {
-        "trades": 2,
-        "pass": 1,
-        "fail": 1,
-        "pnl_usd": 10.14,
-        "total_profit_usd": 20.41,
-        "total_loss_usd": -10.27
-      },
-      "week": {
-        "trades": 7,
-        "pass": 3,
-        "fail": 4,
-        "pnl_usd": 18.97,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -40.71
-      },
-      "month": {
-        "trades": 7,
-        "pass": 3,
-        "fail": 4,
-        "pnl_usd": 18.97,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -40.71
-      },
-      "all_time": {
-        "trades": 7,
-        "pass": 3,
-        "fail": 4,
-        "pnl_usd": 18.97,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -40.71
-      }
-    }
-  },
-  {
-    "reviewed_at_ist": "2026-11-15T13:40:11.805577+05:30",
-    "current_price": 64062.9,
-    "had_previous": true,
-    "grade": "Open",
-    "previous_timestamp_ist": "2026-11-15T08:30:20.205235+05:30",
-    "previous_price": 64870.3,
-    "result": "Open",
-    "mistake": null,
-    "lesson": null,
-    "adjustment": null,
-    "pnl_usd": 0.0,
-    "atr_stop_mult_now": 1.0,
-    "reviews": [
-      {
-        "side": "SHORT",
-        "entry": 64870.0,
-        "stop_loss": 65519.0,
-        "take_profit": 63572.0,
-        "qty": 0.015,
-        "filled": true,
-        "hit_sl": false,
-        "hit_tp": false,
-        "grade": "Open",
-        "mistake": null,
-        "pnl_usd": 0.0,
-        "path_high": 65293.4,
-        "path_low": 63730.7,
-        "deep": null
-      }
-    ],
-    "detail": "SHORT \u2192 Open",
-    "performance": {
-      "updated_ist": "2026-11-15T13:40:11.804459+05:30",
-      "rules": {
-        "notional_usd": 1000.0,
-        "stop_loss_pct": 0.01,
-        "take_profit_pct": 0.02,
-        "grade": "Pass or Fail only (no partial)"
-      },
-      "today": {
-        "trades": 2,
-        "pass": 1,
-        "fail": 1,
-        "pnl_usd": 10.14,
-        "total_profit_usd": 20.41,
-        "total_loss_usd": -10.27
-      },
-      "week": {
-        "trades": 7,
-        "pass": 3,
-        "fail": 4,
-        "pnl_usd": 18.97,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -40.71
-      },
-      "month": {
-        "trades": 7,
-        "pass": 3,
-        "fail": 4,
-        "pnl_usd": 18.97,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -40.71
-      },
-      "all_time": {
-        "trades": 7,
-        "pass": 3,
-        "fail": 4,
-        "pnl_usd": 18.97,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -40.71
-      }
-    }
-  },
-  {
-    "reviewed_at_ist": "2026-11-15T13:50:21.327304+05:30",
-    "current_price": 63913.0,
-    "had_previous": true,
-    "grade": "Open",
-    "previous_timestamp_ist": "2026-11-15T08:30:20.205235+05:30",
-    "previous_price": 64870.3,
-    "result": "Open",
-    "mistake": null,
-    "lesson": null,
-    "adjustment": null,
-    "pnl_usd": 0.0,
-    "atr_stop_mult_now": 1.0,
-    "reviews": [
-      {
-        "side": "SHORT",
-        "entry": 64870.0,
-        "stop_loss": 65519.0,
-        "take_profit": 63572.0,
-        "qty": 0.015,
-        "filled": true,
-        "hit_sl": false,
-        "hit_tp": false,
-        "grade": "Open",
-        "mistake": null,
-        "pnl_usd": 0.0,
-        "path_high": 65293.4,
-        "path_low": 63730.7,
-        "deep": null
-      }
-    ],
-    "detail": "SHORT \u2192 Open",
-    "performance": {
-      "updated_ist": "2026-11-15T13:50:21.326245+05:30",
-      "rules": {
-        "notional_usd": 1000.0,
-        "stop_loss_pct": 0.01,
-        "take_profit_pct": 0.02,
-        "grade": "Pass or Fail only (no partial)"
-      },
-      "today": {
-        "trades": 2,
-        "pass": 1,
-        "fail": 1,
-        "pnl_usd": 10.14,
-        "total_profit_usd": 20.41,
-        "total_loss_usd": -10.27
-      },
-      "week": {
-        "trades": 7,
-        "pass": 3,
-        "fail": 4,
-        "pnl_usd": 18.97,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -40.71
-      },
-      "month": {
-        "trades": 7,
-        "pass": 3,
-        "fail": 4,
-        "pnl_usd": 18.97,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -40.71
-      },
-      "all_time": {
-        "trades": 7,
-        "pass": 3,
-        "fail": 4,
-        "pnl_usd": 18.97,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -40.71
-      }
-    }
-  },
-  {
-    "reviewed_at_ist": "2026-11-15T14:00:20.775570+05:30",
-    "current_price": 64485.3,
-    "had_previous": true,
-    "grade": "Open",
-    "previous_timestamp_ist": "2026-11-15T08:30:20.205235+05:30",
-    "previous_price": 64870.3,
-    "result": "Open",
-    "mistake": null,
-    "lesson": null,
-    "adjustment": null,
-    "pnl_usd": 0.0,
-    "atr_stop_mult_now": 1.0,
-    "reviews": [
-      {
-        "side": "SHORT",
-        "entry": 64870.0,
-        "stop_loss": 65519.0,
-        "take_profit": 63572.0,
-        "qty": 0.015,
-        "filled": true,
-        "hit_sl": false,
-        "hit_tp": false,
-        "grade": "Open",
-        "mistake": null,
-        "pnl_usd": 0.0,
-        "path_high": 65293.4,
-        "path_low": 63730.7,
-        "deep": null
-      }
-    ],
-    "detail": "SHORT \u2192 Open",
-    "performance": {
-      "updated_ist": "2026-11-15T14:00:20.774284+05:30",
-      "rules": {
-        "notional_usd": 1000.0,
-        "stop_loss_pct": 0.01,
-        "take_profit_pct": 0.02,
-        "grade": "Pass or Fail only (no partial)"
-      },
-      "today": {
-        "trades": 2,
-        "pass": 1,
-        "fail": 1,
-        "pnl_usd": 10.14,
-        "total_profit_usd": 20.41,
-        "total_loss_usd": -10.27
-      },
-      "week": {
-        "trades": 7,
-        "pass": 3,
-        "fail": 4,
-        "pnl_usd": 18.97,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -40.71
-      },
-      "month": {
-        "trades": 7,
-        "pass": 3,
-        "fail": 4,
-        "pnl_usd": 18.97,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -40.71
-      },
-      "all_time": {
-        "trades": 7,
-        "pass": 3,
-        "fail": 4,
-        "pnl_usd": 18.97,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -40.71
-      }
-    }
-  },
-  {
-    "reviewed_at_ist": "2026-11-15T14:10:20.572107+05:30",
-    "current_price": 64617.7,
-    "had_previous": true,
-    "grade": "Open",
-    "previous_timestamp_ist": "2026-11-15T08:30:20.205235+05:30",
-    "previous_price": 64870.3,
-    "result": "Open",
-    "mistake": null,
-    "lesson": null,
-    "adjustment": null,
-    "pnl_usd": 0.0,
-    "atr_stop_mult_now": 1.0,
-    "reviews": [
-      {
-        "side": "SHORT",
-        "entry": 64870.0,
-        "stop_loss": 65519.0,
-        "take_profit": 63572.0,
-        "qty": 0.015,
-        "filled": true,
-        "hit_sl": false,
-        "hit_tp": false,
-        "grade": "Open",
-        "mistake": null,
-        "pnl_usd": 0.0,
-        "path_high": 65293.4,
-        "path_low": 63730.7,
-        "deep": null
-      }
-    ],
-    "detail": "SHORT \u2192 Open",
-    "performance": {
-      "updated_ist": "2026-11-15T14:10:20.571039+05:30",
-      "rules": {
-        "notional_usd": 1000.0,
-        "stop_loss_pct": 0.01,
-        "take_profit_pct": 0.02,
-        "grade": "Pass or Fail only (no partial)"
-      },
-      "today": {
-        "trades": 2,
-        "pass": 1,
-        "fail": 1,
-        "pnl_usd": 10.14,
-        "total_profit_usd": 20.41,
-        "total_loss_usd": -10.27
-      },
-      "week": {
-        "trades": 7,
-        "pass": 3,
-        "fail": 4,
-        "pnl_usd": 18.97,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -40.71
-      },
-      "month": {
-        "trades": 7,
-        "pass": 3,
-        "fail": 4,
-        "pnl_usd": 18.97,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -40.71
-      },
-      "all_time": {
-        "trades": 7,
-        "pass": 3,
-        "fail": 4,
-        "pnl_usd": 18.97,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -40.71
-      }
-    }
-  },
-  {
-    "reviewed_at_ist": "2026-11-15T14:20:09.351378+05:30",
-    "current_price": 64672.4,
-    "had_previous": true,
-    "grade": "Open",
-    "previous_timestamp_ist": "2026-11-15T08:30:20.205235+05:30",
-    "previous_price": 64870.3,
-    "result": "Open",
-    "mistake": null,
-    "lesson": null,
-    "adjustment": null,
-    "pnl_usd": 0.0,
-    "atr_stop_mult_now": 1.0,
-    "reviews": [
-      {
-        "side": "SHORT",
-        "entry": 64870.0,
-        "stop_loss": 65519.0,
-        "take_profit": 63572.0,
-        "qty": 0.015,
-        "filled": true,
-        "hit_sl": false,
-        "hit_tp": false,
-        "grade": "Open",
-        "mistake": null,
-        "pnl_usd": 0.0,
-        "path_high": 65293.4,
-        "path_low": 63730.7,
-        "deep": null
-      }
-    ],
-    "detail": "SHORT \u2192 Open",
-    "performance": {
-      "updated_ist": "2026-11-15T14:20:09.349725+05:30",
-      "rules": {
-        "notional_usd": 1000.0,
-        "stop_loss_pct": 0.01,
-        "take_profit_pct": 0.02,
-        "grade": "Pass or Fail only (no partial)"
-      },
-      "today": {
-        "trades": 2,
-        "pass": 1,
-        "fail": 1,
-        "pnl_usd": 10.14,
-        "total_profit_usd": 20.41,
-        "total_loss_usd": -10.27
-      },
-      "week": {
-        "trades": 7,
-        "pass": 3,
-        "fail": 4,
-        "pnl_usd": 18.97,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -40.71
-      },
-      "month": {
-        "trades": 7,
-        "pass": 3,
-        "fail": 4,
-        "pnl_usd": 18.97,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -40.71
-      },
-      "all_time": {
-        "trades": 7,
-        "pass": 3,
-        "fail": 4,
-        "pnl_usd": 18.97,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -40.71
-      }
-    }
-  },
-  {
-    "reviewed_at_ist": "2026-11-15T14:30:13.979771+05:30",
-    "current_price": 65092.3,
-    "had_previous": true,
-    "grade": "Open",
-    "previous_timestamp_ist": "2026-11-15T08:30:20.205235+05:30",
-    "previous_price": 64870.3,
-    "result": "Open",
-    "mistake": null,
-    "lesson": null,
-    "adjustment": null,
-    "pnl_usd": 0.0,
-    "atr_stop_mult_now": 1.0,
-    "reviews": [
-      {
-        "side": "SHORT",
-        "entry": 64870.0,
-        "stop_loss": 65519.0,
-        "take_profit": 63572.0,
-        "qty": 0.015,
-        "filled": true,
-        "hit_sl": false,
-        "hit_tp": false,
-        "grade": "Open",
-        "mistake": null,
-        "pnl_usd": 0.0,
-        "path_high": 65293.4,
-        "path_low": 63730.7,
-        "deep": null
-      }
-    ],
-    "detail": "SHORT \u2192 Open",
-    "performance": {
-      "updated_ist": "2026-11-15T14:30:13.977774+05:30",
-      "rules": {
-        "notional_usd": 1000.0,
-        "stop_loss_pct": 0.01,
-        "take_profit_pct": 0.02,
-        "grade": "Pass or Fail only (no partial)"
-      },
-      "today": {
-        "trades": 2,
-        "pass": 1,
-        "fail": 1,
-        "pnl_usd": 10.14,
-        "total_profit_usd": 20.41,
-        "total_loss_usd": -10.27
-      },
-      "week": {
-        "trades": 7,
-        "pass": 3,
-        "fail": 4,
-        "pnl_usd": 18.97,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -40.71
-      },
-      "month": {
-        "trades": 7,
-        "pass": 3,
-        "fail": 4,
-        "pnl_usd": 18.97,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -40.71
-      },
-      "all_time": {
-        "trades": 7,
-        "pass": 3,
-        "fail": 4,
-        "pnl_usd": 18.97,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -40.71
-      }
-    }
-  },
-  {
-    "reviewed_at_ist": "2026-11-15T14:40:08.739318+05:30",
-    "current_price": 65783.1,
-    "had_previous": true,
-    "grade": "Fail",
-    "previous_timestamp_ist": "2026-11-15T08:30:20.205235+05:30",
-    "previous_price": 64870.3,
-    "result": "Fail",
-    "mistake": "stop_hit",
-    "lesson": "Stop level reached \u2014 Fail. | DEEP: Stop hunted \u2014 next ticket needs SL clear of recent range / liquidity.; Fixed 1% stop was tight vs BTC noise \u2014 demand stronger confluence.",
-    "adjustment": "ATR_STOP_MULT -> 1.25",
-    "pnl_usd": -9.73,
-    "atr_stop_mult_now": 1.25,
-    "reviews": [
-      {
-        "side": "SHORT",
-        "entry": 64870.0,
-        "stop_loss": 65519.0,
-        "take_profit": 63572.0,
-        "qty": 0.015,
-        "filled": true,
-        "hit_sl": true,
-        "hit_tp": false,
-        "grade": "Fail",
-        "mistake": "stop_hit",
-        "pnl_usd": -9.73,
-        "path_high": 65970.3,
-        "path_low": 63730.7,
-        "deep": {
-          "closed_ist": "2026-11-15T14:40:08.737260+05:30",
-          "side": "SHORT",
-          "entry": 64870.0,
-          "fill_price": 64870.0,
-          "stop_loss": 65519.0,
-          "take_profit": 63572.0,
-          "qty": 0.015,
-          "outcome": "Fail",
-          "mistake": "stop_hit",
-          "base_lesson": "Stop level reached \u2014 Fail.",
-          "path_high": 65970.3,
-          "path_low": 63730.7,
-          "price_at_review": 65783.1,
-          "stop_pct": 0.01,
-          "fill_slip_pct": 0.0,
-          "room_from_fill_pct": 0.01,
-          "findings": [
-            "Stop hunted \u2014 next ticket needs SL clear of recent range / liquidity.",
-            "Fixed 1% stop was tight vs BTC noise \u2014 demand stronger confluence."
-          ],
-          "brain_trade_n": 5
-        }
-      }
-    ],
-    "detail": "SHORT \u2192 Fail",
-    "performance": {
-      "updated_ist": "2026-11-15T14:40:08.738152+05:30",
-      "rules": {
-        "notional_usd": 1000.0,
-        "stop_loss_pct": 0.01,
-        "take_profit_pct": 0.02,
-        "grade": "Pass or Fail only (no partial)"
-      },
-      "today": {
-        "trades": 3,
-        "pass": 1,
-        "fail": 2,
-        "pnl_usd": 0.41,
-        "total_profit_usd": 20.41,
-        "total_loss_usd": -20.0
-      },
-      "week": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "month": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "all_time": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      }
-    }
-  },
-  {
-    "reviewed_at_ist": "2026-11-15T14:50:40.219099+05:30",
-    "current_price": 65709.7,
-    "had_previous": true,
-    "grade": "Open",
-    "previous_timestamp_ist": "2026-11-15T14:40:08.951136+05:30",
-    "previous_price": 65783.1,
-    "result": "Open",
-    "mistake": null,
-    "lesson": null,
-    "adjustment": null,
-    "pnl_usd": 0.0,
-    "atr_stop_mult_now": 1.0,
-    "reviews": [
-      {
-        "side": "SHORT",
-        "entry": 65783.0,
-        "stop_loss": 66441.0,
-        "take_profit": 64467.0,
-        "qty": 0.015,
-        "filled": true,
-        "hit_sl": false,
-        "hit_tp": false,
-        "grade": "Open",
-        "mistake": null,
-        "pnl_usd": 0.0,
-        "path_high": 65783.1,
-        "path_low": 65709.7,
-        "deep": null
-      }
-    ],
-    "detail": "SHORT \u2192 Open",
-    "performance": {
-      "updated_ist": "2026-11-15T14:50:40.218013+05:30",
-      "rules": {
-        "notional_usd": 1000.0,
-        "stop_loss_pct": 0.01,
-        "take_profit_pct": 0.02,
-        "grade": "Pass or Fail only (no partial)"
-      },
-      "today": {
-        "trades": 3,
-        "pass": 1,
-        "fail": 2,
-        "pnl_usd": 0.41,
-        "total_profit_usd": 20.41,
-        "total_loss_usd": -20.0
-      },
-      "week": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "month": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "all_time": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      }
-    }
-  },
-  {
-    "reviewed_at_ist": "2026-11-15T15:00:21.810545+05:30",
-    "current_price": 65563.9,
-    "had_previous": true,
-    "grade": "Open",
-    "previous_timestamp_ist": "2026-11-15T14:40:08.951136+05:30",
-    "previous_price": 65783.1,
-    "result": "Open",
-    "mistake": null,
-    "lesson": null,
-    "adjustment": null,
-    "pnl_usd": 0.0,
-    "atr_stop_mult_now": 1.0,
-    "reviews": [
-      {
-        "side": "SHORT",
-        "entry": 65783.0,
-        "stop_loss": 66441.0,
-        "take_profit": 64467.0,
-        "qty": 0.015,
-        "filled": true,
-        "hit_sl": false,
-        "hit_tp": false,
-        "grade": "Open",
-        "mistake": null,
-        "pnl_usd": 0.0,
-        "path_high": 65783.1,
-        "path_low": 65563.9,
-        "deep": null
-      }
-    ],
-    "detail": "SHORT \u2192 Open",
-    "performance": {
-      "updated_ist": "2026-11-15T15:00:21.809444+05:30",
-      "rules": {
-        "notional_usd": 1000.0,
-        "stop_loss_pct": 0.01,
-        "take_profit_pct": 0.02,
-        "grade": "Pass or Fail only (no partial)"
-      },
-      "today": {
-        "trades": 3,
-        "pass": 1,
-        "fail": 2,
-        "pnl_usd": 0.41,
-        "total_profit_usd": 20.41,
-        "total_loss_usd": -20.0
-      },
-      "week": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "month": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "all_time": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      }
-    }
-  },
-  {
-    "reviewed_at_ist": "2026-11-15T15:10:20.145386+05:30",
-    "current_price": 65364.0,
-    "had_previous": true,
-    "grade": "Open",
-    "previous_timestamp_ist": "2026-11-15T14:40:08.951136+05:30",
-    "previous_price": 65783.1,
-    "result": "Open",
-    "mistake": null,
-    "lesson": null,
-    "adjustment": null,
-    "pnl_usd": 0.0,
-    "atr_stop_mult_now": 1.0,
-    "reviews": [
-      {
-        "side": "SHORT",
-        "entry": 65783.0,
-        "stop_loss": 66441.0,
-        "take_profit": 64467.0,
-        "qty": 0.015,
-        "filled": true,
-        "hit_sl": false,
-        "hit_tp": false,
-        "grade": "Open",
-        "mistake": null,
-        "pnl_usd": 0.0,
-        "path_high": 65783.1,
-        "path_low": 65364.0,
-        "deep": null
-      }
-    ],
-    "detail": "SHORT \u2192 Open",
-    "performance": {
-      "updated_ist": "2026-11-15T15:10:20.144140+05:30",
-      "rules": {
-        "notional_usd": 1000.0,
-        "stop_loss_pct": 0.01,
-        "take_profit_pct": 0.02,
-        "grade": "Pass or Fail only (no partial)"
-      },
-      "today": {
-        "trades": 3,
-        "pass": 1,
-        "fail": 2,
-        "pnl_usd": 0.41,
-        "total_profit_usd": 20.41,
-        "total_loss_usd": -20.0
-      },
-      "week": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "month": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "all_time": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      }
-    }
-  },
-  {
-    "reviewed_at_ist": "2026-11-15T19:41:24.040796+05:30",
-    "current_price": 65215.7,
-    "had_previous": true,
-    "grade": "Open",
-    "previous_timestamp_ist": "2026-11-15T15:10:20.167998+05:30",
-    "previous_price": 65364.0,
-    "result": "Open",
-    "mistake": null,
-    "lesson": null,
-    "adjustment": null,
-    "pnl_usd": 0.0,
-    "atr_stop_mult_now": 1.0,
-    "reviews": [
-      {
-        "side": "SHORT",
-        "entry": 65364.0,
-        "stop_loss": 66018.0,
-        "take_profit": 64056.0,
-        "qty": 0.015,
-        "filled": true,
-        "hit_sl": false,
-        "hit_tp": false,
-        "grade": "Open",
-        "mistake": null,
-        "pnl_usd": 0.0,
-        "path_high": 65781.6,
-        "path_low": 65087.6,
-        "deep": null
-      }
-    ],
-    "detail": "SHORT \u2192 Open",
-    "performance": {
-      "updated_ist": "2026-11-15T19:41:24.039272+05:30",
-      "rules": {
-        "notional_usd": 1000.0,
-        "stop_loss_pct": 0.01,
-        "take_profit_pct": 0.02,
-        "grade": "Pass or Fail only (no partial)"
-      },
-      "today": {
-        "trades": 3,
-        "pass": 1,
-        "fail": 2,
-        "pnl_usd": 0.41,
-        "total_profit_usd": 20.41,
-        "total_loss_usd": -20.0
-      },
-      "week": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "month": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "all_time": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      }
-    }
-  },
-  {
-    "reviewed_at_ist": "2026-11-15T19:50:17.628489+05:30",
-    "current_price": 65340.1,
-    "had_previous": true,
-    "grade": "Open",
-    "previous_timestamp_ist": "2026-11-15T15:10:20.167998+05:30",
-    "previous_price": 65364.0,
-    "result": "Open",
-    "mistake": null,
-    "lesson": null,
-    "adjustment": null,
-    "pnl_usd": 0.0,
-    "atr_stop_mult_now": 1.0,
-    "reviews": [
-      {
-        "side": "SHORT",
-        "entry": 65364.0,
-        "stop_loss": 66018.0,
-        "take_profit": 64056.0,
-        "qty": 0.015,
-        "filled": true,
-        "hit_sl": false,
-        "hit_tp": false,
-        "grade": "Open",
-        "mistake": null,
-        "pnl_usd": 0.0,
-        "path_high": 65781.6,
-        "path_low": 65087.6,
-        "deep": null
-      }
-    ],
-    "detail": "SHORT \u2192 Open",
-    "performance": {
-      "updated_ist": "2026-11-15T19:50:17.627019+05:30",
-      "rules": {
-        "notional_usd": 1000.0,
-        "stop_loss_pct": 0.01,
-        "take_profit_pct": 0.02,
-        "grade": "Pass or Fail only (no partial)"
-      },
-      "today": {
-        "trades": 3,
-        "pass": 1,
-        "fail": 2,
-        "pnl_usd": 0.41,
-        "total_profit_usd": 20.41,
-        "total_loss_usd": -20.0
-      },
-      "week": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "month": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "all_time": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      }
-    }
-  },
-  {
-    "reviewed_at_ist": "2026-11-15T20:00:15.374784+05:30",
-    "current_price": 64918.9,
-    "had_previous": true,
-    "grade": "Open",
-    "previous_timestamp_ist": "2026-11-15T15:10:20.167998+05:30",
-    "previous_price": 65364.0,
-    "result": "Open",
-    "mistake": null,
-    "lesson": null,
-    "adjustment": null,
-    "pnl_usd": 0.0,
-    "atr_stop_mult_now": 1.0,
-    "reviews": [
-      {
-        "side": "SHORT",
-        "entry": 65364.0,
-        "stop_loss": 66018.0,
-        "take_profit": 64056.0,
-        "qty": 0.015,
-        "filled": true,
-        "hit_sl": false,
-        "hit_tp": false,
-        "grade": "Open",
-        "mistake": null,
-        "pnl_usd": 0.0,
-        "path_high": 65781.6,
-        "path_low": 64814.7,
-        "deep": null
-      }
-    ],
-    "detail": "SHORT \u2192 Open",
-    "performance": {
-      "updated_ist": "2026-11-15T20:00:15.373446+05:30",
-      "rules": {
-        "notional_usd": 1000.0,
-        "stop_loss_pct": 0.01,
-        "take_profit_pct": 0.02,
-        "grade": "Pass or Fail only (no partial)"
-      },
-      "today": {
-        "trades": 3,
-        "pass": 1,
-        "fail": 2,
-        "pnl_usd": 0.41,
-        "total_profit_usd": 20.41,
-        "total_loss_usd": -20.0
-      },
-      "week": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "month": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "all_time": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      }
-    }
-  },
-  {
-    "reviewed_at_ist": "2026-11-15T20:10:25.117905+05:30",
-    "current_price": 64685.0,
-    "had_previous": true,
-    "grade": "Open",
-    "previous_timestamp_ist": "2026-11-15T15:10:20.167998+05:30",
-    "previous_price": 65364.0,
-    "result": "Open",
-    "mistake": null,
-    "lesson": null,
-    "adjustment": null,
-    "pnl_usd": 0.0,
-    "atr_stop_mult_now": 1.0,
-    "reviews": [
-      {
-        "side": "SHORT",
-        "entry": 65364.0,
-        "stop_loss": 66018.0,
-        "take_profit": 64056.0,
-        "qty": 0.015,
-        "filled": true,
-        "hit_sl": false,
-        "hit_tp": false,
-        "grade": "Open",
-        "mistake": null,
-        "pnl_usd": 0.0,
-        "path_high": 65781.6,
-        "path_low": 64661.6,
-        "deep": null
-      }
-    ],
-    "detail": "SHORT \u2192 Open",
-    "performance": {
-      "updated_ist": "2026-11-15T20:10:25.116828+05:30",
-      "rules": {
-        "notional_usd": 1000.0,
-        "stop_loss_pct": 0.01,
-        "take_profit_pct": 0.02,
-        "grade": "Pass or Fail only (no partial)"
-      },
-      "today": {
-        "trades": 3,
-        "pass": 1,
-        "fail": 2,
-        "pnl_usd": 0.41,
-        "total_profit_usd": 20.41,
-        "total_loss_usd": -20.0
-      },
-      "week": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "month": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "all_time": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      }
-    }
-  },
-  {
-    "reviewed_at_ist": "2026-11-15T20:20:28.309606+05:30",
-    "current_price": 64810.8,
-    "had_previous": true,
-    "grade": "Open",
-    "previous_timestamp_ist": "2026-11-15T15:10:20.167998+05:30",
-    "previous_price": 65364.0,
-    "result": "Open",
-    "mistake": null,
-    "lesson": null,
-    "adjustment": null,
-    "pnl_usd": 0.0,
-    "atr_stop_mult_now": 1.0,
-    "reviews": [
-      {
-        "side": "SHORT",
-        "entry": 65364.0,
-        "stop_loss": 66018.0,
-        "take_profit": 64056.0,
-        "qty": 0.015,
-        "filled": true,
-        "hit_sl": false,
-        "hit_tp": false,
-        "grade": "Open",
-        "mistake": null,
-        "pnl_usd": 0.0,
-        "path_high": 65781.6,
-        "path_low": 64428.5,
-        "deep": null
-      }
-    ],
-    "detail": "SHORT \u2192 Open",
-    "performance": {
-      "updated_ist": "2026-11-15T20:20:28.308536+05:30",
-      "rules": {
-        "notional_usd": 1000.0,
-        "stop_loss_pct": 0.01,
-        "take_profit_pct": 0.02,
-        "grade": "Pass or Fail only (no partial)"
-      },
-      "today": {
-        "trades": 3,
-        "pass": 1,
-        "fail": 2,
-        "pnl_usd": 0.41,
-        "total_profit_usd": 20.41,
-        "total_loss_usd": -20.0
-      },
-      "week": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "month": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "all_time": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      }
-    }
-  },
-  {
-    "reviewed_at_ist": "2026-11-15T20:30:18.717095+05:30",
-    "current_price": 64699.3,
-    "had_previous": true,
-    "grade": "Open",
-    "previous_timestamp_ist": "2026-11-15T15:10:20.167998+05:30",
-    "previous_price": 65364.0,
-    "result": "Open",
-    "mistake": null,
-    "lesson": null,
-    "adjustment": null,
-    "pnl_usd": 0.0,
-    "atr_stop_mult_now": 1.0,
-    "reviews": [
-      {
-        "side": "SHORT",
-        "entry": 65364.0,
-        "stop_loss": 66018.0,
-        "take_profit": 64056.0,
-        "qty": 0.015,
-        "filled": true,
-        "hit_sl": false,
-        "hit_tp": false,
-        "grade": "Open",
-        "mistake": null,
-        "pnl_usd": 0.0,
-        "path_high": 65781.6,
-        "path_low": 64428.5,
-        "deep": null
-      }
-    ],
-    "detail": "SHORT \u2192 Open",
-    "performance": {
-      "updated_ist": "2026-11-15T20:30:18.715979+05:30",
-      "rules": {
-        "notional_usd": 1000.0,
-        "stop_loss_pct": 0.01,
-        "take_profit_pct": 0.02,
-        "grade": "Pass or Fail only (no partial)"
-      },
-      "today": {
-        "trades": 3,
-        "pass": 1,
-        "fail": 2,
-        "pnl_usd": 0.41,
-        "total_profit_usd": 20.41,
-        "total_loss_usd": -20.0
-      },
-      "week": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "month": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "all_time": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      }
-    }
-  },
-  {
-    "reviewed_at_ist": "2026-11-15T20:40:21.142574+05:30",
-    "current_price": 64801.9,
-    "had_previous": true,
-    "grade": "Open",
-    "previous_timestamp_ist": "2026-11-15T15:10:20.167998+05:30",
-    "previous_price": 65364.0,
-    "result": "Open",
-    "mistake": null,
-    "lesson": null,
-    "adjustment": null,
-    "pnl_usd": 0.0,
-    "atr_stop_mult_now": 1.0,
-    "reviews": [
-      {
-        "side": "SHORT",
-        "entry": 65364.0,
-        "stop_loss": 66018.0,
-        "take_profit": 64056.0,
-        "qty": 0.015,
-        "filled": true,
-        "hit_sl": false,
-        "hit_tp": false,
-        "grade": "Open",
-        "mistake": null,
-        "pnl_usd": 0.0,
-        "path_high": 65781.6,
-        "path_low": 64415.9,
-        "deep": null
-      }
-    ],
-    "detail": "SHORT \u2192 Open",
-    "performance": {
-      "updated_ist": "2026-11-15T20:40:21.141493+05:30",
-      "rules": {
-        "notional_usd": 1000.0,
-        "stop_loss_pct": 0.01,
-        "take_profit_pct": 0.02,
-        "grade": "Pass or Fail only (no partial)"
-      },
-      "today": {
-        "trades": 3,
-        "pass": 1,
-        "fail": 2,
-        "pnl_usd": 0.41,
-        "total_profit_usd": 20.41,
-        "total_loss_usd": -20.0
-      },
-      "week": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "month": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "all_time": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      }
-    }
-  },
-  {
-    "reviewed_at_ist": "2026-11-15T20:50:15.761308+05:30",
-    "current_price": 64720.9,
-    "had_previous": true,
-    "grade": "Open",
-    "previous_timestamp_ist": "2026-11-15T15:10:20.167998+05:30",
-    "previous_price": 65364.0,
-    "result": "Open",
-    "mistake": null,
-    "lesson": null,
-    "adjustment": null,
-    "pnl_usd": 0.0,
-    "atr_stop_mult_now": 1.0,
-    "reviews": [
-      {
-        "side": "SHORT",
-        "entry": 65364.0,
-        "stop_loss": 66018.0,
-        "take_profit": 64056.0,
-        "qty": 0.015,
-        "filled": true,
-        "hit_sl": false,
-        "hit_tp": false,
-        "grade": "Open",
-        "mistake": null,
-        "pnl_usd": 0.0,
-        "path_high": 65781.6,
-        "path_low": 64415.9,
-        "deep": null
-      }
-    ],
-    "detail": "SHORT \u2192 Open",
-    "performance": {
-      "updated_ist": "2026-11-15T20:50:15.759966+05:30",
-      "rules": {
-        "notional_usd": 1000.0,
-        "stop_loss_pct": 0.01,
-        "take_profit_pct": 0.02,
-        "grade": "Pass or Fail only (no partial)"
-      },
-      "today": {
-        "trades": 3,
-        "pass": 1,
-        "fail": 2,
-        "pnl_usd": 0.41,
-        "total_profit_usd": 20.41,
-        "total_loss_usd": -20.0
-      },
-      "week": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "month": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "all_time": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      }
-    }
-  },
-  {
-    "reviewed_at_ist": "2026-11-15T21:00:15.687839+05:30",
-    "current_price": 64577.9,
-    "had_previous": true,
-    "grade": "Open",
-    "previous_timestamp_ist": "2026-11-15T15:10:20.167998+05:30",
-    "previous_price": 65364.0,
-    "result": "Open",
-    "mistake": null,
-    "lesson": null,
-    "adjustment": null,
-    "pnl_usd": 0.0,
-    "atr_stop_mult_now": 1.0,
-    "reviews": [
-      {
-        "side": "SHORT",
-        "entry": 65364.0,
-        "stop_loss": 66018.0,
-        "take_profit": 64056.0,
-        "qty": 0.015,
-        "filled": true,
-        "hit_sl": false,
-        "hit_tp": false,
-        "grade": "Open",
-        "mistake": null,
-        "pnl_usd": 0.0,
-        "path_high": 65781.6,
-        "path_low": 64415.9,
-        "deep": null
-      }
-    ],
-    "detail": "SHORT \u2192 Open",
-    "performance": {
-      "updated_ist": "2026-11-15T21:00:15.686762+05:30",
-      "rules": {
-        "notional_usd": 1000.0,
-        "stop_loss_pct": 0.01,
-        "take_profit_pct": 0.02,
-        "grade": "Pass or Fail only (no partial)"
-      },
-      "today": {
-        "trades": 3,
-        "pass": 1,
-        "fail": 2,
-        "pnl_usd": 0.41,
-        "total_profit_usd": 20.41,
-        "total_loss_usd": -20.0
-      },
-      "week": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "month": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "all_time": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      }
-    }
-  },
-  {
-    "reviewed_at_ist": "2026-11-15T21:10:13.031409+05:30",
-    "current_price": 64720.1,
-    "had_previous": true,
-    "grade": "Open",
-    "previous_timestamp_ist": "2026-11-15T15:10:20.167998+05:30",
-    "previous_price": 65364.0,
-    "result": "Open",
-    "mistake": null,
-    "lesson": null,
-    "adjustment": null,
-    "pnl_usd": 0.0,
-    "atr_stop_mult_now": 1.0,
-    "reviews": [
-      {
-        "side": "SHORT",
-        "entry": 65364.0,
-        "stop_loss": 66018.0,
-        "take_profit": 64056.0,
-        "qty": 0.015,
-        "filled": true,
-        "hit_sl": false,
-        "hit_tp": false,
-        "grade": "Open",
-        "mistake": null,
-        "pnl_usd": 0.0,
-        "path_high": 65781.6,
-        "path_low": 64415.9,
-        "deep": null
-      }
-    ],
-    "detail": "SHORT \u2192 Open",
-    "performance": {
-      "updated_ist": "2026-11-15T21:10:13.030328+05:30",
-      "rules": {
-        "notional_usd": 1000.0,
-        "stop_loss_pct": 0.01,
-        "take_profit_pct": 0.02,
-        "grade": "Pass or Fail only (no partial)"
-      },
-      "today": {
-        "trades": 3,
-        "pass": 1,
-        "fail": 2,
-        "pnl_usd": 0.41,
-        "total_profit_usd": 20.41,
-        "total_loss_usd": -20.0
-      },
-      "week": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "month": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "all_time": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      }
-    }
-  },
-  {
-    "reviewed_at_ist": "2026-11-15T21:20:18.564147+05:30",
-    "current_price": 64707.7,
-    "had_previous": true,
-    "grade": "Open",
-    "previous_timestamp_ist": "2026-11-15T15:10:20.167998+05:30",
-    "previous_price": 65364.0,
-    "result": "Open",
-    "mistake": null,
-    "lesson": null,
-    "adjustment": null,
-    "pnl_usd": 0.0,
-    "atr_stop_mult_now": 1.0,
-    "reviews": [
-      {
-        "side": "SHORT",
-        "entry": 65364.0,
-        "stop_loss": 66018.0,
-        "take_profit": 64056.0,
-        "qty": 0.015,
-        "filled": true,
-        "hit_sl": false,
-        "hit_tp": false,
-        "grade": "Open",
-        "mistake": null,
-        "pnl_usd": 0.0,
-        "path_high": 65781.6,
-        "path_low": 64415.9,
-        "deep": null
-      }
-    ],
-    "detail": "SHORT \u2192 Open",
-    "performance": {
-      "updated_ist": "2026-11-15T21:20:18.563013+05:30",
-      "rules": {
-        "notional_usd": 1000.0,
-        "stop_loss_pct": 0.01,
-        "take_profit_pct": 0.02,
-        "grade": "Pass or Fail only (no partial)"
-      },
-      "today": {
-        "trades": 3,
-        "pass": 1,
-        "fail": 2,
-        "pnl_usd": 0.41,
-        "total_profit_usd": 20.41,
-        "total_loss_usd": -20.0
-      },
-      "week": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "month": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "all_time": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      }
-    }
-  },
-  {
-    "reviewed_at_ist": "2026-11-15T21:30:24.814598+05:30",
-    "current_price": 64662.0,
-    "had_previous": true,
-    "grade": "Open",
-    "previous_timestamp_ist": "2026-11-15T15:10:20.167998+05:30",
-    "previous_price": 65364.0,
-    "result": "Open",
-    "mistake": null,
-    "lesson": null,
-    "adjustment": null,
-    "pnl_usd": 0.0,
-    "atr_stop_mult_now": 1.0,
-    "reviews": [
-      {
-        "side": "SHORT",
-        "entry": 65364.0,
-        "stop_loss": 66018.0,
-        "take_profit": 64056.0,
-        "qty": 0.015,
-        "filled": true,
-        "hit_sl": false,
-        "hit_tp": false,
-        "grade": "Open",
-        "mistake": null,
-        "pnl_usd": 0.0,
-        "path_high": 65781.6,
-        "path_low": 64415.9,
-        "deep": null
-      }
-    ],
-    "detail": "SHORT \u2192 Open",
-    "performance": {
-      "updated_ist": "2026-11-15T21:30:24.813055+05:30",
-      "rules": {
-        "notional_usd": 1000.0,
-        "stop_loss_pct": 0.01,
-        "take_profit_pct": 0.02,
-        "grade": "Pass or Fail only (no partial)"
-      },
-      "today": {
-        "trades": 3,
-        "pass": 1,
-        "fail": 2,
-        "pnl_usd": 0.41,
-        "total_profit_usd": 20.41,
-        "total_loss_usd": -20.0
-      },
-      "week": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "month": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "all_time": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      }
-    }
-  },
-  {
-    "reviewed_at_ist": "2026-11-15T21:40:11.848309+05:30",
-    "current_price": 64633.3,
-    "had_previous": true,
-    "grade": "Open",
-    "previous_timestamp_ist": "2026-11-15T15:10:20.167998+05:30",
-    "previous_price": 65364.0,
-    "result": "Open",
-    "mistake": null,
-    "lesson": null,
-    "adjustment": null,
-    "pnl_usd": 0.0,
-    "atr_stop_mult_now": 1.0,
-    "reviews": [
-      {
-        "side": "SHORT",
-        "entry": 65364.0,
-        "stop_loss": 66018.0,
-        "take_profit": 64056.0,
-        "qty": 0.015,
-        "filled": true,
-        "hit_sl": false,
-        "hit_tp": false,
-        "grade": "Open",
-        "mistake": null,
-        "pnl_usd": 0.0,
-        "path_high": 65781.6,
-        "path_low": 64415.9,
-        "deep": null
-      }
-    ],
-    "detail": "SHORT \u2192 Open",
-    "performance": {
-      "updated_ist": "2026-11-15T21:40:11.847149+05:30",
-      "rules": {
-        "notional_usd": 1000.0,
-        "stop_loss_pct": 0.01,
-        "take_profit_pct": 0.02,
-        "grade": "Pass or Fail only (no partial)"
-      },
-      "today": {
-        "trades": 3,
-        "pass": 1,
-        "fail": 2,
-        "pnl_usd": 0.41,
-        "total_profit_usd": 20.41,
-        "total_loss_usd": -20.0
-      },
-      "week": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "month": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "all_time": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      }
-    }
-  },
-  {
-    "reviewed_at_ist": "2026-11-15T21:50:06.305591+05:30",
-    "current_price": 64499.4,
-    "had_previous": true,
-    "grade": "Open",
-    "previous_timestamp_ist": "2026-11-15T15:10:20.167998+05:30",
-    "previous_price": 65364.0,
-    "result": "Open",
-    "mistake": null,
-    "lesson": null,
-    "adjustment": null,
-    "pnl_usd": 0.0,
-    "atr_stop_mult_now": 1.0,
-    "reviews": [
-      {
-        "side": "SHORT",
-        "entry": 65364.0,
-        "stop_loss": 66018.0,
-        "take_profit": 64056.0,
-        "qty": 0.015,
-        "filled": true,
-        "hit_sl": false,
-        "hit_tp": false,
-        "grade": "Open",
-        "mistake": null,
-        "pnl_usd": 0.0,
-        "path_high": 65781.6,
-        "path_low": 64415.9,
-        "deep": null
-      }
-    ],
-    "detail": "SHORT \u2192 Open",
-    "performance": {
-      "updated_ist": "2026-11-15T21:50:06.304435+05:30",
-      "rules": {
-        "notional_usd": 1000.0,
-        "stop_loss_pct": 0.01,
-        "take_profit_pct": 0.02,
-        "grade": "Pass or Fail only (no partial)"
-      },
-      "today": {
-        "trades": 3,
-        "pass": 1,
-        "fail": 2,
-        "pnl_usd": 0.41,
-        "total_profit_usd": 20.41,
-        "total_loss_usd": -20.0
-      },
-      "week": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "month": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "all_time": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      }
-    }
-  },
-  {
-    "reviewed_at_ist": "2026-11-15T22:00:19.400734+05:30",
-    "current_price": 64719.6,
-    "had_previous": true,
-    "grade": "Open",
-    "previous_timestamp_ist": "2026-11-15T15:10:20.167998+05:30",
-    "previous_price": 65364.0,
-    "result": "Open",
-    "mistake": null,
-    "lesson": null,
-    "adjustment": null,
-    "pnl_usd": 0.0,
-    "atr_stop_mult_now": 1.0,
-    "reviews": [
-      {
-        "side": "SHORT",
-        "entry": 65364.0,
-        "stop_loss": 66018.0,
-        "take_profit": 64056.0,
-        "qty": 0.015,
-        "filled": true,
-        "hit_sl": false,
-        "hit_tp": false,
-        "grade": "Open",
-        "mistake": null,
-        "pnl_usd": 0.0,
-        "path_high": 65781.6,
-        "path_low": 64228.9,
-        "deep": null
-      }
-    ],
-    "detail": "SHORT \u2192 Open",
-    "performance": {
-      "updated_ist": "2026-11-15T22:00:19.399122+05:30",
-      "rules": {
-        "notional_usd": 1000.0,
-        "stop_loss_pct": 0.01,
-        "take_profit_pct": 0.02,
-        "grade": "Pass or Fail only (no partial)"
-      },
-      "today": {
-        "trades": 3,
-        "pass": 1,
-        "fail": 2,
-        "pnl_usd": 0.41,
-        "total_profit_usd": 20.41,
-        "total_loss_usd": -20.0
-      },
-      "week": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "month": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "all_time": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      }
-    }
-  },
-  {
-    "reviewed_at_ist": "2026-11-15T22:10:12.257576+05:30",
-    "current_price": 64448.4,
-    "had_previous": true,
-    "grade": "Open",
-    "previous_timestamp_ist": "2026-11-15T15:10:20.167998+05:30",
-    "previous_price": 65364.0,
-    "result": "Open",
-    "mistake": null,
-    "lesson": null,
-    "adjustment": null,
-    "pnl_usd": 0.0,
-    "atr_stop_mult_now": 1.0,
-    "reviews": [
-      {
-        "side": "SHORT",
-        "entry": 65364.0,
-        "stop_loss": 66018.0,
-        "take_profit": 64056.0,
-        "qty": 0.015,
-        "filled": true,
-        "hit_sl": false,
-        "hit_tp": false,
-        "grade": "Open",
-        "mistake": null,
-        "pnl_usd": 0.0,
-        "path_high": 65781.6,
-        "path_low": 64228.9,
-        "deep": null
-      }
-    ],
-    "detail": "SHORT \u2192 Open",
-    "performance": {
-      "updated_ist": "2026-11-15T22:10:12.256456+05:30",
-      "rules": {
-        "notional_usd": 1000.0,
-        "stop_loss_pct": 0.01,
-        "take_profit_pct": 0.02,
-        "grade": "Pass or Fail only (no partial)"
-      },
-      "today": {
-        "trades": 3,
-        "pass": 1,
-        "fail": 2,
-        "pnl_usd": 0.41,
-        "total_profit_usd": 20.41,
-        "total_loss_usd": -20.0
-      },
-      "week": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "month": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "all_time": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      }
-    }
-  },
-  {
-    "reviewed_at_ist": "2026-11-15T22:20:07.388153+05:30",
-    "current_price": 64519.7,
-    "had_previous": true,
-    "grade": "Open",
-    "previous_timestamp_ist": "2026-11-15T15:10:20.167998+05:30",
-    "previous_price": 65364.0,
-    "result": "Open",
-    "mistake": null,
-    "lesson": null,
-    "adjustment": null,
-    "pnl_usd": 0.0,
-    "atr_stop_mult_now": 1.0,
-    "reviews": [
-      {
-        "side": "SHORT",
-        "entry": 65364.0,
-        "stop_loss": 66018.0,
-        "take_profit": 64056.0,
-        "qty": 0.015,
-        "filled": true,
-        "hit_sl": false,
-        "hit_tp": false,
-        "grade": "Open",
-        "mistake": null,
-        "pnl_usd": 0.0,
-        "path_high": 65781.6,
-        "path_low": 64228.9,
-        "deep": null
-      }
-    ],
-    "detail": "SHORT \u2192 Open",
-    "performance": {
-      "updated_ist": "2026-11-15T22:20:07.387086+05:30",
-      "rules": {
-        "notional_usd": 1000.0,
-        "stop_loss_pct": 0.01,
-        "take_profit_pct": 0.02,
-        "grade": "Pass or Fail only (no partial)"
-      },
-      "today": {
-        "trades": 3,
-        "pass": 1,
-        "fail": 2,
-        "pnl_usd": 0.41,
-        "total_profit_usd": 20.41,
-        "total_loss_usd": -20.0
-      },
-      "week": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "month": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "all_time": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      }
-    }
-  },
-  {
-    "reviewed_at_ist": "2026-11-15T22:30:16.988822+05:30",
-    "current_price": 64672.1,
-    "had_previous": true,
-    "grade": "Open",
-    "previous_timestamp_ist": "2026-11-15T15:10:20.167998+05:30",
-    "previous_price": 65364.0,
-    "result": "Open",
-    "mistake": null,
-    "lesson": null,
-    "adjustment": null,
-    "pnl_usd": 0.0,
-    "atr_stop_mult_now": 1.0,
-    "reviews": [
-      {
-        "side": "SHORT",
-        "entry": 65364.0,
-        "stop_loss": 66018.0,
-        "take_profit": 64056.0,
-        "qty": 0.015,
-        "filled": true,
-        "hit_sl": false,
-        "hit_tp": false,
-        "grade": "Open",
-        "mistake": null,
-        "pnl_usd": 0.0,
-        "path_high": 65781.6,
-        "path_low": 64228.9,
-        "deep": null
-      }
-    ],
-    "detail": "SHORT \u2192 Open",
-    "performance": {
-      "updated_ist": "2026-11-15T22:30:16.987705+05:30",
-      "rules": {
-        "notional_usd": 1000.0,
-        "stop_loss_pct": 0.01,
-        "take_profit_pct": 0.02,
-        "grade": "Pass or Fail only (no partial)"
-      },
-      "today": {
-        "trades": 3,
-        "pass": 1,
-        "fail": 2,
-        "pnl_usd": 0.41,
-        "total_profit_usd": 20.41,
-        "total_loss_usd": -20.0
-      },
-      "week": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "month": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "all_time": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      }
-    }
-  },
-  {
-    "reviewed_at_ist": "2026-11-15T22:40:16.718200+05:30",
-    "current_price": 64695.9,
-    "had_previous": true,
-    "grade": "Open",
-    "previous_timestamp_ist": "2026-11-15T15:10:20.167998+05:30",
-    "previous_price": 65364.0,
-    "result": "Open",
-    "mistake": null,
-    "lesson": null,
-    "adjustment": null,
-    "pnl_usd": 0.0,
-    "atr_stop_mult_now": 1.0,
-    "reviews": [
-      {
-        "side": "SHORT",
-        "entry": 65364.0,
-        "stop_loss": 66018.0,
-        "take_profit": 64056.0,
-        "qty": 0.015,
-        "filled": true,
-        "hit_sl": false,
-        "hit_tp": false,
-        "grade": "Open",
-        "mistake": null,
-        "pnl_usd": 0.0,
-        "path_high": 65781.6,
-        "path_low": 64228.9,
-        "deep": null
-      }
-    ],
-    "detail": "SHORT \u2192 Open",
-    "performance": {
-      "updated_ist": "2026-11-15T22:40:16.716750+05:30",
-      "rules": {
-        "notional_usd": 1000.0,
-        "stop_loss_pct": 0.01,
-        "take_profit_pct": 0.02,
-        "grade": "Pass or Fail only (no partial)"
-      },
-      "today": {
-        "trades": 3,
-        "pass": 1,
-        "fail": 2,
-        "pnl_usd": 0.41,
-        "total_profit_usd": 20.41,
-        "total_loss_usd": -20.0
-      },
-      "week": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "month": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "all_time": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      }
-    }
-  },
-  {
-    "reviewed_at_ist": "2026-11-15T22:50:34.050369+05:30",
-    "current_price": 64733.2,
-    "had_previous": true,
-    "grade": "Open",
-    "previous_timestamp_ist": "2026-11-15T15:10:20.167998+05:30",
-    "previous_price": 65364.0,
-    "result": "Open",
-    "mistake": null,
-    "lesson": null,
-    "adjustment": null,
-    "pnl_usd": 0.0,
-    "atr_stop_mult_now": 1.0,
-    "reviews": [
-      {
-        "side": "SHORT",
-        "entry": 65364.0,
-        "stop_loss": 66018.0,
-        "take_profit": 64056.0,
-        "qty": 0.015,
-        "filled": true,
-        "hit_sl": false,
-        "hit_tp": false,
-        "grade": "Open",
-        "mistake": null,
-        "pnl_usd": 0.0,
-        "path_high": 65781.6,
-        "path_low": 64228.9,
-        "deep": null
-      }
-    ],
-    "detail": "SHORT \u2192 Open",
-    "performance": {
-      "updated_ist": "2026-11-15T22:50:34.049243+05:30",
-      "rules": {
-        "notional_usd": 1000.0,
-        "stop_loss_pct": 0.01,
-        "take_profit_pct": 0.02,
-        "grade": "Pass or Fail only (no partial)"
-      },
-      "today": {
-        "trades": 3,
-        "pass": 1,
-        "fail": 2,
-        "pnl_usd": 0.41,
-        "total_profit_usd": 20.41,
-        "total_loss_usd": -20.0
-      },
-      "week": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "month": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "all_time": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      }
-    }
-  },
-  {
-    "reviewed_at_ist": "2026-11-15T23:00:17.023489+05:30",
-    "current_price": 64818.1,
-    "had_previous": true,
-    "grade": "Open",
-    "previous_timestamp_ist": "2026-11-15T15:10:20.167998+05:30",
-    "previous_price": 65364.0,
-    "result": "Open",
-    "mistake": null,
-    "lesson": null,
-    "adjustment": null,
-    "pnl_usd": 0.0,
-    "atr_stop_mult_now": 1.0,
-    "reviews": [
-      {
-        "side": "SHORT",
-        "entry": 65364.0,
-        "stop_loss": 66018.0,
-        "take_profit": 64056.0,
-        "qty": 0.015,
-        "filled": true,
-        "hit_sl": false,
-        "hit_tp": false,
-        "grade": "Open",
-        "mistake": null,
-        "pnl_usd": 0.0,
-        "path_high": 65781.6,
-        "path_low": 64228.9,
-        "deep": null
-      }
-    ],
-    "detail": "SHORT \u2192 Open",
-    "performance": {
-      "updated_ist": "2026-11-15T23:00:17.021746+05:30",
-      "rules": {
-        "notional_usd": 1000.0,
-        "stop_loss_pct": 0.01,
-        "take_profit_pct": 0.02,
-        "grade": "Pass or Fail only (no partial)"
-      },
-      "today": {
-        "trades": 3,
-        "pass": 1,
-        "fail": 2,
-        "pnl_usd": 0.41,
-        "total_profit_usd": 20.41,
-        "total_loss_usd": -20.0
-      },
-      "week": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "month": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "all_time": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      }
-    }
-  },
-  {
-    "reviewed_at_ist": "2026-11-15T23:10:15.063180+05:30",
-    "current_price": 64472.0,
-    "had_previous": true,
-    "grade": "Open",
-    "previous_timestamp_ist": "2026-11-15T15:10:20.167998+05:30",
-    "previous_price": 65364.0,
-    "result": "Open",
-    "mistake": null,
-    "lesson": null,
-    "adjustment": null,
-    "pnl_usd": 0.0,
-    "atr_stop_mult_now": 1.0,
-    "reviews": [
-      {
-        "side": "SHORT",
-        "entry": 65364.0,
-        "stop_loss": 66018.0,
-        "take_profit": 64056.0,
-        "qty": 0.015,
-        "filled": true,
-        "hit_sl": false,
-        "hit_tp": false,
-        "grade": "Open",
-        "mistake": null,
-        "pnl_usd": 0.0,
-        "path_high": 65781.6,
-        "path_low": 64228.9,
-        "deep": null
-      }
-    ],
-    "detail": "SHORT \u2192 Open",
-    "performance": {
-      "updated_ist": "2026-11-15T23:10:15.062114+05:30",
-      "rules": {
-        "notional_usd": 1000.0,
-        "stop_loss_pct": 0.01,
-        "take_profit_pct": 0.02,
-        "grade": "Pass or Fail only (no partial)"
-      },
-      "today": {
-        "trades": 3,
-        "pass": 1,
-        "fail": 2,
-        "pnl_usd": 0.41,
-        "total_profit_usd": 20.41,
-        "total_loss_usd": -20.0
-      },
-      "week": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "month": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "all_time": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      }
-    }
-  },
-  {
-    "reviewed_at_ist": "2026-11-15T23:20:17.749998+05:30",
-    "current_price": 64368.4,
-    "had_previous": true,
-    "grade": "Open",
-    "previous_timestamp_ist": "2026-11-15T15:10:20.167998+05:30",
-    "previous_price": 65364.0,
-    "result": "Open",
-    "mistake": null,
-    "lesson": null,
-    "adjustment": null,
-    "pnl_usd": 0.0,
-    "atr_stop_mult_now": 1.0,
-    "reviews": [
-      {
-        "side": "SHORT",
-        "entry": 65364.0,
-        "stop_loss": 66018.0,
-        "take_profit": 64056.0,
-        "qty": 0.015,
-        "filled": true,
-        "hit_sl": false,
-        "hit_tp": false,
-        "grade": "Open",
-        "mistake": null,
-        "pnl_usd": 0.0,
-        "path_high": 65781.6,
-        "path_low": 64228.9,
-        "deep": null
-      }
-    ],
-    "detail": "SHORT \u2192 Open",
-    "performance": {
-      "updated_ist": "2026-11-15T23:20:17.748886+05:30",
-      "rules": {
-        "notional_usd": 1000.0,
-        "stop_loss_pct": 0.01,
-        "take_profit_pct": 0.02,
-        "grade": "Pass or Fail only (no partial)"
-      },
-      "today": {
-        "trades": 3,
-        "pass": 1,
-        "fail": 2,
-        "pnl_usd": 0.41,
-        "total_profit_usd": 20.41,
-        "total_loss_usd": -20.0
-      },
-      "week": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "month": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "all_time": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      }
-    }
-  },
-  {
-    "reviewed_at_ist": "2026-11-15T23:30:28.029307+05:30",
-    "current_price": 64479.2,
-    "had_previous": true,
-    "grade": "Open",
-    "previous_timestamp_ist": "2026-11-15T15:10:20.167998+05:30",
-    "previous_price": 65364.0,
-    "result": "Open",
-    "mistake": null,
-    "lesson": null,
-    "adjustment": null,
-    "pnl_usd": 0.0,
-    "atr_stop_mult_now": 1.0,
-    "reviews": [
-      {
-        "side": "SHORT",
-        "entry": 65364.0,
-        "stop_loss": 66018.0,
-        "take_profit": 64056.0,
-        "qty": 0.015,
-        "filled": true,
-        "hit_sl": false,
-        "hit_tp": false,
-        "grade": "Open",
-        "mistake": null,
-        "pnl_usd": 0.0,
-        "path_high": 65781.6,
-        "path_low": 64228.9,
-        "deep": null
-      }
-    ],
-    "detail": "SHORT \u2192 Open",
-    "performance": {
-      "updated_ist": "2026-11-15T23:30:28.028201+05:30",
-      "rules": {
-        "notional_usd": 1000.0,
-        "stop_loss_pct": 0.01,
-        "take_profit_pct": 0.02,
-        "grade": "Pass or Fail only (no partial)"
-      },
-      "today": {
-        "trades": 3,
-        "pass": 1,
-        "fail": 2,
-        "pnl_usd": 0.41,
-        "total_profit_usd": 20.41,
-        "total_loss_usd": -20.0
-      },
-      "week": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "month": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "all_time": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      }
-    }
-  },
-  {
-    "reviewed_at_ist": "2026-11-15T23:40:30.564305+05:30",
-    "current_price": 64517.8,
-    "had_previous": true,
-    "grade": "Open",
-    "previous_timestamp_ist": "2026-11-15T15:10:20.167998+05:30",
-    "previous_price": 65364.0,
-    "result": "Open",
-    "mistake": null,
-    "lesson": null,
-    "adjustment": null,
-    "pnl_usd": 0.0,
-    "atr_stop_mult_now": 1.0,
-    "reviews": [
-      {
-        "side": "SHORT",
-        "entry": 65364.0,
-        "stop_loss": 66018.0,
-        "take_profit": 64056.0,
-        "qty": 0.015,
-        "filled": true,
-        "hit_sl": false,
-        "hit_tp": false,
-        "grade": "Open",
-        "mistake": null,
-        "pnl_usd": 0.0,
-        "path_high": 65781.6,
-        "path_low": 64228.9,
-        "deep": null
-      }
-    ],
-    "detail": "SHORT \u2192 Open",
-    "performance": {
-      "updated_ist": "2026-11-15T23:40:30.562802+05:30",
-      "rules": {
-        "notional_usd": 1000.0,
-        "stop_loss_pct": 0.01,
-        "take_profit_pct": 0.02,
-        "grade": "Pass or Fail only (no partial)"
-      },
-      "today": {
-        "trades": 3,
-        "pass": 1,
-        "fail": 2,
-        "pnl_usd": 0.41,
-        "total_profit_usd": 20.41,
-        "total_loss_usd": -20.0
-      },
-      "week": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "month": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "all_time": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      }
-    }
-  },
-  {
-    "reviewed_at_ist": "2026-11-15T23:50:12.298893+05:30",
-    "current_price": 64632.6,
-    "had_previous": true,
-    "grade": "Open",
-    "previous_timestamp_ist": "2026-11-15T15:10:20.167998+05:30",
-    "previous_price": 65364.0,
-    "result": "Open",
-    "mistake": null,
-    "lesson": null,
-    "adjustment": null,
-    "pnl_usd": 0.0,
-    "atr_stop_mult_now": 1.0,
-    "reviews": [
-      {
-        "side": "SHORT",
-        "entry": 65364.0,
-        "stop_loss": 66018.0,
-        "take_profit": 64056.0,
-        "qty": 0.015,
-        "filled": true,
-        "hit_sl": false,
-        "hit_tp": false,
-        "grade": "Open",
-        "mistake": null,
-        "pnl_usd": 0.0,
-        "path_high": 65781.6,
-        "path_low": 64228.9,
-        "deep": null
-      }
-    ],
-    "detail": "SHORT \u2192 Open",
-    "performance": {
-      "updated_ist": "2026-11-15T23:50:12.297449+05:30",
-      "rules": {
-        "notional_usd": 1000.0,
-        "stop_loss_pct": 0.01,
-        "take_profit_pct": 0.02,
-        "grade": "Pass or Fail only (no partial)"
-      },
-      "today": {
-        "trades": 3,
-        "pass": 1,
-        "fail": 2,
-        "pnl_usd": 0.41,
-        "total_profit_usd": 20.41,
-        "total_loss_usd": -20.0
-      },
-      "week": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "month": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "all_time": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      }
-    }
-  },
-  {
-    "reviewed_at_ist": "2026-11-16T00:00:19.705751+05:30",
-    "current_price": 64500.1,
-    "had_previous": true,
-    "grade": "Open",
-    "previous_timestamp_ist": "2026-11-15T15:10:20.167998+05:30",
-    "previous_price": 65364.0,
-    "result": "Open",
-    "mistake": null,
-    "lesson": null,
-    "adjustment": null,
-    "pnl_usd": 0.0,
-    "atr_stop_mult_now": 1.0,
-    "reviews": [
-      {
-        "side": "SHORT",
-        "entry": 65364.0,
-        "stop_loss": 66018.0,
-        "take_profit": 64056.0,
-        "qty": 0.015,
-        "filled": true,
-        "hit_sl": false,
-        "hit_tp": false,
-        "grade": "Open",
-        "mistake": null,
-        "pnl_usd": 0.0,
-        "path_high": 65781.6,
-        "path_low": 64228.9,
-        "deep": null
-      }
-    ],
-    "detail": "SHORT \u2192 Open",
-    "performance": {
-      "updated_ist": "2026-11-16T00:00:19.703762+05:30",
-      "rules": {
-        "notional_usd": 1000.0,
-        "stop_loss_pct": 0.01,
-        "take_profit_pct": 0.02,
-        "grade": "Pass or Fail only (no partial)"
-      },
-      "today": {
-        "trades": 0,
-        "pass": 0,
-        "fail": 0,
-        "pnl_usd": 0,
-        "total_profit_usd": 0,
-        "total_loss_usd": 0
-      },
-      "week": {
-        "trades": 0,
-        "pass": 0,
-        "fail": 0,
-        "pnl_usd": 0,
-        "total_profit_usd": 0,
-        "total_loss_usd": 0
-      },
-      "month": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "all_time": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      }
-    }
-  },
-  {
-    "reviewed_at_ist": "2026-11-16T00:10:12.233987+05:30",
-    "current_price": 64637.7,
-    "had_previous": true,
-    "grade": "Open",
-    "previous_timestamp_ist": "2026-11-15T15:10:20.167998+05:30",
-    "previous_price": 65364.0,
-    "result": "Open",
-    "mistake": null,
-    "lesson": null,
-    "adjustment": null,
-    "pnl_usd": 0.0,
-    "atr_stop_mult_now": 1.0,
-    "reviews": [
-      {
-        "side": "SHORT",
-        "entry": 65364.0,
-        "stop_loss": 66018.0,
-        "take_profit": 64056.0,
-        "qty": 0.015,
-        "filled": true,
-        "hit_sl": false,
-        "hit_tp": false,
-        "grade": "Open",
-        "mistake": null,
-        "pnl_usd": 0.0,
-        "path_high": 65781.6,
-        "path_low": 64228.9,
-        "deep": null
-      }
-    ],
-    "detail": "SHORT \u2192 Open",
-    "performance": {
-      "updated_ist": "2026-11-16T00:10:12.232186+05:30",
-      "rules": {
-        "notional_usd": 1000.0,
-        "stop_loss_pct": 0.01,
-        "take_profit_pct": 0.02,
-        "grade": "Pass or Fail only (no partial)"
-      },
-      "today": {
-        "trades": 0,
-        "pass": 0,
-        "fail": 0,
-        "pnl_usd": 0,
-        "total_profit_usd": 0,
-        "total_loss_usd": 0
-      },
-      "week": {
-        "trades": 0,
-        "pass": 0,
-        "fail": 0,
-        "pnl_usd": 0,
-        "total_profit_usd": 0,
-        "total_loss_usd": 0
-      },
-      "month": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "all_time": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      }
-    }
-  },
-  {
-    "reviewed_at_ist": "2026-11-16T00:20:35.070770+05:30",
-    "current_price": 64578.7,
-    "had_previous": true,
-    "grade": "Open",
-    "previous_timestamp_ist": "2026-11-15T15:10:20.167998+05:30",
-    "previous_price": 65364.0,
-    "result": "Open",
-    "mistake": null,
-    "lesson": null,
-    "adjustment": null,
-    "pnl_usd": 0.0,
-    "atr_stop_mult_now": 1.0,
-    "reviews": [
-      {
-        "side": "SHORT",
-        "entry": 65364.0,
-        "stop_loss": 66018.0,
-        "take_profit": 64056.0,
-        "qty": 0.015,
-        "filled": true,
-        "hit_sl": false,
-        "hit_tp": false,
-        "grade": "Open",
-        "mistake": null,
-        "pnl_usd": 0.0,
-        "path_high": 65781.6,
-        "path_low": 64228.9,
-        "deep": null
-      }
-    ],
-    "detail": "SHORT \u2192 Open",
-    "performance": {
-      "updated_ist": "2026-11-16T00:20:35.069552+05:30",
-      "rules": {
-        "notional_usd": 1000.0,
-        "stop_loss_pct": 0.01,
-        "take_profit_pct": 0.02,
-        "grade": "Pass or Fail only (no partial)"
-      },
-      "today": {
-        "trades": 0,
-        "pass": 0,
-        "fail": 0,
-        "pnl_usd": 0,
-        "total_profit_usd": 0,
-        "total_loss_usd": 0
-      },
-      "week": {
-        "trades": 0,
-        "pass": 0,
-        "fail": 0,
-        "pnl_usd": 0,
-        "total_profit_usd": 0,
-        "total_loss_usd": 0
-      },
-      "month": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "all_time": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      }
-    }
-  },
-  {
-    "reviewed_at_ist": "2026-11-16T00:30:17.927108+05:30",
-    "current_price": 64692.4,
-    "had_previous": true,
-    "grade": "Open",
-    "previous_timestamp_ist": "2026-11-15T15:10:20.167998+05:30",
-    "previous_price": 65364.0,
-    "result": "Open",
-    "mistake": null,
-    "lesson": null,
-    "adjustment": null,
-    "pnl_usd": 0.0,
-    "atr_stop_mult_now": 1.0,
-    "reviews": [
-      {
-        "side": "SHORT",
-        "entry": 65364.0,
-        "stop_loss": 66018.0,
-        "take_profit": 64056.0,
-        "qty": 0.015,
-        "filled": true,
-        "hit_sl": false,
-        "hit_tp": false,
-        "grade": "Open",
-        "mistake": null,
-        "pnl_usd": 0.0,
-        "path_high": 65781.6,
-        "path_low": 64228.9,
-        "deep": null
-      }
-    ],
-    "detail": "SHORT \u2192 Open",
-    "performance": {
-      "updated_ist": "2026-11-16T00:30:17.926000+05:30",
-      "rules": {
-        "notional_usd": 1000.0,
-        "stop_loss_pct": 0.01,
-        "take_profit_pct": 0.02,
-        "grade": "Pass or Fail only (no partial)"
-      },
-      "today": {
-        "trades": 0,
-        "pass": 0,
-        "fail": 0,
-        "pnl_usd": 0,
-        "total_profit_usd": 0,
-        "total_loss_usd": 0
-      },
-      "week": {
-        "trades": 0,
-        "pass": 0,
-        "fail": 0,
-        "pnl_usd": 0,
-        "total_profit_usd": 0,
-        "total_loss_usd": 0
-      },
-      "month": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "all_time": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      }
-    }
-  },
-  {
-    "reviewed_at_ist": "2026-11-16T00:40:24.087864+05:30",
-    "current_price": 65012.9,
-    "had_previous": true,
-    "grade": "Open",
-    "previous_timestamp_ist": "2026-11-15T15:10:20.167998+05:30",
-    "previous_price": 65364.0,
-    "result": "Open",
-    "mistake": null,
-    "lesson": null,
-    "adjustment": null,
-    "pnl_usd": 0.0,
-    "atr_stop_mult_now": 1.0,
-    "reviews": [
-      {
-        "side": "SHORT",
-        "entry": 65364.0,
-        "stop_loss": 66018.0,
-        "take_profit": 64056.0,
-        "qty": 0.015,
-        "filled": true,
-        "hit_sl": false,
-        "hit_tp": false,
-        "grade": "Open",
-        "mistake": null,
-        "pnl_usd": 0.0,
-        "path_high": 65781.6,
-        "path_low": 64228.9,
-        "deep": null
-      }
-    ],
-    "detail": "SHORT \u2192 Open",
-    "performance": {
-      "updated_ist": "2026-11-16T00:40:24.085695+05:30",
-      "rules": {
-        "notional_usd": 1000.0,
-        "stop_loss_pct": 0.01,
-        "take_profit_pct": 0.02,
-        "grade": "Pass or Fail only (no partial)"
-      },
-      "today": {
-        "trades": 0,
-        "pass": 0,
-        "fail": 0,
-        "pnl_usd": 0,
-        "total_profit_usd": 0,
-        "total_loss_usd": 0
-      },
-      "week": {
-        "trades": 0,
-        "pass": 0,
-        "fail": 0,
-        "pnl_usd": 0,
-        "total_profit_usd": 0,
-        "total_loss_usd": 0
-      },
-      "month": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "all_time": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      }
-    }
-  },
-  {
-    "reviewed_at_ist": "2026-11-16T00:50:06.213605+05:30",
-    "current_price": 64909.1,
-    "had_previous": true,
-    "grade": "Open",
-    "previous_timestamp_ist": "2026-11-15T15:10:20.167998+05:30",
-    "previous_price": 65364.0,
-    "result": "Open",
-    "mistake": null,
-    "lesson": null,
-    "adjustment": null,
-    "pnl_usd": 0.0,
-    "atr_stop_mult_now": 1.0,
-    "reviews": [
-      {
-        "side": "SHORT",
-        "entry": 65364.0,
-        "stop_loss": 66018.0,
-        "take_profit": 64056.0,
-        "qty": 0.015,
-        "filled": true,
-        "hit_sl": false,
-        "hit_tp": false,
-        "grade": "Open",
-        "mistake": null,
-        "pnl_usd": 0.0,
-        "path_high": 65781.6,
-        "path_low": 64228.9,
-        "deep": null
-      }
-    ],
-    "detail": "SHORT \u2192 Open",
-    "performance": {
-      "updated_ist": "2026-11-16T00:50:06.212562+05:30",
-      "rules": {
-        "notional_usd": 1000.0,
-        "stop_loss_pct": 0.01,
-        "take_profit_pct": 0.02,
-        "grade": "Pass or Fail only (no partial)"
-      },
-      "today": {
-        "trades": 0,
-        "pass": 0,
-        "fail": 0,
-        "pnl_usd": 0,
-        "total_profit_usd": 0,
-        "total_loss_usd": 0
-      },
-      "week": {
-        "trades": 0,
-        "pass": 0,
-        "fail": 0,
-        "pnl_usd": 0,
-        "total_profit_usd": 0,
-        "total_loss_usd": 0
-      },
-      "month": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      },
-      "all_time": {
-        "trades": 8,
-        "pass": 3,
-        "fail": 5,
-        "pnl_usd": 9.24,
-        "total_profit_usd": 59.68,
-        "total_loss_usd": -50.44
-      }
-    }
-  },
-  {
     "reviewed_at_ist": "2026-11-16T01:00:19.123668+05:30",
     "current_price": 64948.1,
     "had_previous": true,
@@ -7403,6 +3755,3632 @@
     "detail": "SHORT \u2192 Open",
     "performance": {
       "updated_ist": "2026-11-16T11:30:16.087501+05:30",
+      "rules": {
+        "notional_usd": 1000.0,
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+        "grade": "Pass or Fail only (no partial)"
+      },
+      "today": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "week": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "month": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      },
+      "all_time": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      }
+    }
+  },
+  {
+    "reviewed_at_ist": "2026-11-16T11:40:11.517266+05:30",
+    "current_price": 64313.6,
+    "had_previous": true,
+    "grade": "Open",
+    "previous_timestamp_ist": "2026-11-16T11:30:16.110365+05:30",
+    "previous_price": 64376.4,
+    "result": "Open",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "atr_stop_mult_now": 1.0,
+    "reviews": [
+      {
+        "side": "SHORT",
+        "entry": 64376.0,
+        "stop_loss": 65020.0,
+        "take_profit": 63088.0,
+        "qty": 0.016,
+        "filled": true,
+        "hit_sl": false,
+        "hit_tp": false,
+        "grade": "Open",
+        "mistake": null,
+        "pnl_usd": 0.0,
+        "path_high": 64376.4,
+        "path_low": 64313.6,
+        "deep": null
+      }
+    ],
+    "detail": "SHORT \u2192 Open",
+    "performance": {
+      "updated_ist": "2026-11-16T11:40:11.515693+05:30",
+      "rules": {
+        "notional_usd": 1000.0,
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+        "grade": "Pass or Fail only (no partial)"
+      },
+      "today": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "week": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "month": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      },
+      "all_time": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      }
+    }
+  },
+  {
+    "reviewed_at_ist": "2026-11-16T11:50:25.919683+05:30",
+    "current_price": 64349.5,
+    "had_previous": true,
+    "grade": "Open",
+    "previous_timestamp_ist": "2026-11-16T11:30:16.110365+05:30",
+    "previous_price": 64376.4,
+    "result": "Open",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "atr_stop_mult_now": 1.0,
+    "reviews": [
+      {
+        "side": "SHORT",
+        "entry": 64376.0,
+        "stop_loss": 65020.0,
+        "take_profit": 63088.0,
+        "qty": 0.016,
+        "filled": true,
+        "hit_sl": false,
+        "hit_tp": false,
+        "grade": "Open",
+        "mistake": null,
+        "pnl_usd": 0.0,
+        "path_high": 64376.4,
+        "path_low": 64313.6,
+        "deep": null
+      }
+    ],
+    "detail": "SHORT \u2192 Open",
+    "performance": {
+      "updated_ist": "2026-11-16T11:50:25.917520+05:30",
+      "rules": {
+        "notional_usd": 1000.0,
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+        "grade": "Pass or Fail only (no partial)"
+      },
+      "today": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "week": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "month": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      },
+      "all_time": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      }
+    }
+  },
+  {
+    "reviewed_at_ist": "2026-11-16T12:00:18.363540+05:30",
+    "current_price": 64396.7,
+    "had_previous": true,
+    "grade": "Open",
+    "previous_timestamp_ist": "2026-11-16T11:30:16.110365+05:30",
+    "previous_price": 64376.4,
+    "result": "Open",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "atr_stop_mult_now": 1.0,
+    "reviews": [
+      {
+        "side": "SHORT",
+        "entry": 64376.0,
+        "stop_loss": 65020.0,
+        "take_profit": 63088.0,
+        "qty": 0.016,
+        "filled": true,
+        "hit_sl": false,
+        "hit_tp": false,
+        "grade": "Open",
+        "mistake": null,
+        "pnl_usd": 0.0,
+        "path_high": 64396.7,
+        "path_low": 64313.6,
+        "deep": null
+      }
+    ],
+    "detail": "SHORT \u2192 Open",
+    "performance": {
+      "updated_ist": "2026-11-16T12:00:18.359761+05:30",
+      "rules": {
+        "notional_usd": 1000.0,
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+        "grade": "Pass or Fail only (no partial)"
+      },
+      "today": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "week": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "month": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      },
+      "all_time": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      }
+    }
+  },
+  {
+    "reviewed_at_ist": "2026-11-16T12:10:22.063088+05:30",
+    "current_price": 64577.0,
+    "had_previous": true,
+    "grade": "Open",
+    "previous_timestamp_ist": "2026-11-16T11:30:16.110365+05:30",
+    "previous_price": 64376.4,
+    "result": "Open",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "atr_stop_mult_now": 1.0,
+    "reviews": [
+      {
+        "side": "SHORT",
+        "entry": 64376.0,
+        "stop_loss": 65020.0,
+        "take_profit": 63088.0,
+        "qty": 0.016,
+        "filled": true,
+        "hit_sl": false,
+        "hit_tp": false,
+        "grade": "Open",
+        "mistake": null,
+        "pnl_usd": 0.0,
+        "path_high": 64577.0,
+        "path_low": 64313.6,
+        "deep": null
+      }
+    ],
+    "detail": "SHORT \u2192 Open",
+    "performance": {
+      "updated_ist": "2026-11-16T12:10:22.061600+05:30",
+      "rules": {
+        "notional_usd": 1000.0,
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+        "grade": "Pass or Fail only (no partial)"
+      },
+      "today": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "week": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "month": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      },
+      "all_time": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      }
+    }
+  },
+  {
+    "reviewed_at_ist": "2026-11-16T12:20:18.162641+05:30",
+    "current_price": 64596.4,
+    "had_previous": true,
+    "grade": "Open",
+    "previous_timestamp_ist": "2026-11-16T11:30:16.110365+05:30",
+    "previous_price": 64376.4,
+    "result": "Open",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "atr_stop_mult_now": 1.0,
+    "reviews": [
+      {
+        "side": "SHORT",
+        "entry": 64376.0,
+        "stop_loss": 65020.0,
+        "take_profit": 63088.0,
+        "qty": 0.016,
+        "filled": true,
+        "hit_sl": false,
+        "hit_tp": false,
+        "grade": "Open",
+        "mistake": null,
+        "pnl_usd": 0.0,
+        "path_high": 64596.4,
+        "path_low": 64313.6,
+        "deep": null
+      }
+    ],
+    "detail": "SHORT \u2192 Open",
+    "performance": {
+      "updated_ist": "2026-11-16T12:20:18.161618+05:30",
+      "rules": {
+        "notional_usd": 1000.0,
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+        "grade": "Pass or Fail only (no partial)"
+      },
+      "today": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "week": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "month": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      },
+      "all_time": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      }
+    }
+  },
+  {
+    "reviewed_at_ist": "2026-11-16T12:30:11.873302+05:30",
+    "current_price": 64690.4,
+    "had_previous": true,
+    "grade": "Open",
+    "previous_timestamp_ist": "2026-11-16T11:30:16.110365+05:30",
+    "previous_price": 64376.4,
+    "result": "Open",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "atr_stop_mult_now": 1.0,
+    "reviews": [
+      {
+        "side": "SHORT",
+        "entry": 64376.0,
+        "stop_loss": 65020.0,
+        "take_profit": 63088.0,
+        "qty": 0.016,
+        "filled": true,
+        "hit_sl": false,
+        "hit_tp": false,
+        "grade": "Open",
+        "mistake": null,
+        "pnl_usd": 0.0,
+        "path_high": 64690.4,
+        "path_low": 64313.6,
+        "deep": null
+      }
+    ],
+    "detail": "SHORT \u2192 Open",
+    "performance": {
+      "updated_ist": "2026-11-16T12:30:11.872066+05:30",
+      "rules": {
+        "notional_usd": 1000.0,
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+        "grade": "Pass or Fail only (no partial)"
+      },
+      "today": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "week": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "month": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      },
+      "all_time": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      }
+    }
+  },
+  {
+    "reviewed_at_ist": "2026-11-16T12:40:09.416780+05:30",
+    "current_price": 64603.7,
+    "had_previous": true,
+    "grade": "Open",
+    "previous_timestamp_ist": "2026-11-16T11:30:16.110365+05:30",
+    "previous_price": 64376.4,
+    "result": "Open",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "atr_stop_mult_now": 1.0,
+    "reviews": [
+      {
+        "side": "SHORT",
+        "entry": 64376.0,
+        "stop_loss": 65020.0,
+        "take_profit": 63088.0,
+        "qty": 0.016,
+        "filled": true,
+        "hit_sl": false,
+        "hit_tp": false,
+        "grade": "Open",
+        "mistake": null,
+        "pnl_usd": 0.0,
+        "path_high": 64759.1,
+        "path_low": 64313.6,
+        "deep": null
+      }
+    ],
+    "detail": "SHORT \u2192 Open",
+    "performance": {
+      "updated_ist": "2026-11-16T12:40:09.415755+05:30",
+      "rules": {
+        "notional_usd": 1000.0,
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+        "grade": "Pass or Fail only (no partial)"
+      },
+      "today": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "week": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "month": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      },
+      "all_time": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      }
+    }
+  },
+  {
+    "reviewed_at_ist": "2026-11-16T12:50:31.262830+05:30",
+    "current_price": 64381.4,
+    "had_previous": true,
+    "grade": "Open",
+    "previous_timestamp_ist": "2026-11-16T11:30:16.110365+05:30",
+    "previous_price": 64376.4,
+    "result": "Open",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "atr_stop_mult_now": 1.0,
+    "reviews": [
+      {
+        "side": "SHORT",
+        "entry": 64376.0,
+        "stop_loss": 65020.0,
+        "take_profit": 63088.0,
+        "qty": 0.016,
+        "filled": true,
+        "hit_sl": false,
+        "hit_tp": false,
+        "grade": "Open",
+        "mistake": null,
+        "pnl_usd": 0.0,
+        "path_high": 64759.1,
+        "path_low": 64313.6,
+        "deep": null
+      }
+    ],
+    "detail": "SHORT \u2192 Open",
+    "performance": {
+      "updated_ist": "2026-11-16T12:50:31.261737+05:30",
+      "rules": {
+        "notional_usd": 1000.0,
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+        "grade": "Pass or Fail only (no partial)"
+      },
+      "today": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "week": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "month": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      },
+      "all_time": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      }
+    }
+  },
+  {
+    "reviewed_at_ist": "2026-11-16T13:00:09.394182+05:30",
+    "current_price": 64667.0,
+    "had_previous": true,
+    "grade": "Open",
+    "previous_timestamp_ist": "2026-11-16T11:30:16.110365+05:30",
+    "previous_price": 64376.4,
+    "result": "Open",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "atr_stop_mult_now": 1.0,
+    "reviews": [
+      {
+        "side": "SHORT",
+        "entry": 64376.0,
+        "stop_loss": 65020.0,
+        "take_profit": 63088.0,
+        "qty": 0.016,
+        "filled": true,
+        "hit_sl": false,
+        "hit_tp": false,
+        "grade": "Open",
+        "mistake": null,
+        "pnl_usd": 0.0,
+        "path_high": 64759.1,
+        "path_low": 64313.6,
+        "deep": null
+      }
+    ],
+    "detail": "SHORT \u2192 Open",
+    "performance": {
+      "updated_ist": "2026-11-16T13:00:09.393158+05:30",
+      "rules": {
+        "notional_usd": 1000.0,
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+        "grade": "Pass or Fail only (no partial)"
+      },
+      "today": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "week": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "month": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      },
+      "all_time": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      }
+    }
+  },
+  {
+    "reviewed_at_ist": "2026-11-16T13:10:16.866912+05:30",
+    "current_price": 64902.6,
+    "had_previous": true,
+    "grade": "Open",
+    "previous_timestamp_ist": "2026-11-16T11:30:16.110365+05:30",
+    "previous_price": 64376.4,
+    "result": "Open",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "atr_stop_mult_now": 1.0,
+    "reviews": [
+      {
+        "side": "SHORT",
+        "entry": 64376.0,
+        "stop_loss": 65020.0,
+        "take_profit": 63088.0,
+        "qty": 0.016,
+        "filled": true,
+        "hit_sl": false,
+        "hit_tp": false,
+        "grade": "Open",
+        "mistake": null,
+        "pnl_usd": 0.0,
+        "path_high": 64906.7,
+        "path_low": 64313.6,
+        "deep": null
+      }
+    ],
+    "detail": "SHORT \u2192 Open",
+    "performance": {
+      "updated_ist": "2026-11-16T13:10:16.865796+05:30",
+      "rules": {
+        "notional_usd": 1000.0,
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+        "grade": "Pass or Fail only (no partial)"
+      },
+      "today": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "week": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "month": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      },
+      "all_time": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      }
+    }
+  },
+  {
+    "reviewed_at_ist": "2026-11-16T13:20:16.684844+05:30",
+    "current_price": 64890.4,
+    "had_previous": true,
+    "grade": "Open",
+    "previous_timestamp_ist": "2026-11-16T11:30:16.110365+05:30",
+    "previous_price": 64376.4,
+    "result": "Open",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "atr_stop_mult_now": 1.0,
+    "reviews": [
+      {
+        "side": "SHORT",
+        "entry": 64376.0,
+        "stop_loss": 65020.0,
+        "take_profit": 63088.0,
+        "qty": 0.016,
+        "filled": true,
+        "hit_sl": false,
+        "hit_tp": false,
+        "grade": "Open",
+        "mistake": null,
+        "pnl_usd": 0.0,
+        "path_high": 64984.6,
+        "path_low": 64313.6,
+        "deep": null
+      }
+    ],
+    "detail": "SHORT \u2192 Open",
+    "performance": {
+      "updated_ist": "2026-11-16T13:20:16.683800+05:30",
+      "rules": {
+        "notional_usd": 1000.0,
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+        "grade": "Pass or Fail only (no partial)"
+      },
+      "today": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "week": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "month": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      },
+      "all_time": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      }
+    }
+  },
+  {
+    "reviewed_at_ist": "2026-11-16T13:30:13.868678+05:30",
+    "current_price": 64911.7,
+    "had_previous": true,
+    "grade": "Open",
+    "previous_timestamp_ist": "2026-11-16T11:30:16.110365+05:30",
+    "previous_price": 64376.4,
+    "result": "Open",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "atr_stop_mult_now": 1.0,
+    "reviews": [
+      {
+        "side": "SHORT",
+        "entry": 64376.0,
+        "stop_loss": 65020.0,
+        "take_profit": 63088.0,
+        "qty": 0.016,
+        "filled": true,
+        "hit_sl": false,
+        "hit_tp": false,
+        "grade": "Open",
+        "mistake": null,
+        "pnl_usd": 0.0,
+        "path_high": 65001.5,
+        "path_low": 64313.6,
+        "deep": null
+      }
+    ],
+    "detail": "SHORT \u2192 Open",
+    "performance": {
+      "updated_ist": "2026-11-16T13:30:13.867674+05:30",
+      "rules": {
+        "notional_usd": 1000.0,
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+        "grade": "Pass or Fail only (no partial)"
+      },
+      "today": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "week": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "month": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      },
+      "all_time": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      }
+    }
+  },
+  {
+    "reviewed_at_ist": "2026-11-16T13:40:10.329530+05:30",
+    "current_price": 64658.5,
+    "had_previous": true,
+    "grade": "Open",
+    "previous_timestamp_ist": "2026-11-16T11:30:16.110365+05:30",
+    "previous_price": 64376.4,
+    "result": "Open",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "atr_stop_mult_now": 1.0,
+    "reviews": [
+      {
+        "side": "SHORT",
+        "entry": 64376.0,
+        "stop_loss": 65020.0,
+        "take_profit": 63088.0,
+        "qty": 0.016,
+        "filled": true,
+        "hit_sl": false,
+        "hit_tp": false,
+        "grade": "Open",
+        "mistake": null,
+        "pnl_usd": 0.0,
+        "path_high": 65001.5,
+        "path_low": 64313.6,
+        "deep": null
+      }
+    ],
+    "detail": "SHORT \u2192 Open",
+    "performance": {
+      "updated_ist": "2026-11-16T13:40:10.328319+05:30",
+      "rules": {
+        "notional_usd": 1000.0,
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+        "grade": "Pass or Fail only (no partial)"
+      },
+      "today": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "week": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "month": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      },
+      "all_time": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      }
+    }
+  },
+  {
+    "reviewed_at_ist": "2026-11-16T13:50:15.938328+05:30",
+    "current_price": 64565.5,
+    "had_previous": true,
+    "grade": "Open",
+    "previous_timestamp_ist": "2026-11-16T11:30:16.110365+05:30",
+    "previous_price": 64376.4,
+    "result": "Open",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "atr_stop_mult_now": 1.0,
+    "reviews": [
+      {
+        "side": "SHORT",
+        "entry": 64376.0,
+        "stop_loss": 65020.0,
+        "take_profit": 63088.0,
+        "qty": 0.016,
+        "filled": true,
+        "hit_sl": false,
+        "hit_tp": false,
+        "grade": "Open",
+        "mistake": null,
+        "pnl_usd": 0.0,
+        "path_high": 65001.5,
+        "path_low": 64313.6,
+        "deep": null
+      }
+    ],
+    "detail": "SHORT \u2192 Open",
+    "performance": {
+      "updated_ist": "2026-11-16T13:50:15.936149+05:30",
+      "rules": {
+        "notional_usd": 1000.0,
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+        "grade": "Pass or Fail only (no partial)"
+      },
+      "today": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "week": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "month": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      },
+      "all_time": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      }
+    }
+  },
+  {
+    "reviewed_at_ist": "2026-11-16T14:00:17.161192+05:30",
+    "current_price": 64495.7,
+    "had_previous": true,
+    "grade": "Open",
+    "previous_timestamp_ist": "2026-11-16T11:30:16.110365+05:30",
+    "previous_price": 64376.4,
+    "result": "Open",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "atr_stop_mult_now": 1.0,
+    "reviews": [
+      {
+        "side": "SHORT",
+        "entry": 64376.0,
+        "stop_loss": 65020.0,
+        "take_profit": 63088.0,
+        "qty": 0.016,
+        "filled": true,
+        "hit_sl": false,
+        "hit_tp": false,
+        "grade": "Open",
+        "mistake": null,
+        "pnl_usd": 0.0,
+        "path_high": 65001.5,
+        "path_low": 64313.6,
+        "deep": null
+      }
+    ],
+    "detail": "SHORT \u2192 Open",
+    "performance": {
+      "updated_ist": "2026-11-16T14:00:17.160147+05:30",
+      "rules": {
+        "notional_usd": 1000.0,
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+        "grade": "Pass or Fail only (no partial)"
+      },
+      "today": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "week": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "month": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      },
+      "all_time": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      }
+    }
+  },
+  {
+    "reviewed_at_ist": "2026-11-16T14:10:17.386332+05:30",
+    "current_price": 64575.2,
+    "had_previous": true,
+    "grade": "Open",
+    "previous_timestamp_ist": "2026-11-16T11:30:16.110365+05:30",
+    "previous_price": 64376.4,
+    "result": "Open",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "atr_stop_mult_now": 1.0,
+    "reviews": [
+      {
+        "side": "SHORT",
+        "entry": 64376.0,
+        "stop_loss": 65020.0,
+        "take_profit": 63088.0,
+        "qty": 0.016,
+        "filled": true,
+        "hit_sl": false,
+        "hit_tp": false,
+        "grade": "Open",
+        "mistake": null,
+        "pnl_usd": 0.0,
+        "path_high": 65001.5,
+        "path_low": 64313.6,
+        "deep": null
+      }
+    ],
+    "detail": "SHORT \u2192 Open",
+    "performance": {
+      "updated_ist": "2026-11-16T14:10:17.385275+05:30",
+      "rules": {
+        "notional_usd": 1000.0,
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+        "grade": "Pass or Fail only (no partial)"
+      },
+      "today": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "week": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "month": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      },
+      "all_time": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      }
+    }
+  },
+  {
+    "reviewed_at_ist": "2026-11-16T14:20:19.559021+05:30",
+    "current_price": 64532.0,
+    "had_previous": true,
+    "grade": "Open",
+    "previous_timestamp_ist": "2026-11-16T11:30:16.110365+05:30",
+    "previous_price": 64376.4,
+    "result": "Open",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "atr_stop_mult_now": 1.0,
+    "reviews": [
+      {
+        "side": "SHORT",
+        "entry": 64376.0,
+        "stop_loss": 65020.0,
+        "take_profit": 63088.0,
+        "qty": 0.016,
+        "filled": true,
+        "hit_sl": false,
+        "hit_tp": false,
+        "grade": "Open",
+        "mistake": null,
+        "pnl_usd": 0.0,
+        "path_high": 65001.5,
+        "path_low": 64313.6,
+        "deep": null
+      }
+    ],
+    "detail": "SHORT \u2192 Open",
+    "performance": {
+      "updated_ist": "2026-11-16T14:20:19.558014+05:30",
+      "rules": {
+        "notional_usd": 1000.0,
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+        "grade": "Pass or Fail only (no partial)"
+      },
+      "today": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "week": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "month": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      },
+      "all_time": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      }
+    }
+  },
+  {
+    "reviewed_at_ist": "2026-11-16T14:30:24.451899+05:30",
+    "current_price": 64433.6,
+    "had_previous": true,
+    "grade": "Open",
+    "previous_timestamp_ist": "2026-11-16T11:30:16.110365+05:30",
+    "previous_price": 64376.4,
+    "result": "Open",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "atr_stop_mult_now": 1.0,
+    "reviews": [
+      {
+        "side": "SHORT",
+        "entry": 64376.0,
+        "stop_loss": 65020.0,
+        "take_profit": 63088.0,
+        "qty": 0.016,
+        "filled": true,
+        "hit_sl": false,
+        "hit_tp": false,
+        "grade": "Open",
+        "mistake": null,
+        "pnl_usd": 0.0,
+        "path_high": 65001.5,
+        "path_low": 64313.6,
+        "deep": null
+      }
+    ],
+    "detail": "SHORT \u2192 Open",
+    "performance": {
+      "updated_ist": "2026-11-16T14:30:24.450912+05:30",
+      "rules": {
+        "notional_usd": 1000.0,
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+        "grade": "Pass or Fail only (no partial)"
+      },
+      "today": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "week": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "month": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      },
+      "all_time": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      }
+    }
+  },
+  {
+    "reviewed_at_ist": "2026-11-16T14:40:21.275445+05:30",
+    "current_price": 64287.2,
+    "had_previous": true,
+    "grade": "Open",
+    "previous_timestamp_ist": "2026-11-16T11:30:16.110365+05:30",
+    "previous_price": 64376.4,
+    "result": "Open",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "atr_stop_mult_now": 1.0,
+    "reviews": [
+      {
+        "side": "SHORT",
+        "entry": 64376.0,
+        "stop_loss": 65020.0,
+        "take_profit": 63088.0,
+        "qty": 0.016,
+        "filled": true,
+        "hit_sl": false,
+        "hit_tp": false,
+        "grade": "Open",
+        "mistake": null,
+        "pnl_usd": 0.0,
+        "path_high": 65001.5,
+        "path_low": 64250.1,
+        "deep": null
+      }
+    ],
+    "detail": "SHORT \u2192 Open",
+    "performance": {
+      "updated_ist": "2026-11-16T14:40:21.274365+05:30",
+      "rules": {
+        "notional_usd": 1000.0,
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+        "grade": "Pass or Fail only (no partial)"
+      },
+      "today": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "week": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "month": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      },
+      "all_time": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      }
+    }
+  },
+  {
+    "reviewed_at_ist": "2026-11-16T14:50:11.556326+05:30",
+    "current_price": 64151.5,
+    "had_previous": true,
+    "grade": "Open",
+    "previous_timestamp_ist": "2026-11-16T11:30:16.110365+05:30",
+    "previous_price": 64376.4,
+    "result": "Open",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "atr_stop_mult_now": 1.0,
+    "reviews": [
+      {
+        "side": "SHORT",
+        "entry": 64376.0,
+        "stop_loss": 65020.0,
+        "take_profit": 63088.0,
+        "qty": 0.016,
+        "filled": true,
+        "hit_sl": false,
+        "hit_tp": false,
+        "grade": "Open",
+        "mistake": null,
+        "pnl_usd": 0.0,
+        "path_high": 65001.5,
+        "path_low": 64065.9,
+        "deep": null
+      }
+    ],
+    "detail": "SHORT \u2192 Open",
+    "performance": {
+      "updated_ist": "2026-11-16T14:50:11.555295+05:30",
+      "rules": {
+        "notional_usd": 1000.0,
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+        "grade": "Pass or Fail only (no partial)"
+      },
+      "today": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "week": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "month": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      },
+      "all_time": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      }
+    }
+  },
+  {
+    "reviewed_at_ist": "2026-11-16T15:00:13.353555+05:30",
+    "current_price": 64257.2,
+    "had_previous": true,
+    "grade": "Open",
+    "previous_timestamp_ist": "2026-11-16T11:30:16.110365+05:30",
+    "previous_price": 64376.4,
+    "result": "Open",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "atr_stop_mult_now": 1.0,
+    "reviews": [
+      {
+        "side": "SHORT",
+        "entry": 64376.0,
+        "stop_loss": 65020.0,
+        "take_profit": 63088.0,
+        "qty": 0.016,
+        "filled": true,
+        "hit_sl": false,
+        "hit_tp": false,
+        "grade": "Open",
+        "mistake": null,
+        "pnl_usd": 0.0,
+        "path_high": 65001.5,
+        "path_low": 64065.9,
+        "deep": null
+      }
+    ],
+    "detail": "SHORT \u2192 Open",
+    "performance": {
+      "updated_ist": "2026-11-16T15:00:13.352521+05:30",
+      "rules": {
+        "notional_usd": 1000.0,
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+        "grade": "Pass or Fail only (no partial)"
+      },
+      "today": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "week": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "month": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      },
+      "all_time": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      }
+    }
+  },
+  {
+    "reviewed_at_ist": "2026-11-16T15:10:12.862120+05:30",
+    "current_price": 64204.9,
+    "had_previous": true,
+    "grade": "Open",
+    "previous_timestamp_ist": "2026-11-16T11:30:16.110365+05:30",
+    "previous_price": 64376.4,
+    "result": "Open",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "atr_stop_mult_now": 1.0,
+    "reviews": [
+      {
+        "side": "SHORT",
+        "entry": 64376.0,
+        "stop_loss": 65020.0,
+        "take_profit": 63088.0,
+        "qty": 0.016,
+        "filled": true,
+        "hit_sl": false,
+        "hit_tp": false,
+        "grade": "Open",
+        "mistake": null,
+        "pnl_usd": 0.0,
+        "path_high": 65001.5,
+        "path_low": 64065.9,
+        "deep": null
+      }
+    ],
+    "detail": "SHORT \u2192 Open",
+    "performance": {
+      "updated_ist": "2026-11-16T15:10:12.861115+05:30",
+      "rules": {
+        "notional_usd": 1000.0,
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+        "grade": "Pass or Fail only (no partial)"
+      },
+      "today": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "week": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "month": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      },
+      "all_time": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      }
+    }
+  },
+  {
+    "reviewed_at_ist": "2026-11-16T15:20:24.436830+05:30",
+    "current_price": 64299.7,
+    "had_previous": true,
+    "grade": "Open",
+    "previous_timestamp_ist": "2026-11-16T11:30:16.110365+05:30",
+    "previous_price": 64376.4,
+    "result": "Open",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "atr_stop_mult_now": 1.0,
+    "reviews": [
+      {
+        "side": "SHORT",
+        "entry": 64376.0,
+        "stop_loss": 65020.0,
+        "take_profit": 63088.0,
+        "qty": 0.016,
+        "filled": true,
+        "hit_sl": false,
+        "hit_tp": false,
+        "grade": "Open",
+        "mistake": null,
+        "pnl_usd": 0.0,
+        "path_high": 65001.5,
+        "path_low": 64065.9,
+        "deep": null
+      }
+    ],
+    "detail": "SHORT \u2192 Open",
+    "performance": {
+      "updated_ist": "2026-11-16T15:20:24.435597+05:30",
+      "rules": {
+        "notional_usd": 1000.0,
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+        "grade": "Pass or Fail only (no partial)"
+      },
+      "today": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "week": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "month": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      },
+      "all_time": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      }
+    }
+  },
+  {
+    "reviewed_at_ist": "2026-11-16T15:30:11.412222+05:30",
+    "current_price": 64272.9,
+    "had_previous": true,
+    "grade": "Open",
+    "previous_timestamp_ist": "2026-11-16T11:30:16.110365+05:30",
+    "previous_price": 64376.4,
+    "result": "Open",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "atr_stop_mult_now": 1.0,
+    "reviews": [
+      {
+        "side": "SHORT",
+        "entry": 64376.0,
+        "stop_loss": 65020.0,
+        "take_profit": 63088.0,
+        "qty": 0.016,
+        "filled": true,
+        "hit_sl": false,
+        "hit_tp": false,
+        "grade": "Open",
+        "mistake": null,
+        "pnl_usd": 0.0,
+        "path_high": 65001.5,
+        "path_low": 64065.9,
+        "deep": null
+      }
+    ],
+    "detail": "SHORT \u2192 Open",
+    "performance": {
+      "updated_ist": "2026-11-16T15:30:11.411232+05:30",
+      "rules": {
+        "notional_usd": 1000.0,
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+        "grade": "Pass or Fail only (no partial)"
+      },
+      "today": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "week": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "month": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      },
+      "all_time": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      }
+    }
+  },
+  {
+    "reviewed_at_ist": "2026-11-16T15:40:14.697045+05:30",
+    "current_price": 64352.4,
+    "had_previous": true,
+    "grade": "Open",
+    "previous_timestamp_ist": "2026-11-16T11:30:16.110365+05:30",
+    "previous_price": 64376.4,
+    "result": "Open",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "atr_stop_mult_now": 1.0,
+    "reviews": [
+      {
+        "side": "SHORT",
+        "entry": 64376.0,
+        "stop_loss": 65020.0,
+        "take_profit": 63088.0,
+        "qty": 0.016,
+        "filled": true,
+        "hit_sl": false,
+        "hit_tp": false,
+        "grade": "Open",
+        "mistake": null,
+        "pnl_usd": 0.0,
+        "path_high": 65001.5,
+        "path_low": 64065.9,
+        "deep": null
+      }
+    ],
+    "detail": "SHORT \u2192 Open",
+    "performance": {
+      "updated_ist": "2026-11-16T15:40:14.695830+05:30",
+      "rules": {
+        "notional_usd": 1000.0,
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+        "grade": "Pass or Fail only (no partial)"
+      },
+      "today": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "week": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "month": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      },
+      "all_time": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      }
+    }
+  },
+  {
+    "reviewed_at_ist": "2026-11-16T15:50:14.640023+05:30",
+    "current_price": 64348.2,
+    "had_previous": true,
+    "grade": "Open",
+    "previous_timestamp_ist": "2026-11-16T11:30:16.110365+05:30",
+    "previous_price": 64376.4,
+    "result": "Open",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "atr_stop_mult_now": 1.0,
+    "reviews": [
+      {
+        "side": "SHORT",
+        "entry": 64376.0,
+        "stop_loss": 65020.0,
+        "take_profit": 63088.0,
+        "qty": 0.016,
+        "filled": true,
+        "hit_sl": false,
+        "hit_tp": false,
+        "grade": "Open",
+        "mistake": null,
+        "pnl_usd": 0.0,
+        "path_high": 65001.5,
+        "path_low": 64065.9,
+        "deep": null
+      }
+    ],
+    "detail": "SHORT \u2192 Open",
+    "performance": {
+      "updated_ist": "2026-11-16T15:50:14.638489+05:30",
+      "rules": {
+        "notional_usd": 1000.0,
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+        "grade": "Pass or Fail only (no partial)"
+      },
+      "today": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "week": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "month": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      },
+      "all_time": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      }
+    }
+  },
+  {
+    "reviewed_at_ist": "2026-11-16T16:00:10.990551+05:30",
+    "current_price": 64500.0,
+    "had_previous": true,
+    "grade": "Open",
+    "previous_timestamp_ist": "2026-11-16T11:30:16.110365+05:30",
+    "previous_price": 64376.4,
+    "result": "Open",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "atr_stop_mult_now": 1.0,
+    "reviews": [
+      {
+        "side": "SHORT",
+        "entry": 64376.0,
+        "stop_loss": 65020.0,
+        "take_profit": 63088.0,
+        "qty": 0.016,
+        "filled": true,
+        "hit_sl": false,
+        "hit_tp": false,
+        "grade": "Open",
+        "mistake": null,
+        "pnl_usd": 0.0,
+        "path_high": 65001.5,
+        "path_low": 64065.9,
+        "deep": null
+      }
+    ],
+    "detail": "SHORT \u2192 Open",
+    "performance": {
+      "updated_ist": "2026-11-16T16:00:10.989387+05:30",
+      "rules": {
+        "notional_usd": 1000.0,
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+        "grade": "Pass or Fail only (no partial)"
+      },
+      "today": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "week": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "month": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      },
+      "all_time": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      }
+    }
+  },
+  {
+    "reviewed_at_ist": "2026-11-16T16:10:08.792667+05:30",
+    "current_price": 64561.7,
+    "had_previous": true,
+    "grade": "Open",
+    "previous_timestamp_ist": "2026-11-16T11:30:16.110365+05:30",
+    "previous_price": 64376.4,
+    "result": "Open",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "atr_stop_mult_now": 1.0,
+    "reviews": [
+      {
+        "side": "SHORT",
+        "entry": 64376.0,
+        "stop_loss": 65020.0,
+        "take_profit": 63088.0,
+        "qty": 0.016,
+        "filled": true,
+        "hit_sl": false,
+        "hit_tp": false,
+        "grade": "Open",
+        "mistake": null,
+        "pnl_usd": 0.0,
+        "path_high": 65001.5,
+        "path_low": 64065.9,
+        "deep": null
+      }
+    ],
+    "detail": "SHORT \u2192 Open",
+    "performance": {
+      "updated_ist": "2026-11-16T16:10:08.791616+05:30",
+      "rules": {
+        "notional_usd": 1000.0,
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+        "grade": "Pass or Fail only (no partial)"
+      },
+      "today": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "week": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "month": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      },
+      "all_time": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      }
+    }
+  },
+  {
+    "reviewed_at_ist": "2026-11-16T16:20:12.660900+05:30",
+    "current_price": 64484.6,
+    "had_previous": true,
+    "grade": "Open",
+    "previous_timestamp_ist": "2026-11-16T11:30:16.110365+05:30",
+    "previous_price": 64376.4,
+    "result": "Open",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "atr_stop_mult_now": 1.0,
+    "reviews": [
+      {
+        "side": "SHORT",
+        "entry": 64376.0,
+        "stop_loss": 65020.0,
+        "take_profit": 63088.0,
+        "qty": 0.016,
+        "filled": true,
+        "hit_sl": false,
+        "hit_tp": false,
+        "grade": "Open",
+        "mistake": null,
+        "pnl_usd": 0.0,
+        "path_high": 65001.5,
+        "path_low": 64065.9,
+        "deep": null
+      }
+    ],
+    "detail": "SHORT \u2192 Open",
+    "performance": {
+      "updated_ist": "2026-11-16T16:20:12.659769+05:30",
+      "rules": {
+        "notional_usd": 1000.0,
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+        "grade": "Pass or Fail only (no partial)"
+      },
+      "today": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "week": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "month": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      },
+      "all_time": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      }
+    }
+  },
+  {
+    "reviewed_at_ist": "2026-11-16T16:30:21.973495+05:30",
+    "current_price": 64511.2,
+    "had_previous": true,
+    "grade": "Open",
+    "previous_timestamp_ist": "2026-11-16T11:30:16.110365+05:30",
+    "previous_price": 64376.4,
+    "result": "Open",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "atr_stop_mult_now": 1.0,
+    "reviews": [
+      {
+        "side": "SHORT",
+        "entry": 64376.0,
+        "stop_loss": 65020.0,
+        "take_profit": 63088.0,
+        "qty": 0.016,
+        "filled": true,
+        "hit_sl": false,
+        "hit_tp": false,
+        "grade": "Open",
+        "mistake": null,
+        "pnl_usd": 0.0,
+        "path_high": 65001.5,
+        "path_low": 64065.9,
+        "deep": null
+      }
+    ],
+    "detail": "SHORT \u2192 Open",
+    "performance": {
+      "updated_ist": "2026-11-16T16:30:21.972340+05:30",
+      "rules": {
+        "notional_usd": 1000.0,
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+        "grade": "Pass or Fail only (no partial)"
+      },
+      "today": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "week": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "month": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      },
+      "all_time": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      }
+    }
+  },
+  {
+    "reviewed_at_ist": "2026-11-16T16:40:13.834392+05:30",
+    "current_price": 64598.6,
+    "had_previous": true,
+    "grade": "Open",
+    "previous_timestamp_ist": "2026-11-16T11:30:16.110365+05:30",
+    "previous_price": 64376.4,
+    "result": "Open",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "atr_stop_mult_now": 1.0,
+    "reviews": [
+      {
+        "side": "SHORT",
+        "entry": 64376.0,
+        "stop_loss": 65020.0,
+        "take_profit": 63088.0,
+        "qty": 0.016,
+        "filled": true,
+        "hit_sl": false,
+        "hit_tp": false,
+        "grade": "Open",
+        "mistake": null,
+        "pnl_usd": 0.0,
+        "path_high": 65001.5,
+        "path_low": 64065.9,
+        "deep": null
+      }
+    ],
+    "detail": "SHORT \u2192 Open",
+    "performance": {
+      "updated_ist": "2026-11-16T16:40:13.833389+05:30",
+      "rules": {
+        "notional_usd": 1000.0,
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+        "grade": "Pass or Fail only (no partial)"
+      },
+      "today": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "week": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "month": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      },
+      "all_time": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      }
+    }
+  },
+  {
+    "reviewed_at_ist": "2026-11-16T16:50:19.271965+05:30",
+    "current_price": 64669.1,
+    "had_previous": true,
+    "grade": "Open",
+    "previous_timestamp_ist": "2026-11-16T11:30:16.110365+05:30",
+    "previous_price": 64376.4,
+    "result": "Open",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "atr_stop_mult_now": 1.0,
+    "reviews": [
+      {
+        "side": "SHORT",
+        "entry": 64376.0,
+        "stop_loss": 65020.0,
+        "take_profit": 63088.0,
+        "qty": 0.016,
+        "filled": true,
+        "hit_sl": false,
+        "hit_tp": false,
+        "grade": "Open",
+        "mistake": null,
+        "pnl_usd": 0.0,
+        "path_high": 65001.5,
+        "path_low": 64065.9,
+        "deep": null
+      }
+    ],
+    "detail": "SHORT \u2192 Open",
+    "performance": {
+      "updated_ist": "2026-11-16T16:50:19.270522+05:30",
+      "rules": {
+        "notional_usd": 1000.0,
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+        "grade": "Pass or Fail only (no partial)"
+      },
+      "today": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "week": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "month": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      },
+      "all_time": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      }
+    }
+  },
+  {
+    "reviewed_at_ist": "2026-11-16T17:00:27.613009+05:30",
+    "current_price": 64601.3,
+    "had_previous": true,
+    "grade": "Open",
+    "previous_timestamp_ist": "2026-11-16T11:30:16.110365+05:30",
+    "previous_price": 64376.4,
+    "result": "Open",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "atr_stop_mult_now": 1.0,
+    "reviews": [
+      {
+        "side": "SHORT",
+        "entry": 64376.0,
+        "stop_loss": 65020.0,
+        "take_profit": 63088.0,
+        "qty": 0.016,
+        "filled": true,
+        "hit_sl": false,
+        "hit_tp": false,
+        "grade": "Open",
+        "mistake": null,
+        "pnl_usd": 0.0,
+        "path_high": 65001.5,
+        "path_low": 64065.9,
+        "deep": null
+      }
+    ],
+    "detail": "SHORT \u2192 Open",
+    "performance": {
+      "updated_ist": "2026-11-16T17:00:27.611934+05:30",
+      "rules": {
+        "notional_usd": 1000.0,
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+        "grade": "Pass or Fail only (no partial)"
+      },
+      "today": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "week": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "month": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      },
+      "all_time": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      }
+    }
+  },
+  {
+    "reviewed_at_ist": "2026-11-16T17:10:12.272085+05:30",
+    "current_price": 64564.5,
+    "had_previous": true,
+    "grade": "Open",
+    "previous_timestamp_ist": "2026-11-16T11:30:16.110365+05:30",
+    "previous_price": 64376.4,
+    "result": "Open",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "atr_stop_mult_now": 1.0,
+    "reviews": [
+      {
+        "side": "SHORT",
+        "entry": 64376.0,
+        "stop_loss": 65020.0,
+        "take_profit": 63088.0,
+        "qty": 0.016,
+        "filled": true,
+        "hit_sl": false,
+        "hit_tp": false,
+        "grade": "Open",
+        "mistake": null,
+        "pnl_usd": 0.0,
+        "path_high": 65001.5,
+        "path_low": 64065.9,
+        "deep": null
+      }
+    ],
+    "detail": "SHORT \u2192 Open",
+    "performance": {
+      "updated_ist": "2026-11-16T17:10:12.270634+05:30",
+      "rules": {
+        "notional_usd": 1000.0,
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+        "grade": "Pass or Fail only (no partial)"
+      },
+      "today": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "week": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "month": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      },
+      "all_time": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      }
+    }
+  },
+  {
+    "reviewed_at_ist": "2026-11-16T17:20:06.152285+05:30",
+    "current_price": 64432.4,
+    "had_previous": true,
+    "grade": "Open",
+    "previous_timestamp_ist": "2026-11-16T11:30:16.110365+05:30",
+    "previous_price": 64376.4,
+    "result": "Open",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "atr_stop_mult_now": 1.0,
+    "reviews": [
+      {
+        "side": "SHORT",
+        "entry": 64376.0,
+        "stop_loss": 65020.0,
+        "take_profit": 63088.0,
+        "qty": 0.016,
+        "filled": true,
+        "hit_sl": false,
+        "hit_tp": false,
+        "grade": "Open",
+        "mistake": null,
+        "pnl_usd": 0.0,
+        "path_high": 65001.5,
+        "path_low": 64065.9,
+        "deep": null
+      }
+    ],
+    "detail": "SHORT \u2192 Open",
+    "performance": {
+      "updated_ist": "2026-11-16T17:20:06.151211+05:30",
+      "rules": {
+        "notional_usd": 1000.0,
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+        "grade": "Pass or Fail only (no partial)"
+      },
+      "today": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "week": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "month": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      },
+      "all_time": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      }
+    }
+  },
+  {
+    "reviewed_at_ist": "2026-11-16T17:30:29.401309+05:30",
+    "current_price": 64364.3,
+    "had_previous": true,
+    "grade": "Open",
+    "previous_timestamp_ist": "2026-11-16T11:30:16.110365+05:30",
+    "previous_price": 64376.4,
+    "result": "Open",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "atr_stop_mult_now": 1.0,
+    "reviews": [
+      {
+        "side": "SHORT",
+        "entry": 64376.0,
+        "stop_loss": 65020.0,
+        "take_profit": 63088.0,
+        "qty": 0.016,
+        "filled": true,
+        "hit_sl": false,
+        "hit_tp": false,
+        "grade": "Open",
+        "mistake": null,
+        "pnl_usd": 0.0,
+        "path_high": 65001.5,
+        "path_low": 64065.9,
+        "deep": null
+      }
+    ],
+    "detail": "SHORT \u2192 Open",
+    "performance": {
+      "updated_ist": "2026-11-16T17:30:29.400183+05:30",
+      "rules": {
+        "notional_usd": 1000.0,
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+        "grade": "Pass or Fail only (no partial)"
+      },
+      "today": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "week": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "month": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      },
+      "all_time": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      }
+    }
+  },
+  {
+    "reviewed_at_ist": "2026-11-16T17:40:13.429326+05:30",
+    "current_price": 64110.9,
+    "had_previous": true,
+    "grade": "Open",
+    "previous_timestamp_ist": "2026-11-16T11:30:16.110365+05:30",
+    "previous_price": 64376.4,
+    "result": "Open",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "atr_stop_mult_now": 1.0,
+    "reviews": [
+      {
+        "side": "SHORT",
+        "entry": 64376.0,
+        "stop_loss": 65020.0,
+        "take_profit": 63088.0,
+        "qty": 0.016,
+        "filled": true,
+        "hit_sl": false,
+        "hit_tp": false,
+        "grade": "Open",
+        "mistake": null,
+        "pnl_usd": 0.0,
+        "path_high": 65001.5,
+        "path_low": 64065.9,
+        "deep": null
+      }
+    ],
+    "detail": "SHORT \u2192 Open",
+    "performance": {
+      "updated_ist": "2026-11-16T17:40:13.428281+05:30",
+      "rules": {
+        "notional_usd": 1000.0,
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+        "grade": "Pass or Fail only (no partial)"
+      },
+      "today": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "week": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "month": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      },
+      "all_time": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      }
+    }
+  },
+  {
+    "reviewed_at_ist": "2026-11-16T17:50:28.900543+05:30",
+    "current_price": 63936.1,
+    "had_previous": true,
+    "grade": "Open",
+    "previous_timestamp_ist": "2026-11-16T11:30:16.110365+05:30",
+    "previous_price": 64376.4,
+    "result": "Open",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "atr_stop_mult_now": 1.0,
+    "reviews": [
+      {
+        "side": "SHORT",
+        "entry": 64376.0,
+        "stop_loss": 65020.0,
+        "take_profit": 63088.0,
+        "qty": 0.016,
+        "filled": true,
+        "hit_sl": false,
+        "hit_tp": false,
+        "grade": "Open",
+        "mistake": null,
+        "pnl_usd": 0.0,
+        "path_high": 65001.5,
+        "path_low": 63900.1,
+        "deep": null
+      }
+    ],
+    "detail": "SHORT \u2192 Open",
+    "performance": {
+      "updated_ist": "2026-11-16T17:50:28.899514+05:30",
+      "rules": {
+        "notional_usd": 1000.0,
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+        "grade": "Pass or Fail only (no partial)"
+      },
+      "today": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "week": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "month": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      },
+      "all_time": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      }
+    }
+  },
+  {
+    "reviewed_at_ist": "2026-11-16T18:00:12.309830+05:30",
+    "current_price": 63856.3,
+    "had_previous": true,
+    "grade": "Open",
+    "previous_timestamp_ist": "2026-11-16T11:30:16.110365+05:30",
+    "previous_price": 64376.4,
+    "result": "Open",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "atr_stop_mult_now": 1.0,
+    "reviews": [
+      {
+        "side": "SHORT",
+        "entry": 64376.0,
+        "stop_loss": 65020.0,
+        "take_profit": 63088.0,
+        "qty": 0.016,
+        "filled": true,
+        "hit_sl": false,
+        "hit_tp": false,
+        "grade": "Open",
+        "mistake": null,
+        "pnl_usd": 0.0,
+        "path_high": 65001.5,
+        "path_low": 63840.0,
+        "deep": null
+      }
+    ],
+    "detail": "SHORT \u2192 Open",
+    "performance": {
+      "updated_ist": "2026-11-16T18:00:12.308649+05:30",
+      "rules": {
+        "notional_usd": 1000.0,
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+        "grade": "Pass or Fail only (no partial)"
+      },
+      "today": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "week": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "month": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      },
+      "all_time": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      }
+    }
+  },
+  {
+    "reviewed_at_ist": "2026-11-16T18:10:15.706081+05:30",
+    "current_price": 64077.7,
+    "had_previous": true,
+    "grade": "Open",
+    "previous_timestamp_ist": "2026-11-16T11:30:16.110365+05:30",
+    "previous_price": 64376.4,
+    "result": "Open",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "atr_stop_mult_now": 1.0,
+    "reviews": [
+      {
+        "side": "SHORT",
+        "entry": 64376.0,
+        "stop_loss": 65020.0,
+        "take_profit": 63088.0,
+        "qty": 0.016,
+        "filled": true,
+        "hit_sl": false,
+        "hit_tp": false,
+        "grade": "Open",
+        "mistake": null,
+        "pnl_usd": 0.0,
+        "path_high": 65001.5,
+        "path_low": 63840.0,
+        "deep": null
+      }
+    ],
+    "detail": "SHORT \u2192 Open",
+    "performance": {
+      "updated_ist": "2026-11-16T18:10:15.705049+05:30",
+      "rules": {
+        "notional_usd": 1000.0,
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+        "grade": "Pass or Fail only (no partial)"
+      },
+      "today": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "week": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "month": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      },
+      "all_time": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      }
+    }
+  },
+  {
+    "reviewed_at_ist": "2026-11-16T18:20:19.463067+05:30",
+    "current_price": 64109.3,
+    "had_previous": true,
+    "grade": "Open",
+    "previous_timestamp_ist": "2026-11-16T11:30:16.110365+05:30",
+    "previous_price": 64376.4,
+    "result": "Open",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "atr_stop_mult_now": 1.0,
+    "reviews": [
+      {
+        "side": "SHORT",
+        "entry": 64376.0,
+        "stop_loss": 65020.0,
+        "take_profit": 63088.0,
+        "qty": 0.016,
+        "filled": true,
+        "hit_sl": false,
+        "hit_tp": false,
+        "grade": "Open",
+        "mistake": null,
+        "pnl_usd": 0.0,
+        "path_high": 65001.5,
+        "path_low": 63840.0,
+        "deep": null
+      }
+    ],
+    "detail": "SHORT \u2192 Open",
+    "performance": {
+      "updated_ist": "2026-11-16T18:20:19.461994+05:30",
+      "rules": {
+        "notional_usd": 1000.0,
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+        "grade": "Pass or Fail only (no partial)"
+      },
+      "today": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "week": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "month": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      },
+      "all_time": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      }
+    }
+  },
+  {
+    "reviewed_at_ist": "2026-11-16T18:30:16.698527+05:30",
+    "current_price": 64070.8,
+    "had_previous": true,
+    "grade": "Open",
+    "previous_timestamp_ist": "2026-11-16T11:30:16.110365+05:30",
+    "previous_price": 64376.4,
+    "result": "Open",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "atr_stop_mult_now": 1.0,
+    "reviews": [
+      {
+        "side": "SHORT",
+        "entry": 64376.0,
+        "stop_loss": 65020.0,
+        "take_profit": 63088.0,
+        "qty": 0.016,
+        "filled": true,
+        "hit_sl": false,
+        "hit_tp": false,
+        "grade": "Open",
+        "mistake": null,
+        "pnl_usd": 0.0,
+        "path_high": 65001.5,
+        "path_low": 63840.0,
+        "deep": null
+      }
+    ],
+    "detail": "SHORT \u2192 Open",
+    "performance": {
+      "updated_ist": "2026-11-16T18:30:16.697082+05:30",
+      "rules": {
+        "notional_usd": 1000.0,
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+        "grade": "Pass or Fail only (no partial)"
+      },
+      "today": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "week": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "month": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      },
+      "all_time": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      }
+    }
+  },
+  {
+    "reviewed_at_ist": "2026-11-16T18:40:09.342907+05:30",
+    "current_price": 64121.1,
+    "had_previous": true,
+    "grade": "Open",
+    "previous_timestamp_ist": "2026-11-16T11:30:16.110365+05:30",
+    "previous_price": 64376.4,
+    "result": "Open",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "atr_stop_mult_now": 1.0,
+    "reviews": [
+      {
+        "side": "SHORT",
+        "entry": 64376.0,
+        "stop_loss": 65020.0,
+        "take_profit": 63088.0,
+        "qty": 0.016,
+        "filled": true,
+        "hit_sl": false,
+        "hit_tp": false,
+        "grade": "Open",
+        "mistake": null,
+        "pnl_usd": 0.0,
+        "path_high": 65001.5,
+        "path_low": 63840.0,
+        "deep": null
+      }
+    ],
+    "detail": "SHORT \u2192 Open",
+    "performance": {
+      "updated_ist": "2026-11-16T18:40:09.341786+05:30",
+      "rules": {
+        "notional_usd": 1000.0,
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+        "grade": "Pass or Fail only (no partial)"
+      },
+      "today": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "week": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "month": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      },
+      "all_time": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      }
+    }
+  },
+  {
+    "reviewed_at_ist": "2026-11-16T18:50:13.683971+05:30",
+    "current_price": 64113.2,
+    "had_previous": true,
+    "grade": "Open",
+    "previous_timestamp_ist": "2026-11-16T11:30:16.110365+05:30",
+    "previous_price": 64376.4,
+    "result": "Open",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "atr_stop_mult_now": 1.0,
+    "reviews": [
+      {
+        "side": "SHORT",
+        "entry": 64376.0,
+        "stop_loss": 65020.0,
+        "take_profit": 63088.0,
+        "qty": 0.016,
+        "filled": true,
+        "hit_sl": false,
+        "hit_tp": false,
+        "grade": "Open",
+        "mistake": null,
+        "pnl_usd": 0.0,
+        "path_high": 65001.5,
+        "path_low": 63840.0,
+        "deep": null
+      }
+    ],
+    "detail": "SHORT \u2192 Open",
+    "performance": {
+      "updated_ist": "2026-11-16T18:50:13.682206+05:30",
+      "rules": {
+        "notional_usd": 1000.0,
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+        "grade": "Pass or Fail only (no partial)"
+      },
+      "today": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "week": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "month": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      },
+      "all_time": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      }
+    }
+  },
+  {
+    "reviewed_at_ist": "2026-11-16T19:00:19.917590+05:30",
+    "current_price": 64219.8,
+    "had_previous": true,
+    "grade": "Open",
+    "previous_timestamp_ist": "2026-11-16T11:30:16.110365+05:30",
+    "previous_price": 64376.4,
+    "result": "Open",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "atr_stop_mult_now": 1.0,
+    "reviews": [
+      {
+        "side": "SHORT",
+        "entry": 64376.0,
+        "stop_loss": 65020.0,
+        "take_profit": 63088.0,
+        "qty": 0.016,
+        "filled": true,
+        "hit_sl": false,
+        "hit_tp": false,
+        "grade": "Open",
+        "mistake": null,
+        "pnl_usd": 0.0,
+        "path_high": 65001.5,
+        "path_low": 63840.0,
+        "deep": null
+      }
+    ],
+    "detail": "SHORT \u2192 Open",
+    "performance": {
+      "updated_ist": "2026-11-16T19:00:19.916533+05:30",
+      "rules": {
+        "notional_usd": 1000.0,
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+        "grade": "Pass or Fail only (no partial)"
+      },
+      "today": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "week": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "month": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      },
+      "all_time": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      }
+    }
+  },
+  {
+    "reviewed_at_ist": "2026-11-16T19:10:19.185257+05:30",
+    "current_price": 64229.3,
+    "had_previous": true,
+    "grade": "Open",
+    "previous_timestamp_ist": "2026-11-16T11:30:16.110365+05:30",
+    "previous_price": 64376.4,
+    "result": "Open",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "atr_stop_mult_now": 1.0,
+    "reviews": [
+      {
+        "side": "SHORT",
+        "entry": 64376.0,
+        "stop_loss": 65020.0,
+        "take_profit": 63088.0,
+        "qty": 0.016,
+        "filled": true,
+        "hit_sl": false,
+        "hit_tp": false,
+        "grade": "Open",
+        "mistake": null,
+        "pnl_usd": 0.0,
+        "path_high": 65001.5,
+        "path_low": 63840.0,
+        "deep": null
+      }
+    ],
+    "detail": "SHORT \u2192 Open",
+    "performance": {
+      "updated_ist": "2026-11-16T19:10:19.184065+05:30",
+      "rules": {
+        "notional_usd": 1000.0,
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+        "grade": "Pass or Fail only (no partial)"
+      },
+      "today": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "week": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "month": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      },
+      "all_time": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      }
+    }
+  },
+  {
+    "reviewed_at_ist": "2026-11-16T19:20:09.102135+05:30",
+    "current_price": 64312.8,
+    "had_previous": true,
+    "grade": "Open",
+    "previous_timestamp_ist": "2026-11-16T11:30:16.110365+05:30",
+    "previous_price": 64376.4,
+    "result": "Open",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "atr_stop_mult_now": 1.0,
+    "reviews": [
+      {
+        "side": "SHORT",
+        "entry": 64376.0,
+        "stop_loss": 65020.0,
+        "take_profit": 63088.0,
+        "qty": 0.016,
+        "filled": true,
+        "hit_sl": false,
+        "hit_tp": false,
+        "grade": "Open",
+        "mistake": null,
+        "pnl_usd": 0.0,
+        "path_high": 65001.5,
+        "path_low": 63840.0,
+        "deep": null
+      }
+    ],
+    "detail": "SHORT \u2192 Open",
+    "performance": {
+      "updated_ist": "2026-11-16T19:20:09.100896+05:30",
+      "rules": {
+        "notional_usd": 1000.0,
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+        "grade": "Pass or Fail only (no partial)"
+      },
+      "today": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "week": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "month": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      },
+      "all_time": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      }
+    }
+  },
+  {
+    "reviewed_at_ist": "2026-11-16T19:30:14.718175+05:30",
+    "current_price": 64109.6,
+    "had_previous": true,
+    "grade": "Open",
+    "previous_timestamp_ist": "2026-11-16T11:30:16.110365+05:30",
+    "previous_price": 64376.4,
+    "result": "Open",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "atr_stop_mult_now": 1.0,
+    "reviews": [
+      {
+        "side": "SHORT",
+        "entry": 64376.0,
+        "stop_loss": 65020.0,
+        "take_profit": 63088.0,
+        "qty": 0.016,
+        "filled": true,
+        "hit_sl": false,
+        "hit_tp": false,
+        "grade": "Open",
+        "mistake": null,
+        "pnl_usd": 0.0,
+        "path_high": 65001.5,
+        "path_low": 63840.0,
+        "deep": null
+      }
+    ],
+    "detail": "SHORT \u2192 Open",
+    "performance": {
+      "updated_ist": "2026-11-16T19:30:14.717158+05:30",
+      "rules": {
+        "notional_usd": 1000.0,
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+        "grade": "Pass or Fail only (no partial)"
+      },
+      "today": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "week": {
+        "trades": 1,
+        "pass": 0,
+        "fail": 1,
+        "pnl_usd": -9.69,
+        "total_profit_usd": 0,
+        "total_loss_usd": -9.69
+      },
+      "month": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      },
+      "all_time": {
+        "trades": 9,
+        "pass": 3,
+        "fail": 6,
+        "pnl_usd": -0.45,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -60.13
+      }
+    }
+  },
+  {
+    "reviewed_at_ist": "2026-11-16T19:40:15.123126+05:30",
+    "current_price": 63951.7,
+    "had_previous": true,
+    "grade": "Open",
+    "previous_timestamp_ist": "2026-11-16T11:30:16.110365+05:30",
+    "previous_price": 64376.4,
+    "result": "Open",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "atr_stop_mult_now": 1.0,
+    "reviews": [
+      {
+        "side": "SHORT",
+        "entry": 64376.0,
+        "stop_loss": 65020.0,
+        "take_profit": 63088.0,
+        "qty": 0.016,
+        "filled": true,
+        "hit_sl": false,
+        "hit_tp": false,
+        "grade": "Open",
+        "mistake": null,
+        "pnl_usd": 0.0,
+        "path_high": 65001.5,
+        "path_low": 63840.0,
+        "deep": null
+      }
+    ],
+    "detail": "SHORT \u2192 Open",
+    "performance": {
+      "updated_ist": "2026-11-16T19:40:15.122027+05:30",
       "rules": {
         "notional_usd": 1000.0,
         "stop_loss_pct": 0.01,

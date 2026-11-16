@@ -1,12 +1,12 @@
 {
-  "timestamp_ist": "2026-11-16T11:30:16.110365+05:30",
-  "price": 64376.4,
+  "timestamp_ist": "2026-11-16T19:40:15.145507+05:30",
+  "price": 63951.7,
   "bias": "bearish",
   "previous_review": {
     "had_previous": true,
     "grade": "\u2014",
-    "previous_timestamp_ist": "2026-11-16T09:10:17.137482+05:30",
-    "previous_price": 64916.6,
+    "previous_timestamp_ist": "2026-11-16T11:30:16.110365+05:30",
+    "previous_price": 64376.4,
     "result": "Open",
     "mistake": null,
     "lesson": null,
@@ -16,24 +16,24 @@
     "reviews": [
       {
         "side": "SHORT",
-        "entry": 64917.0,
-        "stop_loss": 65609.0,
-        "take_profit": 63533.0,
-        "qty": 0.015,
+        "entry": 64376.0,
+        "stop_loss": 65020.0,
+        "take_profit": 63088.0,
+        "qty": 0.016,
         "filled": true,
         "hit_sl": false,
         "hit_tp": false,
         "grade": "Open",
         "mistake": null,
         "pnl_usd": 0.0,
-        "path_high": 65128.9,
-        "path_low": 64300.1,
+        "path_high": 65001.5,
+        "path_low": 63840.0,
         "deep": null
       }
     ],
     "detail": "Replaced unfilled far SHORT with mark continuation (not graded).",
     "performance": {
-      "updated_ist": "2026-11-16T11:30:16.087501+05:30",
+      "updated_ist": "2026-11-16T19:40:15.122027+05:30",
       "rules": {
         "notional_usd": 1000.0,
         "stop_loss_pct": 0.01,
@@ -78,9 +78,9 @@
   "signals": [
     {
       "side": "SHORT",
-      "entry": 64376.0,
-      "stop_loss": 65020.0,
-      "take_profit": 63088.0,
+      "entry": 63952.0,
+      "stop_loss": 64592.0,
+      "take_profit": 62672.0,
       "qty": 0.016
     }
   ]
