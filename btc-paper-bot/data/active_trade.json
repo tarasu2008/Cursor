@@ -1,61 +1,39 @@
 {
-  "timestamp_ist": "2026-11-16T08:10:09.816597+05:30",
-  "price": 65267.8,
+  "timestamp_ist": "2026-11-16T09:10:17.137482+05:30",
+  "price": 64916.6,
   "bias": "bearish",
   "previous_review": {
     "had_previous": true,
-    "grade": "Fail",
-    "previous_timestamp_ist": "2026-11-16T07:30:18.575128+05:30",
-    "previous_price": 64579.3,
-    "result": "Fail",
-    "mistake": "stop_hit",
-    "lesson": "Stop level reached \u2014 Fail. | DEEP: Stop hunted \u2014 next ticket needs SL clear of recent range / liquidity.; Fixed 1% stop was tight vs BTC noise \u2014 demand stronger confluence.",
-    "adjustment": "ATR_STOP_MULT -> 1.25",
-    "pnl_usd": -9.69,
-    "atr_stop_mult_now": 1.25,
+    "grade": "\u2014",
+    "previous_timestamp_ist": "2026-11-16T08:10:09.816597+05:30",
+    "previous_price": 65267.8,
+    "result": "Open",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "atr_stop_mult_now": 1.0,
     "reviews": [
       {
         "side": "SHORT",
-        "entry": 64579.0,
-        "stop_loss": 65225.0,
-        "take_profit": 63287.0,
+        "entry": 65268.0,
+        "stop_loss": 65969.0,
+        "take_profit": 63866.0,
         "qty": 0.015,
-        "filled": true,
-        "hit_sl": true,
+        "filled": false,
+        "hit_sl": false,
         "hit_tp": false,
-        "grade": "Fail",
-        "mistake": "stop_hit",
-        "pnl_usd": -9.69,
+        "grade": "Open",
+        "mistake": null,
+        "pnl_usd": 0.0,
         "path_high": 65267.8,
-        "path_low": 64579.3,
-        "deep": {
-          "closed_ist": "2026-11-16T08:10:09.594686+05:30",
-          "side": "SHORT",
-          "entry": 64579.0,
-          "fill_price": 64579.0,
-          "stop_loss": 65225.0,
-          "take_profit": 63287.0,
-          "qty": 0.015,
-          "outcome": "Fail",
-          "mistake": "stop_hit",
-          "base_lesson": "Stop level reached \u2014 Fail.",
-          "path_high": 65267.8,
-          "path_low": 64579.3,
-          "price_at_review": 65267.8,
-          "stop_pct": 0.01,
-          "fill_slip_pct": 0.0,
-          "room_from_fill_pct": 0.01,
-          "findings": [
-            "Stop hunted \u2014 next ticket needs SL clear of recent range / liquidity.",
-            "Fixed 1% stop was tight vs BTC noise \u2014 demand stronger confluence."
-          ],
-          "brain_trade_n": 6
-        }
+        "path_low": 64838.1,
+        "deep": null
       }
     ],
-    "detail": "SHORT \u2192 Fail",
+    "detail": "Replaced unfilled far SHORT with mark continuation (not graded).",
     "performance": {
-      "updated_ist": "2026-11-16T08:10:09.595464+05:30",
+      "updated_ist": "2026-11-16T09:10:17.114927+05:30",
       "rules": {
         "notional_usd": 1000.0,
         "stop_loss_pct": 0.01,
@@ -100,9 +78,9 @@
   "signals": [
     {
       "side": "SHORT",
-      "entry": 65268.0,
-      "stop_loss": 65969.0,
-      "take_profit": 63866.0,
+      "entry": 64917.0,
+      "stop_loss": 65609.0,
+      "take_profit": 63533.0,
       "qty": 0.015
     }
   ]
