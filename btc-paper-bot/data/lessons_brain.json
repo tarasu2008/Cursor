@@ -1,8 +1,8 @@
 {
-  "updated_ist": "2026-11-16T08:10:09.594702+05:30",
-  "trade_count": 6,
+  "updated_ist": "2026-11-16T20:10:13.796112+05:30",
+  "trade_count": 7,
   "pass": 1,
-  "fail": 5,
+  "fail": 6,
   "hard_rules": [
     "Never place SHORT/LONG if 1% SL sits inside recent 3H high/low.",
     "Min confluence 4+; pending breakdown without 1H close is forbidden.",
@@ -149,29 +149,52 @@
         "Fixed 1% stop was tight vs BTC noise \u2014 demand stronger confluence."
       ],
       "brain_trade_n": 6
+    },
+    {
+      "closed_ist": "2026-11-16T20:10:13.796097+05:30",
+      "side": "SHORT",
+      "entry": 63952.0,
+      "fill_price": 63952.0,
+      "stop_loss": 64592.0,
+      "take_profit": 62672.0,
+      "qty": 0.016,
+      "outcome": "Fail",
+      "mistake": "stop_hit",
+      "base_lesson": "Stop level reached \u2014 Fail.",
+      "path_high": 65228.2,
+      "path_low": 63951.7,
+      "price_at_review": 65228.2,
+      "stop_pct": 0.01001,
+      "fill_slip_pct": 0.0,
+      "room_from_fill_pct": 0.01001,
+      "findings": [
+        "Stop hunted \u2014 next ticket needs SL clear of recent range / liquidity.",
+        "Fixed 1% stop was tight vs BTC noise \u2014 demand stronger confluence."
+      ],
+      "brain_trade_n": 7
     }
   ],
   "last_lesson": {
-    "closed_ist": "2026-11-16T08:10:09.594686+05:30",
+    "closed_ist": "2026-11-16T20:10:13.796097+05:30",
     "side": "SHORT",
-    "entry": 64579.0,
-    "fill_price": 64579.0,
-    "stop_loss": 65225.0,
-    "take_profit": 63287.0,
-    "qty": 0.015,
+    "entry": 63952.0,
+    "fill_price": 63952.0,
+    "stop_loss": 64592.0,
+    "take_profit": 62672.0,
+    "qty": 0.016,
     "outcome": "Fail",
     "mistake": "stop_hit",
     "base_lesson": "Stop level reached \u2014 Fail.",
-    "path_high": 65267.8,
-    "path_low": 64579.3,
-    "price_at_review": 65267.8,
-    "stop_pct": 0.01,
+    "path_high": 65228.2,
+    "path_low": 63951.7,
+    "price_at_review": 65228.2,
+    "stop_pct": 0.01001,
     "fill_slip_pct": 0.0,
-    "room_from_fill_pct": 0.01,
+    "room_from_fill_pct": 0.01001,
     "findings": [
       "Stop hunted \u2014 next ticket needs SL clear of recent range / liquidity.",
       "Fixed 1% stop was tight vs BTC noise \u2014 demand stronger confluence."
     ],
-    "brain_trade_n": 6
+    "brain_trade_n": 7
   }
 }
