@@ -4,19 +4,19 @@ import android.annotation.SuppressLint
 import android.content.ClipboardManager
 import android.content.Intent
 import android.inputmethodservice.InputMethodService
-import android.inputmethodservice.Keyboard
-import android.inputmethodservice.KeyboardView
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
 import android.text.TextUtils
 import android.view.KeyEvent
+import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputConnection
 import android.view.inputmethod.InputMethodManager
-import android.widget.ImageView
+import android.widget.HorizontalScrollView
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.politetype.engine.FieldKind
@@ -25,15 +25,16 @@ import com.politetype.engine.Sentences
 import com.politetype.engine.Suggestion
 import com.politetype.engine.Text
 import com.politetype.ime.R
+import com.politetype.ime.data.Alerts
 import com.politetype.ime.data.ClipHistory
+import com.politetype.ime.data.CrashLog
 import com.politetype.ime.data.LexiconLoader
 import com.politetype.ime.data.Preferences
 import com.politetype.ime.ui.SetupActivity
 import java.util.Locale
 import java.util.concurrent.Executors
 
-@Suppress("DEPRECATION")
-class PoliteTypeService : InputMethodService(), KeyboardView.OnKeyboardActionListener {
+class PoliteTypeService : InputMethodService() {
 
     private enum class Layer { LETTERS, SYMBOLS, SYMBOLS_MORE, NUMBERS, EMOJI }
 
@@ -47,20 +48,19 @@ class PoliteTypeService : InputMethodService(), KeyboardView.OnKeyboardActionLis
 
     private var keyboardView: PoliteKeyboardView? = null
     private var chipRow: LinearLayout? = null
-    private var clipButton: ImageView? = null
+    private var clipButton: TextView? = null
 
-    private var letters: Keyboard? = null
-    private var symbols: Keyboard? = null
-    private var symbolsMore: Keyboard? = null
-    private var numbers: Keyboard? = null
-    private var emoji: Keyboard? = null
+    private var letters: KeyBoard? = null
+    private var symbols: KeyBoard? = null
+    private var symbolsMore: KeyBoard? = null
+    private var numbers: KeyBoard? = null
+    private var emoji: KeyBoard? = null
 
     private var layer = Layer.LETTERS
     private var shifted = false
     private var capsLock = false
     private var manualShiftAt = 0L
     private var lastShiftTap = 0L
-    private var builtWidth = 0
     private var field = FieldKind.TEXT
     private var editorAction = EditorInfo.IME_ACTION_NONE
     private var noEnterAction = false
@@ -70,71 +70,159 @@ class PoliteTypeService : InputMethodService(), KeyboardView.OnKeyboardActionLis
 
     override fun onCreate() {
         super.onCreate()
-        prefs = Preferences(this)
-        clips = ClipHistory(this)
-        LexiconLoader.ensure(applicationContext) { scheduleSuggestions() }
+        Alerts.ensure(this)
+        CrashLog.note(this, "keyboard service started")
+        try {
+            prefs = Preferences(this)
+            clips = ClipHistory(this)
+            LexiconLoader.ensure(applicationContext) { scheduleSuggestions() }
+        } catch (error: Throwable) {
+            CrashLog.record(this, "service start", error)
+        }
     }
 
     override fun onCreateInputView(): View {
-        val root = layoutInflater.inflate(R.layout.input, null)
-        val board = root.findViewById<PoliteKeyboardView>(R.id.keyboard)
-        keyboardView = board
-        chipRow = root.findViewById(R.id.chips)
-        clipButton = root.findViewById(R.id.clip)
-        val globe = root.findViewById<ImageView>(R.id.globe)
-
-        board.setOnKeyboardActionListener(this)
-        board.isPreviewEnabled = true
-        board.setProximityCorrectionEnabled(false)
-        board.onPopupText = { text -> commit(text, honorShift = true) }
-        board.onShiftLock = { lockShift() }
-        board.onWidthChanged = { width -> rebuildKeyboards(width) }
-
-        clipButton?.setOnClickListener {
-            if (clipMode) {
-                clipMode = false
-                clipButton?.setImageResource(R.drawable.ic_clipboard)
-                scheduleSuggestions()
-            } else {
-                showClipboard()
+        return try {
+            buildInputView()
+        } catch (error: Throwable) {
+            CrashLog.record(this, "open keyboard", error)
+            TextView(this).apply {
+                text = error.javaClass.simpleName + "\n" + (error.message ?: "")
+                setPadding(dp(16), dp(16), dp(16), dp(16))
             }
         }
+    }
+
+    private fun buildInputView(): View {
+        val root = LinearLayout(this)
+        root.orientation = LinearLayout.VERTICAL
+        root.setBackgroundColor(colorOf(R.color.keyboard_bg))
+
+        val bar = LinearLayout(this)
+        bar.orientation = LinearLayout.HORIZONTAL
+        bar.gravity = Gravity.CENTER_VERTICAL
+        bar.setBackgroundColor(colorOf(R.color.candidate_bg))
+        bar.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp(46))
+
+        val globe = barButton("ABC")
         globe.setOnClickListener { switchKeyboard() }
         globe.setOnLongClickListener {
-            startActivity(Intent(this, SetupActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+            try {
+                startActivity(Intent(this, SetupActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+            } catch (error: Throwable) {
+                CrashLog.record(this, "open setup", error)
+            }
             true
         }
 
-        rebuildKeyboards(resources.displayMetrics.widthPixels)
+        val chips = LinearLayout(this)
+        chips.orientation = LinearLayout.HORIZONTAL
+        chips.gravity = Gravity.CENTER_VERTICAL
+        chipRow = chips
+        val scroll = HorizontalScrollView(this)
+        scroll.isHorizontalScrollBarEnabled = false
+        scroll.isFillViewport = true
+        scroll.addView(chips, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
+        scroll.layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1f)
+
+        val clip = barButton("Clip")
+        clipButton = clip
+        clip.setOnClickListener {
+            try {
+                if (clipMode) {
+                    clipMode = false
+                    clip.text = "Clip"
+                    scheduleSuggestions()
+                } else {
+                    showClipboard()
+                }
+            } catch (error: Throwable) {
+                CrashLog.record(this, "clipboard", error)
+            }
+        }
+
+        bar.addView(globe)
+        bar.addView(scroll)
+        bar.addView(clip)
+
+        val line = View(this)
+        line.setBackgroundColor(colorOf(R.color.divider))
+        line.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp(1).coerceAtLeast(1))
+
+        val board = PoliteKeyboardView(this)
+        keyboardView = board
+        board.layoutParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
+        board.onKey = { code -> guardedKey(code) }
+        board.onText = { text ->
+            try {
+                commit(text.toString(), honorShift = false)
+            } catch (error: Throwable) {
+                CrashLog.record(this, "insert text", error)
+            }
+        }
+        board.onPopupText = { text ->
+            try {
+                commit(text, honorShift = true)
+            } catch (error: Throwable) {
+                CrashLog.record(this, "popup text", error)
+            }
+        }
+        board.onShiftLock = { lockShift() }
+
+        root.addView(bar)
+        root.addView(line)
+        root.addView(board)
+        ensurePages()
         return root
+    }
+
+    private fun barButton(label: String): TextView {
+        return TextView(this).apply {
+            text = label
+            gravity = Gravity.CENTER
+            textSize = 12f
+            setTextColor(colorOf(R.color.key_text))
+            layoutParams = LinearLayout.LayoutParams(dp(48), LinearLayout.LayoutParams.MATCH_PARENT)
+        }
     }
 
     override fun onEvaluateFullscreenMode(): Boolean = false
 
     override fun onStartInput(attribute: EditorInfo, restarting: Boolean) {
         super.onStartInput(attribute, restarting)
-        field = fieldKind(attribute)
-        editorAction = attribute.imeOptions and EditorInfo.IME_MASK_ACTION
-        noEnterAction = attribute.imeOptions and EditorInfo.IME_FLAG_NO_ENTER_ACTION != 0
-        revert = null
-        capsLock = false
-        manualShiftAt = 0L
+        try {
+            field = fieldKind(attribute)
+            editorAction = attribute.imeOptions and EditorInfo.IME_MASK_ACTION
+            noEnterAction = attribute.imeOptions and EditorInfo.IME_FLAG_NO_ENTER_ACTION != 0
+            revert = null
+            capsLock = false
+            manualShiftAt = 0L
+        } catch (error: Throwable) {
+            CrashLog.record(this, "start input", error)
+        }
     }
 
     override fun onStartInputView(attribute: EditorInfo, restarting: Boolean) {
         super.onStartInputView(attribute, restarting)
-        clipMode = false
-        clipButton?.setImageResource(R.drawable.ic_clipboard)
-        val next = if (field == FieldKind.NUMBER) Layer.NUMBERS else Layer.LETTERS
-        if (letters == null) rebuildKeyboards(resources.displayMetrics.widthPixels)
-        showLayer(next)
-        applyAutoShift(respectManual = false)
-        LexiconLoader.ensure(this) { scheduleSuggestions() }
-        scheduleSuggestions()
+        try {
+            CrashLog.note(this, "keyboard shown")
+            clipMode = false
+            clipButton?.text = "Clip"
+            val next = if (field == FieldKind.NUMBER) Layer.NUMBERS else Layer.LETTERS
+            ensurePages()
+            showLayer(next)
+            applyAutoShift(respectManual = false)
+            LexiconLoader.ensure(this) { scheduleSuggestions() }
+            scheduleSuggestions()
+        } catch (error: Throwable) {
+            CrashLog.record(this, "show keyboard", error)
+        }
     }
 
     override fun onFinishInputView(finishingInput: Boolean) {
-        keyboardView?.closing()
         keyboardView?.dismissPopup()
         super.onFinishInputView(finishingInput)
     }
@@ -156,56 +244,54 @@ class PoliteTypeService : InputMethodService(), KeyboardView.OnKeyboardActionLis
             candidatesEnd
         )
         if (newSelStart != oldSelStart || newSelEnd != oldSelEnd) {
-            applyAutoShift(respectManual = true)
-            if (!clipMode) scheduleSuggestions()
+            try {
+                applyAutoShift(respectManual = true)
+                if (!clipMode) scheduleSuggestions()
+            } catch (error: Throwable) {
+                CrashLog.record(this, "selection", error)
+            }
         }
     }
 
-    override fun onKey(primaryCode: Int, keyCodes: IntArray?) {
+    private fun guardedKey(primaryCode: Int) {
+        try {
+            handleKey(primaryCode)
+        } catch (error: Throwable) {
+            CrashLog.record(this, "key $primaryCode", error)
+        }
+    }
+
+    private fun handleKey(primaryCode: Int) {
         keyboardView?.dismissPopup()
         when (primaryCode) {
-            Keyboard.KEYCODE_SHIFT -> onShiftKey()
-            Keyboard.KEYCODE_DELETE -> onDelete()
-            Keyboard.KEYCODE_MODE_CHANGE -> onModeKey()
-            Keyboard.KEYCODE_DONE, KeyEvent.KEYCODE_ENTER -> onEnter()
-            Keyboard.KEYCODE_ALT -> showLayer(if (layer == Layer.EMOJI) Layer.LETTERS else Layer.EMOJI)
-            KEYCODE_SPACE -> onSpace()
+            KeyCodes.SHIFT -> onShiftKey()
+            KeyCodes.DELETE -> onDelete()
+            KeyCodes.MODE -> onModeKey()
+            KeyCodes.DONE, KeyEvent.KEYCODE_ENTER -> onEnter()
+            KeyCodes.EMOJI -> showLayer(if (layer == Layer.EMOJI) Layer.LETTERS else Layer.EMOJI)
+            KeyCodes.SPACE -> onSpace()
             else -> if (primaryCode > 0) commitCode(primaryCode)
         }
     }
 
-    override fun onText(text: CharSequence?) {
-        if (!text.isNullOrEmpty()) commit(text.toString(), honorShift = false)
-    }
-
-    override fun onPress(primaryCode: Int) {}
-
-    override fun onRelease(primaryCode: Int) {}
-
-    override fun swipeLeft() {}
-
-    override fun swipeRight() {}
-
-    override fun swipeDown() {}
-
-    override fun swipeUp() {}
-
     override fun onDestroy() {
         executor.shutdownNow()
-        keyboardView?.closing()
+        keyboardView?.dismissPopup()
         super.onDestroy()
     }
 
-    private fun rebuildKeyboards(width: Int) {
-        if (width < 100 || (width == builtWidth && letters != null)) return
-        builtWidth = width
-        val height = resources.displayMetrics.heightPixels
-        letters = Keyboard(this, R.xml.qwerty, 0, width, height)
-        symbols = Keyboard(this, R.xml.symbols, 0, width, height)
-        symbolsMore = Keyboard(this, R.xml.symbols_shift, 0, width, height)
-        numbers = Keyboard(this, R.xml.numbers, 0, width, height)
-        emoji = Keyboard(this, R.xml.emoji, 0, width, height)
-        showLayer(layer)
+    private fun ensurePages() {
+        if (letters != null) return
+        try {
+            letters = KeyPages.letters()
+            symbols = KeyPages.symbols()
+            symbolsMore = KeyPages.symbolsMore()
+            numbers = KeyPages.numbers()
+            emoji = KeyPages.emoji()
+            CrashLog.note(this, "keys ready")
+        } catch (error: Throwable) {
+            CrashLog.record(this, "build keyboard", error)
+        }
     }
 
     private fun showLayer(next: Layer) {
@@ -217,7 +303,7 @@ class PoliteTypeService : InputMethodService(), KeyboardView.OnKeyboardActionLis
             Layer.NUMBERS -> numbers
             Layer.EMOJI -> emoji
         } ?: return
-        keyboardView?.keyboard = board
+        keyboardView?.board = board
         updateEnterKey()
         applyShift()
     }
@@ -278,28 +364,25 @@ class PoliteTypeService : InputMethodService(), KeyboardView.OnKeyboardActionLis
     }
 
     private fun applyShift() {
-        val board = keyboardView?.keyboard ?: return
+        val board = keyboardView?.board ?: return
         val on = layer == Layer.LETTERS && (shifted || capsLock)
-        board.setShifted(on)
+        board.shifted = on
         if (layer == Layer.LETTERS) {
             for (key in board.keys) {
-                if (key.codes?.firstOrNull() == Keyboard.KEYCODE_SHIFT) {
-                    key.label = if (capsLock) "AA" else "Aa"
-                }
+                if (key.code == KeyCodes.SHIFT) key.label = if (capsLock) "AA" else "Aa"
             }
         }
-        keyboardView?.invalidateAllKeys()
+        keyboardView?.invalidateKeys()
     }
 
     private fun updateEnterKey() {
         val label = enterLabel()
         for (board in listOfNotNull(letters, symbols, symbolsMore, numbers, emoji)) {
             for (key in board.keys) {
-                val code = key.codes?.firstOrNull() ?: continue
-                if (code == Keyboard.KEYCODE_DONE || code == KeyEvent.KEYCODE_ENTER) key.label = label
+                if (key.code == KeyCodes.DONE) key.label = label
             }
         }
-        keyboardView?.invalidateAllKeys()
+        keyboardView?.invalidateKeys()
     }
 
     private fun enterLabel(): String {
@@ -316,6 +399,7 @@ class PoliteTypeService : InputMethodService(), KeyboardView.OnKeyboardActionLis
     }
 
     private fun commitCode(code: Int) {
+        if (code <= 0 || code > 0x10FFFF || code in 0xD800..0xDFFF) return
         val chars = Character.toChars(code)
         var text = String(chars)
         if ((shifted || capsLock) && text.length == 1 && text[0].isLetter()) {
@@ -475,17 +559,28 @@ class PoliteTypeService : InputMethodService(), KeyboardView.OnKeyboardActionLis
         val gen = ++generation
         val kind = field
         executor.execute {
-            val list = LexiconLoader.engine?.suggest(before, after, kind).orEmpty()
+            val list = try {
+                LexiconLoader.engine?.suggest(before, after, kind).orEmpty()
+            } catch (_: Throwable) {
+                emptyList()
+            }
             handler.post {
-                if (gen == generation && !clipMode) renderSuggestions(list)
+                if (gen == generation && !clipMode) {
+                    try {
+                        renderSuggestions(list)
+                    } catch (_: Throwable) {
+                        // Leave the previous chips in place.
+                    }
+                }
             }
         }
     }
 
     private fun renderSuggestions(suggestions: List<Suggestion>) {
         val row = chipRow ?: return
+        if (row.layoutParams == null) return
         row.removeAllViews()
-        clipButton?.setImageResource(R.drawable.ic_clipboard)
+        clipButton?.text = "Clip"
         val weighted = suggestions.size in 1..3
         row.layoutParams = row.layoutParams.apply {
             width = if (weighted) LinearLayout.LayoutParams.MATCH_PARENT else LinearLayout.LayoutParams.WRAP_CONTENT
@@ -508,7 +603,7 @@ class PoliteTypeService : InputMethodService(), KeyboardView.OnKeyboardActionLis
         if (live.isNotBlank()) clips.add(live)
         val row = chipRow ?: return
         row.removeAllViews()
-        clipButton?.setImageResource(R.drawable.ic_back)
+        clipButton?.text = "Back"
         row.layoutParams = row.layoutParams.apply {
             width = LinearLayout.LayoutParams.WRAP_CONTENT
         }
@@ -573,14 +668,18 @@ class PoliteTypeService : InputMethodService(), KeyboardView.OnKeyboardActionLis
     @SuppressLint("MissingPermission")
     private fun haptic() {
         if (!prefs.haptic) return
-        val vibrator = getSystemService(VIBRATOR_SERVICE) as android.os.Vibrator
-        if (!vibrator.hasVibrator()) return
-        if (Build.VERSION.SDK_INT >= 26) {
-            vibrator.vibrate(
-                android.os.VibrationEffect.createOneShot(12, android.os.VibrationEffect.DEFAULT_AMPLITUDE)
-            )
-        } else {
-            vibrator.vibrate(12)
+        try {
+            val vibrator = getSystemService(VIBRATOR_SERVICE) as android.os.Vibrator
+            if (!vibrator.hasVibrator()) return
+            if (Build.VERSION.SDK_INT >= 26) {
+                vibrator.vibrate(
+                    android.os.VibrationEffect.createOneShot(12, android.os.VibrationEffect.DEFAULT_AMPLITUDE)
+                )
+            } else {
+                vibrator.vibrate(12)
+            }
+        } catch (_: Throwable) {
+            // Missing vibrator hardware should not close the keyboard.
         }
     }
 
@@ -609,8 +708,4 @@ class PoliteTypeService : InputMethodService(), KeyboardView.OnKeyboardActionLis
     private fun colorOf(id: Int): Int = resources.getColor(id)
 
     private fun dp(value: Int): Int = (value * resources.displayMetrics.density).toInt()
-
-    private companion object {
-        const val KEYCODE_SPACE = 32
-    }
 }

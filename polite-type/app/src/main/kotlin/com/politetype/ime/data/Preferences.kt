@@ -4,7 +4,11 @@ import android.content.Context
 import android.content.SharedPreferences
 
 class Preferences(context: Context) {
-    private val prefs = context.applicationContext.getSharedPreferences(NAME, Context.MODE_PRIVATE)
+    @Suppress("DEPRECATION")
+    private val prefs = context.applicationContext.getSharedPreferences(
+        NAME,
+        Context.MODE_PRIVATE or Context.MODE_MULTI_PROCESS
+    )
 
     var polite: Boolean
         get() = prefs.getBoolean(KEY_POLITE, false)

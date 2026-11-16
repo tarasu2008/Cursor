@@ -35,6 +35,22 @@
             android:textColor="@color/setup_text"
             android:textSize="16sp" />
 
+        <TextView
+            android:id="@+id/notification_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:textColor="@color/setup_text"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/allow_notifications"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/allow_notifications"
+            android:textAllCaps="false" />
+
         <Button
             android:id="@+id/enable"
             android:layout_width="match_parent"
@@ -87,6 +103,25 @@
             android:layout_marginTop="8dp"
             android:text="@string/double_space"
             android:textColor="@color/setup_text" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/crash_title"
+            android:textColor="@color/setup_text"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/crash_log"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/setup_muted"
+            android:textIsSelectable="true"
+            android:textSize="12sp"
+            android:typeface="monospace" />
 
         <TextView
             android:layout_width="match_parent"

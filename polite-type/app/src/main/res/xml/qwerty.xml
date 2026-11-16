@@ -78,7 +78,7 @@
         <Key
             android:codes="32"
             android:isRepeatable="true"
-            android:keyLabel=" "
+            android:keyLabel="English"
             android:keyWidth="40%p" />
         <Key
             android:keyLabel="."

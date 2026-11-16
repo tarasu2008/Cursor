@@ -6,7 +6,11 @@ The keys follow the usual phone layout: QWERTY, a gray shift and delete, and `?1
 
 ## Install
 
-The installable file is `PoliteType.apk` (universal, all CPU types). Android 5.0 and newer can install it. Android 4.x cannot.
+The installable file is `PoliteType.apk` (universal, all CPU types). Android 10 and newer can install it. Android 9 and older cannot.
+
+Open the app and tap **Allow notifications**. Android 13 and Samsung phones block alerts until that permission is on. If the phone still shows them as blocked, the button opens PoliteType’s notification settings.
+
+If the app closes, open it again. The reason is shown on the setup screen, in a notification, and in `Downloads/PoliteType-crash.txt`.
 
 1. Copy the APK to the phone and open it. Allow installs from your file manager if Android asks.
 2. Open the PoliteType app.
