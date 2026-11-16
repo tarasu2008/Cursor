@@ -56,6 +56,19 @@ Locked in `rules.py` + this file. Change only when the user explicitly asks.
       ATR stop mult, block pending breakdown), **re-analyze**, then auto-bid the next
       **valid** ticket on Delta DEMO (never the same failed entry).
     - On Pass, ease temporary Fail bumps (hard_rules in brain stay forever).
+24. **Profit-v2 trial (15 Nov) — next 10 trades, else REMOVE:**
+    - Goal: better profits without adding more TA indicators.
+    - Features (while `data/profit_v2_trial.json` status=active):
+      1. **ATR-aware SL/TP** — SL = max(1% entry, 1× 1H ATR × atr_stop_mult); TP = 2R.
+      2. **Fail cooldown 90 min** — no bounce shorts until cooldown ends (dump/break OK).
+      3. **Bounce regime FLAT** — bearish + price above 1H EMA20 → no supply shorts;
+         allow dump continuation or reclaim LONG only.
+      4. **Reclaim LONG in bear** — 1H close > EMA20 and local swing → LONG allowed.
+      5. **Delta sync** — flatten leftover demo position before rebidding new paper ticket.
+    - Count only tickets **issued after** trial start (current open pre-trial trade excluded).
+    - After **10** trial closes: if not clearly better → **REMOVE** (status=remove) and
+      revert to fixed 1%/2%; if better → keep_candidate (user confirms forever lock).
+    - Do not extend past 10 without an explicit user decision.
 
 ## Manual
 - `python3 btc-paper-bot/analyze.py --simple --show` → force current ticket view.

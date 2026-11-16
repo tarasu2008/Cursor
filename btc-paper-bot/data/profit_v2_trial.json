@@ -1,0 +1,44 @@
+{
+  "enabled": true,
+  "status": "active",
+  "max_trades": 10,
+  "trades_completed": 2,
+  "started_ist": "2026-11-15T19:40:27.499115+05:30",
+  "features": [
+    "atr_aware_stops",
+    "fail_cooldown",
+    "bounce_regime_flat",
+    "reclaim_long_in_bear",
+    "delta_sync_before_rebid"
+  ],
+  "closed": [
+    {
+      "key": "2026-11-16T07:30:18.575128+05:30|SHORT|64579.0|Fail",
+      "closed_ist": "2026-11-16T08:10:09.594512+05:30",
+      "issued_ist": "2026-11-16T07:30:18.575128+05:30",
+      "side": "SHORT",
+      "entry": 64579.0,
+      "stop_loss": 65225.0,
+      "take_profit": 63287.0,
+      "outcome": "Fail",
+      "pnl_usd": -9.69
+    },
+    {
+      "key": "2026-11-16T19:40:15.145507+05:30|SHORT|63952.0|Fail",
+      "closed_ist": "2026-11-16T20:10:13.795941+05:30",
+      "issued_ist": "2026-11-16T19:40:15.145507+05:30",
+      "side": "SHORT",
+      "entry": 63952.0,
+      "stop_loss": 64592.0,
+      "take_profit": 62672.0,
+      "outcome": "Fail",
+      "pnl_usd": -10.24
+    }
+  ],
+  "pass": 0,
+  "fail": 2,
+  "pnl_usd": -19.93,
+  "verdict": null,
+  "note": "Trial: next 10 trades under profit-v2. If not clearly better \u2192 remove / revert to fixed 1%/2%.",
+  "updated_ist": "2026-11-16T20:10:13.795958+05:30"
+}

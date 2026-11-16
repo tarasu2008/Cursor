@@ -185,12 +185,33 @@ def place_ticket(
 
     pos = position_size()
     if pos is not None and pos != 0:
-        return {
-            "ok": False,
-            "skipped": True,
-            "reason": "delta_position_already_open",
-            "position_size": pos,
-        }
+        # Profit-v2: flatten leftover demo before bidding the new paper ticket.
+        try:
+            from profit_v2 import feature_on
+
+            sync_rebid = feature_on("delta_sync_before_rebid")
+        except Exception:
+            sync_rebid = False
+        if sync_rebid:
+            closed = close_position_market()
+            mark_flat("sync_before_rebid")
+            pos2 = position_size()
+            if pos2 is not None and pos2 != 0:
+                return {
+                    "ok": False,
+                    "skipped": True,
+                    "reason": "delta_sync_close_failed",
+                    "position_size": pos2,
+                    "close": closed,
+                }
+            # Fall through and place the new ticket on a flat book.
+        else:
+            return {
+                "ok": False,
+                "skipped": True,
+                "reason": "delta_position_already_open",
+                "position_size": pos,
+            }
 
     mark = _mark_price()
     if mark is not None:
