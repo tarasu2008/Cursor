@@ -51,3 +51,19 @@ projects/*/*
 # BTC paper trading automation
 !btc-paper-bot/
 !btc-paper-bot/**
+
+# Diwali greeting cards
+!diwali-cards/
+!diwali-cards/**
+
+# CRE declarations
+!cre-declarations/
+!cre-declarations/**
+
+# Sports images
+!sports-images/
+!sports-images/**
+
+# Shutterstock marketplace analysis
+!shutterstock-analysis/
+!shutterstock-analysis/**
