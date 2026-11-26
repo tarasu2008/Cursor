@@ -55,7 +55,9 @@ export default function CategoriesPage() {
             className={`subcategory-grid${isPhone ? " phone-wallpaper-grid" : ""}${isDesktop ? " desktop-wallpaper-grid" : ""}`}
           >
             {subs.map((s) => {
-              const thumb = `/samples/subcategories/${s.id}.jpg`;
+              const thumb =
+                assets.find((a) => a.subcategoryId === s.id)?.imageUrl ||
+                `/samples/subcategories/${s.id}.jpg`;
               const subCount = getAssetCountForSubcategory(s.id);
               return (
                 <Link

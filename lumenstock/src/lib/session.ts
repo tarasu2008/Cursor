@@ -42,13 +42,20 @@ export function verifySessionToken(token: string): { userId: string } | null {
   }
 }
 
+function shouldUseSecureCookies() {
+  if (process.env.NODE_ENV !== "production") return false;
+  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "").trim();
+  if (!siteUrl) return false;
+  return siteUrl.startsWith("https://");
+}
+
 export function sessionCookieOptions(token: string) {
   return {
     name: COOKIE,
     value: token,
     httpOnly: true,
     sameSite: "lax" as const,
-    secure: process.env.NODE_ENV === "production",
+    secure: shouldUseSecureCookies(),
     path: "/",
     maxAge: MAX_AGE_SEC,
   };
@@ -60,7 +67,7 @@ export function clearSessionCookieOptions() {
     value: "",
     httpOnly: true,
     sameSite: "lax" as const,
-    secure: process.env.NODE_ENV === "production",
+    secure: shouldUseSecureCookies(),
     path: "/",
     maxAge: 0,
   };
@@ -72,7 +79,7 @@ export async function getSessionUser(): Promise<PublicUser | null> {
   if (!token) return null;
   const verified = verifySessionToken(token);
   if (!verified) return null;
-  const user = findUserById(verified.userId);
+  const user = await findUserById(verified.userId);
   if (!user) return null;
   return publicUser(user);
 }

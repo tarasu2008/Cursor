@@ -2,9 +2,11 @@ import { NextResponse } from "next/server";
 import { authenticateUser, ensureAuthStore } from "@/lib/authStore";
 import { createSessionToken, sessionCookieOptions } from "@/lib/session";
 
+export const runtime = "nodejs";
+
 export async function POST(request: Request) {
   try {
-    ensureAuthStore();
+    await ensureAuthStore();
     const body = (await request.json()) as { email?: string; password?: string };
     const email = (body.email || "").trim();
     const password = body.password || "";
@@ -13,7 +15,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Email and password are required." }, { status: 400 });
     }
 
-    const result = authenticateUser(email, password);
+    const result = await authenticateUser(email, password);
     if (!result.ok) {
       return NextResponse.json({ error: result.error }, { status: 401 });
     }

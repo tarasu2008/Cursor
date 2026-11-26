@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { packs, pricingPlans } from "@/data/catalog";
+import { PricingClient } from "./PricingClient";
 
 export const metadata: Metadata = {
   title: "Pricing & image licenses",
@@ -23,54 +23,7 @@ export default function PricingPage() {
         </p>
       </div>
 
-      <section className="section" style={{ paddingTop: "1rem" }}>
-        <div className="pricing-grid">
-          {pricingPlans.map((plan) => (
-            <article key={plan.id} className={`price-card${plan.featured ? " featured" : ""}`}>
-              <div>
-                <h3>{plan.name}</h3>
-                <p style={{ color: "var(--muted)", margin: "0.35rem 0 0" }}>{plan.blurb}</p>
-              </div>
-              <div className="price">
-                ${plan.annual}
-                <span> /mo annual</span>
-              </div>
-              <div style={{ color: "var(--faint)", fontSize: "0.9rem" }}>
-                or ${plan.monthly}/mo month-to-month · {plan.downloads} downloads
-              </div>
-              <ul>
-                {plan.features.map((f) => (
-                  <li key={f}>{f}</li>
-                ))}
-              </ul>
-              <button className={`btn ${plan.featured ? "btn-primary" : "btn-ghost"}`} type="button">
-                Choose {plan.name}
-              </button>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="section" style={{ paddingTop: 0 }}>
-        <div className="section-head">
-          <div>
-            <h2>On-demand packs</h2>
-            <p>Credits that do not expire — ideal for one-off projects.</p>
-          </div>
-        </div>
-        <div className="packs">
-          {packs.map((p) => (
-            <div key={p.id} className="pack">
-              <strong>
-                {p.count} images · ${p.price}
-              </strong>
-              <div style={{ color: "var(--muted)", fontSize: "0.88rem", marginTop: 4 }}>
-                ${(p.price / p.count).toFixed(2)} per image
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
+      <PricingClient />
 
       <section id="licenses" className="section" style={{ paddingTop: 0 }}>
         <div className="section-head">

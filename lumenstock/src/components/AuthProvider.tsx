@@ -16,6 +16,10 @@ export type AuthUser = {
   email: string;
   role: "user" | "super_admin";
   paid: boolean;
+  emailVerified?: boolean;
+  planId?: string | null;
+  creditsRemaining?: number;
+  planExpiresAt?: string | null;
   canDownload: boolean;
   createdAt: string;
 };

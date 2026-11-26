@@ -119,7 +119,7 @@ function drawCoverCrop(
 }
 
 export function AssetWorkspace({ imageUrl, title, width, height }: Props) {
-  const { user, openAuth } = useAuth();
+  const { user, openAuth, refresh } = useAuth();
   const [license, setLicense] = useState<"standard" | "enhanced">("standard");
   const [device, setDevice] = useState<DeviceGroup>("desktop");
   const [sizeId, setSizeId] = useState("desk-hd");
@@ -207,6 +207,7 @@ export function AssetWorkspace({ imageUrl, title, width, height }: Props) {
         a.download = `lumenstock-${safe}-${selected.id}-${license}.jpg`;
         a.click();
         URL.revokeObjectURL(a.href);
+        void refresh();
       } finally {
         URL.revokeObjectURL(objectUrl);
       }
@@ -330,8 +331,12 @@ export function AssetWorkspace({ imageUrl, title, width, height }: Props) {
         {user?.canDownload && (
           <p className="download-note">
             Signed in as {user.email}
-            {user.role === "super_admin" ? " (super admin)" : ""} — downloads unlocked. Open Preview size
-            to check the crop before downloading.
+            {user.role === "super_admin"
+              ? " (super admin · unlimited)"
+              : typeof user.creditsRemaining === "number"
+                ? ` (${user.creditsRemaining} credits left)`
+                : ""}{" "}
+            — downloads unlocked. Open Preview size to check the crop before downloading.
           </p>
         )}
       </div>

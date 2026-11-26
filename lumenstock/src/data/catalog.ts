@@ -687,6 +687,15 @@ const seeds: Record<string, Seed> = {
 
 const usedSlugs = new Set<string>();
 
+const ASSET_CDN_BASE = (process.env.NEXT_PUBLIC_ASSET_CDN_URL || "").replace(/\/+$/, "");
+
+function withAssetCdn(imageUrl: string) {
+  if (ASSET_CDN_BASE && imageUrl.startsWith("/samples/")) {
+    return `${ASSET_CDN_BASE}${imageUrl}`;
+  }
+  return imageUrl;
+}
+
 /** One HD catalog image per category — owned/sold by Lumenstock */
 const categoryAssets: Asset[] = categories.map((cat, index) => {
   const seed = seeds[cat.id];
@@ -704,7 +713,7 @@ const categoryAssets: Asset[] = categories.map((cat, index) => {
     height: seed.height,
     owner: "Lumenstock",
     priceHint: "From plan",
-    imageUrl: `/samples/categories/${cat.id}.jpg`,
+    imageUrl: withAssetCdn(`/samples/categories/${cat.id}.jpg`),
     color: seed.color,
     people: seed.people,
   };
@@ -728,7 +737,7 @@ const subcategoryAssets: Asset[] = subcategories.map((sub, index) => {
     height: seed.height,
     owner: "Lumenstock",
     priceHint: "From plan",
-    imageUrl: `/samples/subcategories/${sub.id}.jpg`,
+    imageUrl: withAssetCdn(`/samples/subcategories/${sub.id}.jpg`),
     color: seed.color,
     people: seed.people,
   };
@@ -751,7 +760,7 @@ type RawExpandedAsset = {
   people: number;
 };
 
-/** Nine additional unique HD images per category (48×9) and per subcategory (178×9) */
+/** 49 additional unique HD images per category (48×49) and per subcategory (178×49) */
 const expandedAssets: Asset[] = (expandedAssetsRaw as RawExpandedAsset[]).map((item) => ({
   id: item.id,
   slug: item.slug,
@@ -766,7 +775,7 @@ const expandedAssets: Asset[] = (expandedAssetsRaw as RawExpandedAsset[]).map((i
   height: item.height,
   owner: "Lumenstock",
   priceHint: "From plan",
-  imageUrl: item.imageUrl,
+  imageUrl: withAssetCdn(item.imageUrl),
   color: item.color,
   people: item.people,
 }));

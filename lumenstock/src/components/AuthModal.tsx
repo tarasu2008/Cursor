@@ -5,18 +5,20 @@ import { useAuth, type AuthUser } from "./AuthProvider";
 
 export function AuthModal() {
   const { authOpen: open, authMode: initialMode, closeAuth: onClose, setUser: onAuthed } = useAuth();
-  const [mode, setMode] = useState<"login" | "signup">(initialMode);
+  const [mode, setMode] = useState<"login" | "signup" | "forgot">(initialMode);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [info, setInfo] = useState("");
   const [user, setUser] = useState<AuthUser | null>(null);
 
   useEffect(() => {
     if (!open) return;
     setMode(initialMode);
     setError("");
+    setInfo("");
     setUser(null);
     setBusy(false);
     const onKey = (e: KeyboardEvent) => {
@@ -37,7 +39,23 @@ export function AuthModal() {
     e.preventDefault();
     setBusy(true);
     setError("");
+    setInfo("");
     try {
+      if (mode === "forgot") {
+        const res = await fetch("/api/auth/forgot-password", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: email.trim() }),
+        });
+        const data = (await res.json()) as { message?: string; error?: string };
+        if (!res.ok) {
+          setError(data.error || "Could not send reset link.");
+          return;
+        }
+        setInfo(data.message || "If an account exists for that email, we sent a reset link.");
+        return;
+      }
+
       const endpoint = mode === "login" ? "/api/auth/login" : "/api/auth/signup";
       const res = await fetch(endpoint, {
         method: "POST",
@@ -156,18 +174,37 @@ export function AuthModal() {
                 required
               />
             </label>
-            <label>
-              <span>Password</span>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="At least 8 characters"
-                autoComplete={mode === "login" ? "current-password" : "new-password"}
-                minLength={8}
-                required
-              />
-            </label>
+            {mode !== "forgot" && (
+              <label>
+                <span>Password</span>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="At least 8 characters"
+                  autoComplete={mode === "login" ? "current-password" : "new-password"}
+                  minLength={8}
+                  required
+                />
+              </label>
+            )}
+
+            {mode === "login" && (
+              <div style={{ textAlign: "right", marginTop: "-0.35rem" }}>
+                <button
+                  type="button"
+                  className="nav-text-btn"
+                  style={{ fontSize: "0.82rem" }}
+                  onClick={() => {
+                    setMode("forgot");
+                    setError("");
+                    setInfo("");
+                  }}
+                >
+                  Forgot password?
+                </button>
+              </div>
+            )}
 
             {mode === "signup" && (
               <div className="auth-notice" role="note">
@@ -181,9 +218,16 @@ export function AuthModal() {
             )}
 
             {error && <p className="auth-error">{error}</p>}
+            {info && <p className="download-note" style={{ color: "var(--ink)" }}>{info}</p>}
 
             <button type="submit" className="btn btn-primary" style={{ width: "100%" }} disabled={busy}>
-              {busy ? "Please wait…" : mode === "login" ? "Log in" : "Create account"}
+              {busy
+                ? "Please wait…"
+                : mode === "login"
+                  ? "Log in"
+                  : mode === "forgot"
+                    ? "Send reset link"
+                    : "Create account"}
             </button>
             <p className="auth-footnote">
               Passwords are stored hashed for login validation. Card numbers are never saved on Lumenstock.
