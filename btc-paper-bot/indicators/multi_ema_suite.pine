@@ -1,0 +1,25 @@
+//@version=6
+indicator("Multi-EMA Trend & Chop Suite", overlay=true)
+
+fast = input.int(9, "Fast EMA")
+mid = input.int(21, "Mid EMA")
+slow = input.int(55, "Slow EMA")
+macro = input.int(200, "Macro EMA")
+
+ef = ta.ema(close, fast)
+em = ta.ema(close, mid)
+es = ta.ema(close, slow)
+eM = ta.ema(close, macro)
+
+plot(ef, "EMA Fast", color=color.new(#00E676, 0))
+plot(em, "EMA Mid", color=color.new(#FFD54F, 0))
+plot(es, "EMA Slow", color=color.new(#FF5252, 0))
+plot(eM, "EMA Macro", color=color.new(#90CAF9, 0), linewidth=2)
+
+alignedBull = ef > em and em > es and close > eM
+alignedBear = ef < em and em < es and close < eM
+chop = not alignedBull and not alignedBear
+
+bgcolor(alignedBull ? color.new(#00E676, 90) : alignedBear ? color.new(#FF5252, 90) : color.new(#9E9E9E, 93), title="Trend/Chop zones")
+alertcondition(alignedBull, "EMA Suite Bull", "Fast>Mid>Slow and above macro")
+alertcondition(alignedBear, "EMA Suite Bear", "Fast<Mid<Slow and below macro")

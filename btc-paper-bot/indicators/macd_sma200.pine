@@ -1,0 +1,22 @@
+//@version=6
+indicator("MACD + 200 SMA Combo", overlay=true)
+
+smaLen = input.int(200, "SMA Length")
+fast = input.int(12, "MACD Fast")
+slow = input.int(26, "MACD Slow")
+sig = input.int(9, "MACD Signal")
+
+sma200 = ta.sma(close, smaLen)
+[macdLine, signalLine, hist] = ta.macd(close, fast, slow, sig)
+
+plot(sma200, "SMA 200", color=color.new(#FFD54F, 0), linewidth=2)
+above = close > sma200
+bull = ta.crossover(macdLine, signalLine) and above
+bear = ta.crossunder(macdLine, signalLine) and not above
+
+plotshape(bull, "Long impulse", shape.labelup, location.belowbar, color.new(#00E676, 0), text="LONG", textcolor=color.black, size=size.tiny)
+plotshape(bear, "Short impulse", shape.labeldown, location.abovebar, color.new(#FF5252, 0), text="SHORT", textcolor=color.white, size=size.tiny)
+
+bgcolor(above ? color.new(#00E676, 92) : color.new(#FF5252, 92), title="Macro SMA200 filter")
+alertcondition(bull, "MACD+SMA200 Long", "MACD bull cross above SMA200")
+alertcondition(bear, "MACD+SMA200 Short", "MACD bear cross below SMA200")

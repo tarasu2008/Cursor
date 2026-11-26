@@ -1,0 +1,22 @@
+//@version=6
+indicator("TrueMarket Mean (proxy)", overlay=true)
+
+// Practical proxy for cyclical valuation mean: long VWMA + bands
+len = input.int(100, "Mean Length")
+bandAtr = input.int(14, "ATR Length")
+bandMult = input.float(1.5, "Band ATR Mult", step=0.1)
+
+mean = ta.vwma(close, len)
+atr = ta.atr(bandAtr)
+upper = mean + bandMult * atr
+lower = mean - bandMult * atr
+
+plot(mean, "TrueMarket Mean", color=color.new(#CE93D8, 0), linewidth=2)
+pU = plot(upper, "Upper", color=color.new(#FF5252, 60))
+pL = plot(lower, "Lower", color=color.new(#00E676, 60))
+fill(pU, pL, color=color.new(#CE93D8, 92), title="Valuation band")
+
+accum = close < lower
+distrib = close > upper
+plotshape(accum, "Accumulation zone", shape.diamond, location.belowbar, color.new(#00E676, 0), size=size.tiny)
+plotshape(distrib, "Distribution zone", shape.diamond, location.abovebar, color.new(#FF5252, 0), size=size.tiny)

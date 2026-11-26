@@ -1,0 +1,87 @@
+{
+  "timestamp_ist": "2026-11-15T15:10:20.167998+05:30",
+  "price": 65364.0,
+  "bias": "bearish",
+  "previous_review": {
+    "had_previous": true,
+    "grade": "\u2014",
+    "previous_timestamp_ist": "2026-11-15T14:40:08.951136+05:30",
+    "previous_price": 65783.1,
+    "result": "Open",
+    "mistake": null,
+    "lesson": null,
+    "adjustment": null,
+    "pnl_usd": 0.0,
+    "atr_stop_mult_now": 1.0,
+    "reviews": [
+      {
+        "side": "SHORT",
+        "entry": 65783.0,
+        "stop_loss": 66441.0,
+        "take_profit": 64467.0,
+        "qty": 0.015,
+        "filled": true,
+        "hit_sl": false,
+        "hit_tp": false,
+        "grade": "Open",
+        "mistake": null,
+        "pnl_usd": 0.0,
+        "path_high": 65783.1,
+        "path_low": 65364.0,
+        "deep": null
+      }
+    ],
+    "detail": "Replaced unfilled far SHORT with mark continuation (not graded).",
+    "performance": {
+      "updated_ist": "2026-11-15T15:10:20.144140+05:30",
+      "rules": {
+        "notional_usd": 1000.0,
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+        "grade": "Pass or Fail only (no partial)"
+      },
+      "today": {
+        "trades": 3,
+        "pass": 1,
+        "fail": 2,
+        "pnl_usd": 0.41,
+        "total_profit_usd": 20.41,
+        "total_loss_usd": -20.0
+      },
+      "week": {
+        "trades": 8,
+        "pass": 3,
+        "fail": 5,
+        "pnl_usd": 9.24,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -50.44
+      },
+      "month": {
+        "trades": 8,
+        "pass": 3,
+        "fail": 5,
+        "pnl_usd": 9.24,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -50.44
+      },
+      "all_time": {
+        "trades": 8,
+        "pass": 3,
+        "fail": 5,
+        "pnl_usd": 9.24,
+        "total_profit_usd": 59.68,
+        "total_loss_usd": -50.44
+      }
+    }
+  },
+  "waiting_prev": false,
+  "signals": [
+    {
+      "side": "SHORT",
+      "entry": 65364.0,
+      "stop_loss": 66018.0,
+      "take_profit": 64056.0,
+      "qty": 0.015
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+//@version=6
+indicator("UT Bot Alerts (BTC)", overlay=true)
+
+// Classic UT Bot: ATR trailing stop with key sensitivity
+key = input.float(1.0, "Key Value", step=0.1)
+atrPeriod = input.int(10, "ATR Period")
+useHeikin = input.bool(false, "Use Heikin Ashi Source")
+
+src = useHeikin ? (open + high + low + close) / 4 : close
+nLoss = key * ta.atr(atrPeriod)
+
+var float trail = na
+iff1 = src > nz(trail[1], 0) ? src - nLoss : src + nLoss
+iff2 = src < nz(trail[1], 0) and src[1] < nz(trail[1], 0) ? math.min(nz(trail[1], 0), src + nLoss) : iff1
+trail := src > nz(trail[1], 0) and src[1] > nz(trail[1], 0) ? math.max(nz(trail[1], 0), src - nLoss) : iff2
+
+buy = src[1] < trail[1] and src > trail
+sell = src[1] > trail[1] and src < trail
+bull = src > trail
+
+plot(trail, "UT Bot Trail", color=bull ? color.new(#00E676, 0) : color.new(#FF5252, 0), linewidth=2)
+plotshape(buy, "UT Buy", shape.labelup, location.belowbar, color.new(#00E676, 0), text="UT", textcolor=color.black, size=size.tiny)
+plotshape(sell, "UT Sell", shape.labeldown, location.abovebar, color.new(#FF5252, 0), text="UT", textcolor=color.white, size=size.tiny)
+alertcondition(buy, "UT Bot Buy", "UT Bot buy")
+alertcondition(sell, "UT Bot Sell", "UT Bot sell")
