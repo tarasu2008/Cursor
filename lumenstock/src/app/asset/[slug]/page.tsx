@@ -8,6 +8,7 @@ import {
   categories,
   getAsset,
   getSubcategory,
+  primaryAssets,
   siteConfig,
 } from "@/data/catalog";
 import { AssetWorkspace } from "./AssetWorkspace";
@@ -15,7 +16,7 @@ import { AssetWorkspace } from "./AssetWorkspace";
 type Props = { params: Promise<{ slug: string }> };
 
 export async function generateStaticParams() {
-  return assets.map((a) => ({ slug: a.slug }));
+  return primaryAssets.map((a) => ({ slug: a.slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -62,9 +63,16 @@ export default async function AssetPage({ params }: Props) {
 
   const cats = categories.filter((c) => asset.categoryIds.includes(c.id));
   const sub = asset.subcategoryId ? getSubcategory(asset.subcategoryId) : undefined;
-  const related = assets
-    .filter((a) => a.id !== asset.id && a.categoryIds.some((c) => asset.categoryIds.includes(c)))
-    .slice(0, 4);
+  const sameSub = asset.subcategoryId
+    ? assets.filter((a) => a.id !== asset.id && a.subcategoryId === asset.subcategoryId)
+    : [];
+  const sameCat = assets.filter(
+    (a) =>
+      a.id !== asset.id &&
+      a.subcategoryId !== asset.subcategoryId &&
+      a.categoryIds.some((c) => asset.categoryIds.includes(c)),
+  );
+  const related = [...sameSub, ...sameCat].slice(0, 8);
 
   const jsonLd = {
     "@context": "https://schema.org",

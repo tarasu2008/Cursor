@@ -1306,6 +1306,21 @@ img {
   line-height: 1.35;
 }
 
+.count-pill {
+  display: inline-block;
+  margin-left: 0.4rem;
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  font-style: normal;
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--muted);
+  background: var(--bg-soft);
+  border: 1px solid var(--line);
+  vertical-align: middle;
+}
+
 .wallpaper-block {
   padding-bottom: 0.5rem;
 }

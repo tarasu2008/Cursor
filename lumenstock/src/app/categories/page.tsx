@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { assets, categories, getSubcategoriesForParent } from "@/data/catalog";
+import {
+  assets,
+  categories,
+  getAssetCountForCategory,
+  getAssetCountForSubcategory,
+  getSubcategoriesForParent,
+} from "@/data/catalog";
 
 export const metadata: Metadata = {
   title: "Image categories & subcategories",
@@ -38,7 +44,9 @@ export default function CategoriesPage() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={cover} alt="" className={isPhone ? "phone-cover" : undefined} />
           <div>
-            <strong>{c.name}</strong>
+            <strong>
+              {c.name} <em className="count-pill">{getAssetCountForCategory(c.id)} HD images</em>
+            </strong>
             <span>{c.description}</span>
           </div>
         </Link>
@@ -48,6 +56,7 @@ export default function CategoriesPage() {
           >
             {subs.map((s) => {
               const thumb = `/samples/subcategories/${s.id}.jpg`;
+              const subCount = getAssetCountForSubcategory(s.id);
               return (
                 <Link
                   key={s.id}
@@ -64,7 +73,9 @@ export default function CategoriesPage() {
                     )}
                   </div>
                   <div>
-                    <strong>{s.name}</strong>
+                    <strong>
+                      {s.name} <em className="count-pill">{subCount} HD</em>
+                    </strong>
                     <span>{s.description}</span>
                   </div>
                 </Link>

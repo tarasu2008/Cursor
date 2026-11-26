@@ -1,3 +1,4 @@
+import expandedAssetsRaw from "./expandedAssets.json";
 import { getSubcategory, subcategories } from "./subcategories";
 import { subcategorySeeds } from "./subcategorySeeds";
 
@@ -733,7 +734,64 @@ const subcategoryAssets: Asset[] = subcategories.map((sub, index) => {
   };
 });
 
-export const assets: Asset[] = [...categoryAssets, ...subcategoryAssets];
+type RawExpandedAsset = {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  type: string;
+  categoryIds: string[];
+  subcategoryId?: string;
+  keywords: string[];
+  orientation: string;
+  width: number;
+  height: number;
+  imageUrl: string;
+  color: string;
+  people: number;
+};
+
+/** Nine additional unique HD images per category (48×9) and per subcategory (178×9) */
+const expandedAssets: Asset[] = (expandedAssetsRaw as RawExpandedAsset[]).map((item) => ({
+  id: item.id,
+  slug: item.slug,
+  title: item.title,
+  description: item.description,
+  type: item.type as MediaType,
+  categoryIds: item.categoryIds,
+  ...(item.subcategoryId ? { subcategoryId: item.subcategoryId } : {}),
+  keywords: item.keywords,
+  orientation: item.orientation === "vertical" ? "vertical" : "horizontal",
+  width: item.width,
+  height: item.height,
+  owner: "Lumenstock",
+  priceHint: "From plan",
+  imageUrl: item.imageUrl,
+  color: item.color,
+  people: item.people,
+}));
+
+export const primaryAssets: Asset[] = [...categoryAssets, ...subcategoryAssets];
+export const assets: Asset[] = [...primaryAssets, ...expandedAssets];
+
+const categoryCounts = new Map<string, number>();
+const subcategoryCounts = new Map<string, number>();
+for (const asset of assets) {
+  for (const catId of asset.categoryIds) {
+    categoryCounts.set(catId, (categoryCounts.get(catId) || 0) + 1);
+  }
+  if (asset.subcategoryId) {
+    subcategoryCounts.set(asset.subcategoryId, (subcategoryCounts.get(asset.subcategoryId) || 0) + 1);
+  }
+}
+
+export function getAssetCountForCategory(categoryId: string) {
+  return categoryCounts.get(categoryId) || 0;
+}
+
+export function getAssetCountForSubcategory(subcategoryId: string) {
+  return subcategoryCounts.get(subcategoryId) || 0;
+}
 
 export function assetPath(asset: Pick<Asset, "slug">) {
   return `/asset/${asset.slug}`;
