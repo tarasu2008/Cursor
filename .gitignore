@@ -48,6 +48,10 @@ projects/*/*
 !polite-type/
 !polite-type/**
 
+# BTC paper trading automation
+!btc-paper-bot/
+!btc-paper-bot/**
+
 # Diwali greeting cards
 !diwali-cards/
 !diwali-cards/**

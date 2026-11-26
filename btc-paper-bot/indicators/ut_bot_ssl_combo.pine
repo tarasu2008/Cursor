@@ -1,0 +1,34 @@
+//@version=6
+indicator("UT Bot + SSL Combo", overlay=true)
+
+// UT Bot trail
+key = input.float(1.0, "UT Key")
+atrPeriod = input.int(10, "UT ATR")
+nLoss = key * ta.atr(atrPeriod)
+src = close
+var float trail = na
+iff1 = src > nz(trail[1], 0) ? src - nLoss : src + nLoss
+iff2 = src < nz(trail[1], 0) and src[1] < nz(trail[1], 0) ? math.min(nz(trail[1], 0), src + nLoss) : iff1
+trail := src > nz(trail[1], 0) and src[1] > nz(trail[1], 0) ? math.max(nz(trail[1], 0), src - nLoss) : iff2
+utBull = src > trail
+utBuy = src[1] < trail[1] and src > trail
+utSell = src[1] > trail[1] and src < trail
+
+// SSL
+sslLen = input.int(10, "SSL Length")
+smaHigh = ta.sma(high, sslLen)
+smaLow = ta.sma(low, sslLen)
+var int hlv = 0
+hlv := close > smaHigh ? 1 : close < smaLow ? -1 : hlv[1]
+sslBull = hlv > 0
+
+// Strict filter: only fire when UT and SSL agree (cuts sideways over-trading)
+longSig = utBuy and sslBull
+shortSig = utSell and not sslBull
+
+plot(trail, "UT Trail", color=utBull ? color.new(#00E676, 0) : color.new(#FF5252, 0))
+bgcolor(sslBull ? color.new(#00E676, 93) : color.new(#FF5252, 93), title="SSL bias")
+plotshape(longSig, "Combo Long", shape.labelup, location.belowbar, color.new(#00E676, 0), text="L", textcolor=color.black, size=size.tiny)
+plotshape(shortSig, "Combo Short", shape.labeldown, location.abovebar, color.new(#FF5252, 0), text="S", textcolor=color.white, size=size.tiny)
+alertcondition(longSig, "UT+SSL Long", "UT Bot buy with SSL bull")
+alertcondition(shortSig, "UT+SSL Short", "UT Bot sell with SSL bear")
