@@ -3,6 +3,7 @@ import path from "path";
 import { NextResponse } from "next/server";
 import { ensureAuthStore } from "@/lib/authStore";
 import { getSessionUser } from "@/lib/session";
+import { isCatalogImageUrl } from "@/data/catalog";
 import { downloadSizes } from "@/data/downloadSizes";
 
 export const runtime = "nodejs";
@@ -40,19 +41,35 @@ export async function POST(request: Request) {
     };
 
     const imageUrl = (body.imageUrl || "").trim();
-    if (!imageUrl.startsWith("/samples/")) {
+    let bytes: BodyInit;
+    let contentType = "image/jpeg";
+
+    if (imageUrl.startsWith("/samples/")) {
+      const rel = imageUrl.replace(/^\/+/, "");
+      const filePath = path.join(process.cwd(), "public", rel);
+      const publicRoot = path.join(process.cwd(), "public");
+      if (!filePath.startsWith(publicRoot) || !existsSync(filePath)) {
+        return NextResponse.json({ error: "Image not found." }, { status: 404 });
+      }
+      bytes = new Uint8Array(readFileSync(filePath));
+    } else if (imageUrl.startsWith("https://") && isCatalogImageUrl(imageUrl)) {
+      const upstream = await fetch(imageUrl, {
+        headers: {
+          "User-Agent": "LumenstockDownloader/1.0 (+https://lumenstock.cursor.app)",
+          Accept: "image/*",
+        },
+        cache: "no-store",
+      });
+      if (!upstream.ok) {
+        return NextResponse.json({ error: "Could not fetch master image." }, { status: 502 });
+      }
+      contentType = upstream.headers.get("content-type") || "image/jpeg";
+      bytes = await upstream.arrayBuffer();
+    } else {
       return NextResponse.json({ error: "Invalid image." }, { status: 400 });
     }
 
-    const rel = imageUrl.replace(/^\/+/, "");
-    const filePath = path.join(process.cwd(), "public", rel);
-    const publicRoot = path.join(process.cwd(), "public");
-    if (!filePath.startsWith(publicRoot) || !existsSync(filePath)) {
-      return NextResponse.json({ error: "Image not found." }, { status: 404 });
-    }
-
     const size = downloadSizes.find((s) => s.id === body.sizeId);
-    const bytes = readFileSync(filePath);
     const safeTitle = (body.title || "image")
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
@@ -64,7 +81,7 @@ export async function POST(request: Request) {
     return new NextResponse(bytes, {
       status: 200,
       headers: {
-        "Content-Type": "image/jpeg",
+        "Content-Type": contentType,
         "Content-Disposition": `attachment; filename="${filename}"`,
         "Cache-Control": "private, no-store",
         "X-Lumenstock-User": user.email,

@@ -774,15 +774,26 @@ const expandedAssets: Asset[] = (expandedAssetsRaw as RawExpandedAsset[]).map((i
 export const primaryAssets: Asset[] = [...categoryAssets, ...subcategoryAssets];
 export const assets: Asset[] = [...primaryAssets, ...expandedAssets];
 
+const assetBySlug = new Map<string, Asset>();
+const assetById = new Map<string, Asset>();
+const catalogImageUrlSet = new Set<string>();
 const categoryCounts = new Map<string, number>();
 const subcategoryCounts = new Map<string, number>();
+
 for (const asset of assets) {
+  assetBySlug.set(asset.slug, asset);
+  assetById.set(asset.id, asset);
+  catalogImageUrlSet.add(asset.imageUrl);
   for (const catId of asset.categoryIds) {
     categoryCounts.set(catId, (categoryCounts.get(catId) || 0) + 1);
   }
   if (asset.subcategoryId) {
     subcategoryCounts.set(asset.subcategoryId, (subcategoryCounts.get(asset.subcategoryId) || 0) + 1);
   }
+}
+
+export function isCatalogImageUrl(imageUrl: string) {
+  return catalogImageUrlSet.has(imageUrl);
 }
 
 export function getAssetCountForCategory(categoryId: string) {
@@ -839,7 +850,7 @@ export const packs = [
 
 /** Resolve by SEO slug or legacy id (ls-0003 / ls-sub-0001). */
 export function getAsset(slugOrId: string) {
-  return assets.find((a) => a.slug === slugOrId || a.id === slugOrId);
+  return assetBySlug.get(slugOrId) ?? assetById.get(slugOrId);
 }
 
 export function getCategory(id: string) {

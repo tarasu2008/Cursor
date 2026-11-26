@@ -73,6 +73,7 @@ function SizePreviewModal({
             key={`${imageUrl}-${size.id}`}
             src={imageUrl}
             alt={`${size.label} crop preview`}
+            referrerPolicy="no-referrer"
             className={`preview-modal-image${loaded ? " ready" : ""}`}
             style={{
               aspectRatio: `${size.width} / ${size.height}`,
@@ -229,7 +230,7 @@ export function AssetWorkspace({ imageUrl, title, width, height }: Props) {
       <div className="detail-media-stack">
         <figure className="detail-media master-media">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={imageUrl} alt={title} />
+          <img src={imageUrl} alt={title} referrerPolicy="no-referrer" />
           <figcaption>
             Master · {width}×{height}px
           </figcaption>

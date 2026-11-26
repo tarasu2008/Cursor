@@ -19,13 +19,19 @@ export async function generateStaticParams() {
   return primaryAssets.map((a) => ({ slug: a.slug }));
 }
 
+function absoluteImageUrl(imageUrl: string) {
+  return imageUrl.startsWith("http://") || imageUrl.startsWith("https://")
+    ? imageUrl
+    : `${siteConfig.url}${imageUrl}`;
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const asset = getAsset(slug);
   if (!asset) return { title: "Image not found" };
 
   const url = `${siteConfig.url}${assetPath(asset)}`;
-  const image = `${siteConfig.url}${asset.imageUrl}`;
+  const image = absoluteImageUrl(asset.imageUrl);
   const title = `${asset.title} — royalty-free stock image`;
   const description = `${asset.description} Download HD desktop, tablet, and phone sizes from Lumenstock.`;
 
@@ -79,7 +85,7 @@ export default async function AssetPage({ params }: Props) {
     "@type": "ImageObject",
     name: asset.title,
     description: asset.description,
-    contentUrl: `${siteConfig.url}${asset.imageUrl}`,
+    contentUrl: absoluteImageUrl(asset.imageUrl),
     url: `${siteConfig.url}${assetPath(asset)}`,
     creditText: asset.owner,
     acquireLicensePage: `${siteConfig.url}/pricing`,
