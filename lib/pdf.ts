@@ -36,8 +36,12 @@ export function renderReportPdf(report: AuditReport): Promise<Buffer> {
       .fontSize(11)
       .fillColor("#6e6e73")
       .text(
-        `${report.scores.passedCount} of ${report.scores.total} opened pages passed. Score ${report.scores.passedPercent}.`,
+        report.categories
+          .map((item) => `${item.label}: ${item.score === null ? "not scored" : item.score}`)
+          .join("   "),
       );
+    doc.moveDown(0.3);
+    doc.font(FONT).fontSize(11).fillColor("#6e6e73").text("The scenarios below are the requests this run made.");
 
     for (const scenario of report.scenarios) {
       doc.moveDown(1.2);

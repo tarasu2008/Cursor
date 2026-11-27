@@ -1,5 +1,21 @@
 import { z } from "zod";
 
+export const findingSchema = z.object({
+  label: z.string().min(1),
+  value: z.string().min(1),
+  state: z.enum(["pass", "fail", "info"]),
+});
+
+export const categorySchema = z.object({
+  id: z.enum(["load", "document", "meta", "links", "missing"]),
+  label: z.string().min(1),
+  headline: z.string().min(1),
+  score: z.number().int().min(0).max(100).nullable(),
+  findings: z.array(findingSchema).min(1).max(20),
+});
+
+export type Category = z.infer<typeof categorySchema>;
+
 export const scenarioSchema = z.object({
   id: z.string().regex(/^TC-\d+$/),
   name: z.string().min(1),
@@ -32,6 +48,7 @@ export const auditReportSchema = z.object({
     homepageStatus: z.number().int(),
     homepageMs: z.number().int().nonnegative(),
   }),
+  categories: z.array(categorySchema).length(5),
   scenarios: z.array(scenarioSchema).min(1).max(24),
 });
 

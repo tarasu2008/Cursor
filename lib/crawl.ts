@@ -3,6 +3,7 @@ import {
   PRECONDITIONS,
   auditReportSchema,
   type AuditReport,
+  type Category,
   type Scenario,
 } from "./schema";
 import {
@@ -58,33 +59,41 @@ export async function auditUrl(raw: string): Promise<AuditReport> {
       const message = error instanceof Error ? error.message : "The request failed.";
       return {
         control,
-        page: {
-          requestedUrl: control.url,
-          finalUrl: control.url,
-          status: 0,
-          ms: 0,
-          title: null,
-          h1: [],
-          metaDescription: null,
-          html: false,
-          note: message,
-        } satisfies Opened,
+        page: blankOpen(control.url, message),
       };
     }
   });
 
-  const scenarios: Scenario[] = [homepageScenario(home)];
-  for (const row of opened) {
-    if (!row) continue;
-    scenarios.push(controlScenario(scenarios.length + 1, row.control.label, row.page));
+  const links = opened.flatMap((row) => (row ? [row] : []));
+  const missingTarget = new URL("/qa-first-pass-missing", home.finalUrl);
+  missingTarget.search = "";
+  missingTarget.hash = "";
+  let missing: Opened;
+  try {
+    missing = await openUrl(missingTarget.toString(), hosts, deadline, CHILD_TIMEOUT_MS);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "The request failed.";
+    missing = blankOpen(missingTarget.toString(), message);
   }
 
+  const facts = home.html ? documentFacts(home.htmlBody, home.finalUrl) : emptyFacts();
+  const scenarios: Scenario[] = [
+    loadScenario(home),
+    documentScenario(home, facts),
+    metaScenario(home, facts),
+  ];
+  for (const row of links) {
+    scenarios.push(controlScenario(scenarios.length + 1, row.control.label, row.page));
+  }
+  scenarios.push(missingScenario(scenarios.length + 1, missing));
+
+  const failedLinks = links.filter((row) => linkFailed(row.page)).length;
   const passedCount = scenarios.filter((item) => item.passed).length;
   const report: AuditReport = {
     requestedUrl: start.toString(),
     finalUrl: home.finalUrl,
     fetchedAt: new Date().toISOString(),
-    summary: `${passedCount} of ${scenarios.length} opened pages returned a status below 400 and a title. Homepage HTTP ${home.status} in ${home.ms} ms.`,
+    summary: `HTTP ${home.status} in ${home.ms} ms. ${failedLinks} of ${links.length} opened header links failed. The unknown path returned HTTP ${missing.status}.`,
     scores: {
       passedPercent: Math.round((100 * passedCount) / scenarios.length),
       passedCount,
@@ -92,44 +101,92 @@ export async function auditUrl(raw: string): Promise<AuditReport> {
       homepageStatus: home.status,
       homepageMs: home.ms,
     },
+    categories: buildCategories(home, facts, links, missing),
     scenarios,
   };
   return auditReportSchema.parse(report);
 }
 
-function homepageScenario(page: Opened & { htmlBody: string }): Scenario {
-  const title = page.title;
-  const passed = page.status >= 200 && page.status < 400 && Boolean(title) && page.h1.length === 1;
-  const h1Text = page.h1.length === 0 ? "No H1." : page.h1.map((item) => `"${item}"`).join(", ");
+function loadScenario(page: Opened): Scenario {
+  const passed = page.status >= 200 && page.status < 400;
   return {
     id: "TC-01",
     name: "Open the homepage",
-    control: "Homepage",
+    control: "Load",
     requestedUrl: page.requestedUrl,
     finalUrl: page.finalUrl,
     status: page.status,
     ms: page.ms,
-    title,
+    title: page.title,
+    passed,
+    description: "A public visitor opens the address they pasted. This scenario checks the HTTP status and the time of that response.",
+    preconditions: PRECONDITIONS,
+    steps: [`Open ${page.requestedUrl} with GET.`, "Read the HTTP status and the elapsed time."],
+    testData: page.requestedUrl,
+    expected: "The response status is below 400.",
+    actual: [page.note, `HTTP ${page.status} in ${page.ms} ms.`, `Final address: ${page.finalUrl}.`].filter(Boolean).join(" "),
+  };
+}
+
+function documentScenario(page: Opened, facts: DocFacts): Scenario {
+  const passed = Boolean(page.title) && page.h1.length === 1;
+  const h1Text = page.h1.length === 0 ? "No H1." : page.h1.map((item) => `"${item}"`).join(", ");
+  return {
+    id: "TC-02",
+    name: "Read the title and headings",
+    control: "Title and headings",
+    requestedUrl: page.requestedUrl,
+    finalUrl: page.finalUrl,
+    status: page.status,
+    ms: page.ms,
+    title: page.title,
+    passed,
+    description: "A public visitor reads the document that came back for the pasted address. This scenario checks the title element and the H1 elements.",
+    preconditions: PRECONDITIONS,
+    steps: ["Read the title element.", "Count the H1 elements and read their text.", "Count the H2 and H3 elements."],
+    testData: page.finalUrl,
+    expected: "The title is not empty. The document contains exactly one H1.",
+    actual: [
+      page.title ? `Title: "${page.title}".` : "No title element.",
+      `H1: ${h1Text}.`,
+      `H2 count: ${facts.h2}.`,
+      `H3 count: ${facts.h3}.`,
+    ].join(" "),
+  };
+}
+
+function metaScenario(page: Opened, facts: DocFacts): Scenario {
+  const passed = Boolean(page.metaDescription) && Boolean(facts.canonical) && Boolean(facts.viewport) && Boolean(facts.lang);
+  return {
+    id: "TC-03",
+    name: "Read the meta elements",
+    control: "Meta",
+    requestedUrl: page.requestedUrl,
+    finalUrl: page.finalUrl,
+    status: page.status,
+    ms: page.ms,
+    title: page.title,
     passed,
     description:
-      "A public visitor opens the address they pasted. This scenario checks the HTTP status, the document title, and the first H1 that came back with that response.",
+      "A public visitor reads the document that came back for the pasted address. This scenario checks the meta description, canonical link, viewport meta element, and html lang attribute.",
     preconditions: PRECONDITIONS,
     steps: [
-      `Open ${page.requestedUrl}.`,
-      "Read the HTTP status, the document title, and the text of each H1 in the response.",
+      "Read the meta description.",
+      "Read the canonical link.",
+      "Read the viewport meta element.",
+      "Read the lang attribute on the html element.",
     ],
-    testData: page.requestedUrl,
-    expected: "The response status is below 400. The title is not empty. The document contains exactly one H1.",
+    testData: page.finalUrl,
+    expected: "The description, canonical link, viewport meta element, and html lang attribute are present.",
     actual: [
-      page.note,
-      `HTTP ${page.status} in ${page.ms} ms.`,
-      `Final address: ${page.finalUrl}.`,
-      title ? `Title: "${title}".` : "No title element.",
-      `H1: ${h1Text}.`,
-      page.metaDescription ? `Meta description: "${page.metaDescription}".` : "No meta description element.",
-    ]
-      .filter(Boolean)
-      .join(" "),
+      page.metaDescription
+        ? `Meta description: ${page.metaDescription.length} characters. "${page.metaDescription}".`
+        : "No meta description element.",
+      facts.canonical ? `Canonical: ${facts.canonical}.` : "No canonical link.",
+      facts.viewport ? `Viewport: ${facts.viewport}.` : "No viewport meta element.",
+      facts.lang ? `Language: ${facts.lang}.` : "No lang attribute on the html element.",
+      facts.robots ? `Robots: ${facts.robots}.` : "No robots meta element.",
+    ].join(" "),
   };
 }
 
@@ -163,6 +220,199 @@ function controlScenario(number: number, label: string, page: Opened): Scenario 
       .filter(Boolean)
       .join(" "),
   };
+}
+
+function missingScenario(number: number, page: Opened): Scenario {
+  const passed = page.status === 404;
+  return {
+    id: `TC-${String(number).padStart(2, "0")}`,
+    name: "Request an unknown path",
+    control: "404 check",
+    requestedUrl: page.requestedUrl,
+    finalUrl: page.finalUrl,
+    status: page.status,
+    ms: page.ms,
+    title: page.title,
+    passed,
+    description: "A public visitor requests a path that is not a page on the site. This scenario checks that the response status is 404.",
+    preconditions: PRECONDITIONS,
+    steps: [`Open ${page.requestedUrl} with GET.`, "Read the HTTP status."],
+    testData: page.requestedUrl,
+    expected: "The response status is 404.",
+    actual: [
+      page.note,
+      page.status === 0 ? "No HTTP status was returned." : `HTTP ${page.status} in ${page.ms} ms.`,
+      `Final address: ${page.finalUrl}.`,
+    ]
+      .filter(Boolean)
+      .join(" "),
+  };
+}
+
+type DocFacts = { lang: string | null; canonical: string | null; viewport: string | null; robots: string | null; h2: number; h3: number };
+type LinkRow = { control: { label: string; url: string }; page: Opened };
+
+function buildCategories(home: Opened, facts: DocFacts, links: LinkRow[], missing: Opened): Category[] {
+  const loadPass = home.status >= 200 && home.status < 400;
+  const titlePass = Boolean(home.title);
+  const h1Pass = home.h1.length === 1;
+  const h1Value =
+    home.h1.length === 0 ? "0 headings." : `${home.h1.length} heading${home.h1.length === 1 ? "" : "s"}. ${home.h1.map((item) => `"${item}"`).join(" ")}`;
+  const metaFindings = [
+    {
+      label: "Description",
+      value: home.metaDescription
+        ? `${home.metaDescription.length} characters. "${clip(home.metaDescription)}"`
+        : "No meta description element.",
+      state: home.metaDescription ? "pass" : "fail",
+    },
+    {
+      label: "Canonical",
+      value: facts.canonical ?? "No canonical link.",
+      state: facts.canonical ? "pass" : "fail",
+    },
+    {
+      label: "Viewport",
+      value: facts.viewport ?? "No viewport meta element.",
+      state: facts.viewport ? "pass" : "fail",
+    },
+    {
+      label: "Language",
+      value: facts.lang ?? "No lang attribute on the html element.",
+      state: facts.lang ? "pass" : "fail",
+    },
+  ] as const;
+  const metaPassed = metaFindings.filter((item) => item.state === "pass").length;
+  const failed = links.filter((row) => linkFailed(row.page));
+  const missingPass = missing.status === 404;
+
+  return [
+    {
+      id: "load",
+      label: "Load",
+      headline: `HTTP ${home.status} · ${home.ms} ms`,
+      score: loadPass ? 100 : 0,
+      findings: [
+        { label: "HTTP status", value: String(home.status || "none"), state: loadPass ? "pass" : "fail" },
+        { label: "Time", value: `${home.ms} ms`, state: "info" },
+        { label: "Final address", value: home.finalUrl, state: "info" },
+        ...(home.note ? [{ label: "Redirects", value: home.note, state: "info" as const }] : []),
+      ],
+    },
+    {
+      id: "document",
+      label: "Title and headings",
+      headline: `${home.title ? clip(home.title, 80) : "No title"} · ${home.h1.length} H1`,
+      score: Math.round((100 * [titlePass, h1Pass].filter(Boolean).length) / 2),
+      findings: [
+        { label: "Title", value: home.title ? `"${home.title}"` : "No title element.", state: titlePass ? "pass" : "fail" },
+        { label: "H1", value: h1Value, state: h1Pass ? "pass" : "fail" },
+        { label: "H2", value: `${facts.h2} headings`, state: "info" },
+        { label: "H3", value: `${facts.h3} headings`, state: "info" },
+      ],
+    },
+    {
+      id: "meta",
+      label: "Meta",
+      headline: `${metaPassed} of ${metaFindings.length} present`,
+      score: Math.round((100 * metaPassed) / metaFindings.length),
+      findings: [
+        ...metaFindings,
+        { label: "Robots", value: facts.robots ?? "No robots meta element.", state: "info" },
+      ],
+    },
+    {
+      id: "links",
+      label: "Failed links",
+      headline: links.length === 0 ? "None opened" : `${failed.length} of ${links.length} failed`,
+      score: links.length === 0 ? null : Math.round((100 * (links.length - failed.length)) / links.length),
+      findings: [
+        {
+          label: "Opened",
+          value:
+            links.length === 0
+              ? "No header or nav links were opened."
+              : `${failed.length} of ${links.length} opened header and nav links failed.`,
+          state: links.length === 0 ? "info" : failed.length === 0 ? "pass" : "fail",
+        },
+        ...failed.map((row) => ({
+          label: "Link",
+          value:
+            row.page.status === 0
+              ? `${row.page.requestedUrl}. ${row.page.note || "No HTTP status."}`
+              : `${row.page.finalUrl}. HTTP ${row.page.status} in ${row.page.ms} ms.${row.page.html && !row.page.title ? " No title element." : ""}`,
+          state: "fail" as const,
+        })),
+      ],
+    },
+    {
+      id: "missing",
+      label: "404 check",
+      headline: missing.status === 0 ? "No response" : `HTTP ${missing.status}`,
+      score: missingPass ? 100 : 0,
+      findings: [
+        { label: "Requested", value: missing.requestedUrl, state: "info" },
+        {
+          label: "HTTP status",
+          value: missing.status === 0 ? missing.note || "No HTTP status." : String(missing.status),
+          state: missingPass ? "pass" : "fail",
+        },
+        { label: "Time", value: `${missing.ms} ms`, state: "info" },
+        ...(missing.finalUrl !== missing.requestedUrl
+          ? [{ label: "Final address", value: missing.finalUrl, state: "info" as const }]
+          : []),
+      ],
+    },
+  ];
+}
+
+function linkFailed(page: Opened): boolean {
+  if (page.status < 200 || page.status >= 400) return true;
+  return page.html && !page.title;
+}
+
+function blankOpen(url: string, note: string): Opened {
+  return {
+    requestedUrl: url,
+    finalUrl: url,
+    status: 0,
+    ms: 0,
+    title: null,
+    h1: [],
+    metaDescription: null,
+    html: false,
+    note,
+  };
+}
+
+function emptyFacts(): DocFacts {
+  return { lang: null, canonical: null, viewport: null, robots: null, h2: 0, h3: 0 };
+}
+
+function documentFacts(html: string, base: string): DocFacts {
+  const root = parse(html);
+  const canonicalTag = root.querySelectorAll("link").find((el) => (el.getAttribute("rel") || "").toLowerCase() === "canonical");
+  const href = clean(canonicalTag?.getAttribute("href") ?? "");
+  let canonical: string | null = null;
+  if (href) {
+    try {
+      canonical = new URL(href, base).toString();
+    } catch {
+      canonical = href;
+    }
+  }
+  return {
+    lang: clean(root.querySelector("html")?.getAttribute("lang") ?? "") || null,
+    canonical,
+    viewport: metaContent(root, "viewport"),
+    robots: metaContent(root, "robots"),
+    h2: root.querySelectorAll("h2").map((el) => clean(el.text)).filter(Boolean).length,
+    h3: root.querySelectorAll("h3").map((el) => clean(el.text)).filter(Boolean).length,
+  };
+}
+
+function clip(value: string, max = 400): string {
+  return value.length <= max ? value : `${value.slice(0, max)}…`;
 }
 
 function discoverControls(

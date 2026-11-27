@@ -1,6 +1,6 @@
 # First Pass
 
-Paste a public homepage. The page opens that address and the links in its header, then shows only the pages that came back. Download report writes a PDF of those same scenarios.
+Paste a public URL. The page shows circular scores and expandable groups for what this run measured on that URL: load, title and headings, meta, failed header links, and a 404 check. Download report writes the fuller scenarios to a PDF.
 
 Nothing is submitted. Checkout, payment, sign-in, and delete addresses are not opened.
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { AuditReport } from "@/lib/schema";
+import type { AuditReport, Category } from "@/lib/schema";
 
 const DEMO_URL = "https://www.seadwellers.com/";
 
@@ -22,7 +22,7 @@ export function Auditor() {
         body: JSON.stringify({ url }),
       });
       const payload = (await response.json()) as AuditReport | { error?: string };
-      if (!response.ok || !("scenarios" in payload)) {
+      if (!response.ok || !("categories" in payload)) {
         setReport(null);
         setError("error" in payload && payload.error ? payload.error : "The homepage could not be opened.");
         return;
@@ -66,16 +66,16 @@ export function Auditor() {
   }
 
   return (
-    <main>
-      <header className="top">
-        <a href="#open">First Pass</a>
+    <>
+      <header className="bar">
+        <h1>First Pass</h1>
+        {report ? (
+          <button type="button" className="ghost" onClick={() => void download()} disabled={downloading}>
+            {downloading ? "Preparing…" : "Download report"}
+          </button>
+        ) : null}
       </header>
-
-      <section className="hero" id="open">
-        <h1>Open the homepage.</h1>
-        <p className="lede">
-          Paste an address. First Pass opens that page and the links in its header, then lists what came back.
-        </p>
+      <main>
         <form
           onSubmit={(event) => {
             event.preventDefault();
@@ -96,51 +96,92 @@ export function Auditor() {
               onChange={(event) => setUrl(event.target.value)}
             />
             <button type="submit" disabled={pending}>
-              {pending ? "Opening…" : "Analyze"}
+              {pending ? "Analyzing…" : "Analyze"}
             </button>
           </div>
+          <p className="quiet">Public pages only. One fetch of this URL. Nothing is submitted.</p>
+          {error ? (
+            <p className="error" role="alert">
+              {error}
+            </p>
+          ) : null}
         </form>
-        <p className="quiet">Public pages only. Nothing is submitted.</p>
-        {error ? (
-          <p className="error" role="alert">
-            {error}
-          </p>
-        ) : null}
-      </section>
 
-      {report ? (
-        <section className="results" aria-live="polite">
-          <div className="scores">
-            <div>
-              <p className="figure">{report.scores.passedPercent}</p>
-              <p className="caption">
-                Passed · {report.scores.passedCount} of {report.scores.total} opened
+        {report ? (
+          <section className="results" aria-live="polite">
+            <div className="gauge-card">
+              {report.categories.map((category) => (
+                <Gauge key={category.id} category={category} />
+              ))}
+              <p className="legend">
+                <span className="swatch poor" /> 0–49
+                <span className="swatch ok" /> 50–89
+                <span className="swatch good" /> 90–100
               </p>
             </div>
-            <div>
-              <p className="figure">{report.scores.homepageMs}</p>
-              <p className="caption">Homepage · HTTP {report.scores.homepageStatus}</p>
+            <div className="groups">
+              {report.categories.map((category) => (
+                <details key={category.id} open={category.score === null || category.score < 90}>
+                  <summary>
+                    <i className={`marker ${band(category.score)}`} aria-hidden="true" />
+                    <span className="group-label">{category.label}</span>
+                    <span className="group-headline">{category.headline}</span>
+                    <span className={`group-score ${band(category.score)}`}>
+                      {category.score === null ? "–" : category.score}
+                    </span>
+                  </summary>
+                  <ul>
+                    {category.findings.map((finding, index) => (
+                      <li key={`${category.id}-${index}`} className={finding.state}>
+                        <i className={`marker ${finding.state === "pass" ? "good" : finding.state === "fail" ? "poor" : "info"}`} aria-hidden="true" />
+                        <span className="finding-label">{finding.label}</span>
+                        <span className="finding-value">{finding.value}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </details>
+              ))}
             </div>
-          </div>
-          <p className="summary">{report.summary}</p>
-          <button type="button" className="download" onClick={() => void download()} disabled={downloading}>
-            {downloading ? "Preparing…" : "Download report"}
-          </button>
-          <ul className="rows">
-            {report.scenarios.map((scenario) => (
-              <li key={scenario.id}>
-                <span className={scenario.passed ? "mark pass" : "mark fail"} aria-hidden="true" />
-                <span className="name">{scenario.control}</span>
-                <span className="status">{scenario.status || "—"}</span>
-                <span className="time">{scenario.ms ? `${scenario.ms} ms` : ""}</span>
-                <span className="title">{scenario.title ?? scenario.finalUrl}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
-      ) : null}
-    </main>
+          </section>
+        ) : null}
+      </main>
+    </>
   );
+}
+
+function Gauge({ category }: { category: Category }) {
+  const tone = band(category.score);
+  const radius = 42;
+  const circumference = 2 * Math.PI * radius;
+  const amount = ((category.score ?? 0) / 100) * circumference;
+  const spoken = category.score === null ? "not scored" : String(category.score);
+  return (
+    <figure className={`gauge ${tone}`} aria-label={`${category.label} ${spoken}`}>
+      <svg viewBox="0 0 120 120" aria-hidden="true">
+        <circle className="gauge-fill" cx="60" cy="60" r="48" />
+        <circle className="gauge-track" cx="60" cy="60" r={radius} />
+        <circle
+          className="gauge-arc"
+          cx="60"
+          cy="60"
+          r={radius}
+          strokeDasharray={`${amount} ${circumference}`}
+          transform="rotate(-90 60 60)"
+        />
+        <text x="60" y="68">
+          {category.score === null ? "–" : category.score}
+        </text>
+      </svg>
+      <figcaption>{category.label}</figcaption>
+    </figure>
+  );
+}
+
+function band(score: number | null): "good" | "ok" | "poor" | "none" {
+  if (score === null) return "none";
+  if (score >= 90) return "good";
+  if (score >= 50) return "ok";
+  return "poor";
 }
 
 function fileName(url: string): string {

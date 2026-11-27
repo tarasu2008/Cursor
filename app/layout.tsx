@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "First Pass",
-  description: "Open a homepage and the links in its header. Download the report of the pages that came back.",
+  description: "Open a public URL and see the measurements that came back. Download the written report.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
