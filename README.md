@@ -1,6 +1,6 @@
 # First Pass
 
-Paste a public URL. The page shows scores, then the homepage checks that ran: status, title, H1, meta, pinch zoom, nav links, buttons, the phone menu, a 404 probe, console errors, footer links, image alt text, and text overflow. Download report writes those checks to a PDF.
+Paste a public URL. The page shows scores, then every homepage check that ran: status, headings, contrast, navigation, buttons, menu items, and a booking walk that stops at checkout without entering guest or card details. A run stops at about 2 minutes. Download report writes those checks to a PDF.
 
 Nothing is submitted. Checkout, payment, sign-in, and delete addresses are not opened.
 

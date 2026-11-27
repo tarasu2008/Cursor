@@ -100,7 +100,7 @@ export function Auditor() {
               {pending ? "Analyzing…" : "Analyze"}
             </button>
           </div>
-          <p className="quiet">Public pages only. Nothing is submitted.</p>
+          <p className="quiet">Public pages only. A run stops at about 2 minutes. Checkout is not filled in or paid.</p>
           {error ? (
             <p className="error" role="alert">
               {error}
@@ -122,6 +122,9 @@ export function Auditor() {
               <p className="score-note">
                 {report.scenarios.filter((item) => item.passed).length} passed and{" "}
                 {report.scenarios.filter((item) => !item.passed).length} failed. Automation counts every check below.
+                {report.limits.remaining > 0
+                  ? ` Stopped at ${Math.round(report.limits.capSeconds / 60)} minutes. ${report.limits.remaining} controls were not opened.`
+                  : ""}
               </p>
             </div>
             <ol className="scenarios">

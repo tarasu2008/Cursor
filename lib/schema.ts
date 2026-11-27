@@ -56,12 +56,14 @@ export const auditReportSchema = z.object({
     maxPages: z.number().int().positive(),
     maxDepth: z.number().int().positive(),
     opened: z.number().int().nonnegative(),
+    capSeconds: z.number().int().positive(),
+    remaining: z.number().int().nonnegative(),
   }),
   categories: z.array(categorySchema).length(5),
-  scenarios: z.array(scenarioSchema).min(1).max(80),
+  scenarios: z.array(scenarioSchema).min(1).max(200),
 });
 
 export type AuditReport = z.infer<typeof auditReportSchema>;
 
 export const PRECONDITIONS =
-  "Role: public visitor, not signed in. Each step is a GET. No form is filled in. Checkout, payment, sign-in, and delete are not used.";
+  "Role: public visitor, not signed in. Booking may be opened through checkout. Guest details, card details, and payment are not entered or submitted.";
