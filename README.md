@@ -1,6 +1,6 @@
 # First Pass
 
-Paste a public URL. The page crawls up to 12 same-host pages, two links deep, and shows circular scores for load, title and headings, meta, links, and automation. A score counts passes, failures, and checks that did not run. Download report writes the executed page list to a PDF.
+Paste a public URL. The page shows scores, then the homepage checks that ran: status, title, H1, meta, pinch zoom, nav links, buttons, the phone menu, a 404 probe, console errors, footer links, image alt text, and text overflow. Download report writes those checks to a PDF.
 
 Nothing is submitted. Checkout, payment, sign-in, and delete addresses are not opened.
 

@@ -58,7 +58,7 @@ export const auditReportSchema = z.object({
     opened: z.number().int().nonnegative(),
   }),
   categories: z.array(categorySchema).length(5),
-  scenarios: z.array(scenarioSchema).min(1).max(16),
+  scenarios: z.array(scenarioSchema).min(1).max(80),
 });
 
 export type AuditReport = z.infer<typeof auditReportSchema>;

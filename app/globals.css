@@ -228,6 +228,32 @@ form label {
 }
 .marker.info { background: #dadce0; border-radius: 50%; }
 
+.scenarios {
+  list-style: none;
+  margin: 28px 0 0;
+  padding: 8px 0;
+  background: #fff;
+  border-radius: 22px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+}
+
+.scenarios li {
+  display: grid;
+  grid-template-columns: 4.5rem minmax(8rem, 16rem) 1fr;
+  gap: 14px;
+  align-items: baseline;
+  padding: 14px 22px;
+  border-top: 1px solid #f0f0f2;
+}
+
+.scenarios li:first-child { border-top: 0; }
+
+.pill { font-size: 13px; font-weight: 600; }
+.pill.pass { color: #0d904f; }
+.pill.fail { color: #c5221f; }
+.scenario-name { font-weight: 600; }
+.scenario-actual { color: #6e6e73; overflow-wrap: anywhere; }
+
 .groups { margin-top: 28px; overflow: hidden; }
 
 details { border-top: 1px solid var(--line); }
@@ -289,6 +315,8 @@ details[open] summary::after { transform: rotate(-135deg) translate(-2px, -2px);
 
 @media (max-width: 720px) {
   .url-row { flex-direction: column; align-items: stretch; }
+  .scenarios li { grid-template-columns: 4.5rem 1fr; }
+  .scenario-actual { grid-column: 2; }
   summary, .groups li { grid-template-columns: 16px 1fr auto; }
   .group-headline { display: none; }
   .groups li { grid-template-columns: 16px 1fr; }

@@ -100,9 +100,7 @@ export function Auditor() {
               {pending ? "Analyzing…" : "Analyze"}
             </button>
           </div>
-          <p className="quiet">
-            Public pages only. Up to 12 pages, 2 links deep. Nothing is submitted.
-          </p>
+          <p className="quiet">Public pages only. Nothing is submitted.</p>
           {error ? (
             <p className="error" role="alert">
               {error}
@@ -122,10 +120,19 @@ export function Auditor() {
                 <span className="swatch good" /> 90–100
               </p>
               <p className="score-note">
-                Opened {report.limits.opened} of {report.limits.maxPages} pages, {report.limits.maxDepth} links deep.
-                A score is passes divided by passes, failures, and checks that did not run.
+                {report.scenarios.filter((item) => item.passed).length} passed and{" "}
+                {report.scenarios.filter((item) => !item.passed).length} failed. Automation counts every check below.
               </p>
             </div>
+            <ol className="scenarios">
+              {report.scenarios.map((scenario) => (
+                <li key={scenario.id}>
+                  <span className={scenario.passed ? "pill pass" : "pill fail"}>{scenario.passed ? "Pass" : "Fail"}</span>
+                  <span className="scenario-name">{scenario.name}</span>
+                  <span className="scenario-actual">{scenario.actual}</span>
+                </li>
+              ))}
+            </ol>
             <div className="groups">
               {report.categories.map((category) => (
                 <details key={category.id} open={category.score === null || category.score < 90}>
