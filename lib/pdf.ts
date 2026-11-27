@@ -37,8 +37,11 @@ export function renderReportPdf(report: AuditReport): Promise<Buffer> {
       .fillColor("#6e6e73")
       .text(
         report.categories
-          .map((item) => `${item.label}: ${item.score === null ? "not scored" : item.score}`)
-          .join("   "),
+          .map(
+            (item) =>
+              `${item.label} ${item.score === null ? "not scored" : item.score} (${item.passed} passed, ${item.failed} failed, ${item.skipped} skipped, ${item.ran} ran)`,
+          )
+          .join(". "),
       );
     doc.moveDown(0.3);
     doc.font(FONT).fontSize(11).fillColor("#6e6e73").text("The scenarios below are the requests this run made.");

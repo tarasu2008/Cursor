@@ -15,16 +15,18 @@ import {
 } from "./guardrails";
 import { isDisallowed, parseRobots } from "./robots";
 
-const USER_AGENT =
-  "QAFirstPass/0.1 (homepage audit; GET only; does not submit forms or sign in)";
+const USER_AGENT = "QAFirstPass/0.1 (site audit; GET only; does not submit forms or sign in)";
 
-const BUDGET_MS = 25_000;
+export const MAX_PAGES = 12;
+export const MAX_DEPTH = 2;
+const BUDGET_MS = 55_000;
 const HOME_TIMEOUT_MS = 12_000;
 const CHILD_TIMEOUT_MS = 8_000;
 const MAX_BYTES = 1_200_000;
-const MAX_CONTROLS = 16;
 const ASSET_EXT =
   /\.(?:png|jpe?g|gif|webp|avif|svg|ico|css|js|mjs|map|woff2?|ttf|eot|mp4|webm|pdf|zip|gz|xml|json)$/i;
+
+type Mark = "pass" | "fail" | "skip";
 
 type Opened = {
   requestedUrl: string;
@@ -34,133 +36,130 @@ type Opened = {
   title: string | null;
   h1: string[];
   metaDescription: string | null;
+  canonical: string | null;
+  viewport: string | null;
+  lang: string | null;
+  robots: string | null;
   html: boolean;
   note: string | null;
+  depth: number;
+  label: string;
+  htmlBody: string;
 };
+
+type Job = { url: string; depth: number; label: string };
 
 export async function auditUrl(raw: string): Promise<AuditReport> {
   const start = parsePublicUrl(raw);
   await assertPublicDns(start.hostname);
   const hosts = allowedHostsFor(start.hostname);
   const deadline = Date.now() + BUDGET_MS;
+  const seen = new Set<string>();
+  const queue: Job[] = [];
+  const pages: Opened[] = [];
 
-  const home = await openUrl(start.toString(), hosts, deadline, HOME_TIMEOUT_MS);
-  const disallow = await robotsRules(home.finalUrl, hosts, deadline);
-  const controls = home.html
-    ? discoverControls(home.htmlBody, home.finalUrl, hosts, disallow)
-    : [];
+  enqueue(queue, seen, { url: start.toString(), depth: 0, label: "Homepage" });
+  let disallow: string[] = [];
+  let robotsLoaded = false;
+  let budgetSkips = 0;
 
-  const opened = await mapPool(controls, 4, async (control) => {
-    if (Date.now() > deadline - 700) return null;
-    try {
-      const page = await openUrl(control.url, hosts, deadline, CHILD_TIMEOUT_MS);
-      return { control, page };
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "The request failed.";
-      return {
-        control,
-        page: blankOpen(control.url, message),
-      };
+  while (pages.length < MAX_PAGES && queue.length > 0) {
+    if (Date.now() > deadline - 800) {
+      budgetSkips = Math.min(queue.length, MAX_PAGES - pages.length);
+      break;
     }
-  });
+    const batch = queue.splice(0, Math.min(4, MAX_PAGES - pages.length));
+    const fetched = await mapPool(batch, 4, async (job) => {
+      try {
+        const page = await openUrl(job.url, hosts, deadline, job.depth === 0 ? HOME_TIMEOUT_MS : CHILD_TIMEOUT_MS);
+        return { job, page };
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "The request failed.";
+        return { job, page: failedOpen(job, message) };
+      }
+    });
 
-  const links = opened.flatMap((row) => (row ? [row] : []));
+    for (const item of fetched) {
+      const page = item.page;
+      page.depth = item.job.depth;
+      page.label = item.job.label;
+      pages.push(page);
+      seen.add(normalize(page.finalUrl));
+      if (!robotsLoaded && page.html) {
+        disallow = await robotsRules(page.finalUrl, hosts, deadline);
+        robotsLoaded = true;
+      }
+      if (page.html && page.htmlBody && page.depth < MAX_DEPTH) {
+        for (const link of discoverLinks(page.htmlBody, page.finalUrl, hosts, disallow)) {
+          enqueue(queue, seen, { url: link.url, depth: page.depth + 1, label: link.label });
+        }
+      }
+    }
+  }
+
+  const homePage = pages[0];
+  if (!homePage || homePage.status === 0) {
+    throw new CrawlError(homePage?.note || "The homepage could not be opened.");
+  }
+  const home = pages[0];
+  if (!home) throw new CrawlError("The homepage could not be opened.");
+
   const missingTarget = new URL("/qa-first-pass-missing", home.finalUrl);
   missingTarget.search = "";
   missingTarget.hash = "";
-  let missing: Opened;
-  try {
-    missing = await openUrl(missingTarget.toString(), hosts, deadline, CHILD_TIMEOUT_MS);
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "The request failed.";
-    missing = blankOpen(missingTarget.toString(), message);
+  let missing: Opened | null = null;
+  let missingSkipped = false;
+  if (Date.now() > deadline - 800) {
+    missingSkipped = true;
+  } else {
+    try {
+      missing = await openUrl(missingTarget.toString(), hosts, deadline, CHILD_TIMEOUT_MS);
+      missing.depth = 1;
+      missing.label = "Unknown path";
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "The request failed.";
+      missing = failedOpen({ url: missingTarget.toString(), depth: 1, label: "Unknown path" }, message);
+    }
   }
 
-  const facts = home.html ? documentFacts(home.htmlBody, home.finalUrl) : emptyFacts();
-  const scenarios: Scenario[] = [
-    loadScenario(home),
-    documentScenario(home, facts),
-    metaScenario(home, facts),
-  ];
-  for (const row of links) {
-    scenarios.push(controlScenario(scenarios.length + 1, row.control.label, row.page));
-  }
-  scenarios.push(missingScenario(scenarios.length + 1, missing));
-
-  const failedLinks = links.filter((row) => linkFailed(row.page)).length;
-  const passedCount = scenarios.filter((item) => item.passed).length;
+  const coverageGap = Math.max(0, MAX_PAGES - pages.length - budgetSkips);
+  const categories = buildCategories(pages, missing, missingSkipped, budgetSkips, coverageGap);
+  const scenarios = buildScenarios(pages, missing);
+  const automation = categories.find((item) => item.id === "automation");
   const report: AuditReport = {
     requestedUrl: start.toString(),
     finalUrl: home.finalUrl,
     fetchedAt: new Date().toISOString(),
-    summary: `HTTP ${home.status} in ${home.ms} ms. ${failedLinks} of ${links.length} opened header links failed. The unknown path returned HTTP ${missing.status}.`,
+    summary: `${pages.length} of ${MAX_PAGES} pages opened, depth ${MAX_DEPTH}. ${budgetSkips} queued pages were not opened. The unknown path ${missingSkipped ? "was not requested" : `returned HTTP ${missing?.status ?? 0}`}.`,
     scores: {
-      passedPercent: Math.round((100 * passedCount) / scenarios.length),
-      passedCount,
-      total: scenarios.length,
+      passedPercent: automation?.score ?? 0,
+      passedCount: automation?.passed ?? 0,
+      total: Math.max(1, (automation?.passed ?? 0) + (automation?.failed ?? 0) + (automation?.skipped ?? 0)),
       homepageStatus: home.status,
       homepageMs: home.ms,
     },
-    categories: buildCategories(home, facts, links, missing),
+    limits: { maxPages: MAX_PAGES, maxDepth: MAX_DEPTH, opened: pages.length },
+    categories,
     scenarios,
   };
   return auditReportSchema.parse(report);
 }
 
-function loadScenario(page: Opened): Scenario {
-  const passed = page.status >= 200 && page.status < 400;
-  return {
-    id: "TC-01",
-    name: "Open the homepage",
-    control: "Load",
-    requestedUrl: page.requestedUrl,
-    finalUrl: page.finalUrl,
-    status: page.status,
-    ms: page.ms,
-    title: page.title,
-    passed,
-    description: "A public visitor opens the address they pasted. This scenario checks the HTTP status and the time of that response.",
-    preconditions: PRECONDITIONS,
-    steps: [`Open ${page.requestedUrl} with GET.`, "Read the HTTP status and the elapsed time."],
-    testData: page.requestedUrl,
-    expected: "The response status is below 400.",
-    actual: [page.note, `HTTP ${page.status} in ${page.ms} ms.`, `Final address: ${page.finalUrl}.`].filter(Boolean).join(" "),
-  };
+function buildScenarios(pages: Opened[], missing: Opened | null): Scenario[] {
+  const scenarios = pages.map((page, index) => pageScenario(index + 1, page));
+  if (missing) scenarios.push(missingScenario(scenarios.length + 1, missing));
+  return scenarios;
 }
 
-function documentScenario(page: Opened, facts: DocFacts): Scenario {
-  const passed = Boolean(page.title) && page.h1.length === 1;
-  const h1Text = page.h1.length === 0 ? "No H1." : page.h1.map((item) => `"${item}"`).join(", ");
+function pageScenario(number: number, page: Opened): Scenario {
+  const statusOk = page.status >= 200 && page.status < 400;
+  const titleOk = Boolean(page.title);
+  const h1Ok = page.h1.length === 1;
+  const passed = statusOk && (!page.html || (titleOk && h1Ok));
   return {
-    id: "TC-02",
-    name: "Read the title and headings",
-    control: "Title and headings",
-    requestedUrl: page.requestedUrl,
-    finalUrl: page.finalUrl,
-    status: page.status,
-    ms: page.ms,
-    title: page.title,
-    passed,
-    description: "A public visitor reads the document that came back for the pasted address. This scenario checks the title element and the H1 elements.",
-    preconditions: PRECONDITIONS,
-    steps: ["Read the title element.", "Count the H1 elements and read their text.", "Count the H2 and H3 elements."],
-    testData: page.finalUrl,
-    expected: "The title is not empty. The document contains exactly one H1.",
-    actual: [
-      page.title ? `Title: "${page.title}".` : "No title element.",
-      `H1: ${h1Text}.`,
-      `H2 count: ${facts.h2}.`,
-      `H3 count: ${facts.h3}.`,
-    ].join(" "),
-  };
-}
-
-function metaScenario(page: Opened, facts: DocFacts): Scenario {
-  const passed = Boolean(page.metaDescription) && Boolean(facts.canonical) && Boolean(facts.viewport) && Boolean(facts.lang);
-  return {
-    id: "TC-03",
-    name: "Read the meta elements",
-    control: "Meta",
+    id: `TC-${String(number).padStart(2, "0")}`,
+    name: page.depth === 0 ? "Open the submitted URL" : "Open a discovered page",
+    control: page.depth === 0 ? "Submitted URL" : page.label || "Discovered link",
     requestedUrl: page.requestedUrl,
     finalUrl: page.finalUrl,
     status: page.status,
@@ -168,54 +167,23 @@ function metaScenario(page: Opened, facts: DocFacts): Scenario {
     title: page.title,
     passed,
     description:
-      "A public visitor reads the document that came back for the pasted address. This scenario checks the meta description, canonical link, viewport meta element, and html lang attribute.",
-    preconditions: PRECONDITIONS,
-    steps: [
-      "Read the meta description.",
-      "Read the canonical link.",
-      "Read the viewport meta element.",
-      "Read the lang attribute on the html element.",
-    ],
-    testData: page.finalUrl,
-    expected: "The description, canonical link, viewport meta element, and html lang attribute are present.",
-    actual: [
-      page.metaDescription
-        ? `Meta description: ${page.metaDescription.length} characters. "${page.metaDescription}".`
-        : "No meta description element.",
-      facts.canonical ? `Canonical: ${facts.canonical}.` : "No canonical link.",
-      facts.viewport ? `Viewport: ${facts.viewport}.` : "No viewport meta element.",
-      facts.lang ? `Language: ${facts.lang}.` : "No lang attribute on the html element.",
-      facts.robots ? `Robots: ${facts.robots}.` : "No robots meta element.",
-    ].join(" "),
-  };
-}
-
-function controlScenario(number: number, label: string, page: Opened): Scenario {
-  const passed = page.status >= 200 && page.status < 400 && (!page.html || Boolean(page.title));
-  return {
-    id: `TC-${String(number).padStart(2, "0")}`,
-    name: `Open ${label}`,
-    control: label,
-    requestedUrl: page.requestedUrl,
-    finalUrl: page.finalUrl,
-    status: page.status,
-    ms: page.ms,
-    title: page.title,
-    passed,
-    description: `A public visitor uses the "${label}" control on the homepage. This scenario checks the page that control opens.`,
-    preconditions: `${PRECONDITIONS} The homepage response contained a link whose visible name is "${label}".`,
-    steps: [
-      `On the homepage, find the control named "${label}".`,
-      `Open ${page.requestedUrl} with GET.`,
-      "Read the HTTP status and the document title.",
-    ],
-    testData: `${label} — ${page.requestedUrl}`,
-    expected: "The response status is below 400. When the response is HTML, the title is not empty.",
+      page.depth === 0
+        ? "A public visitor opens the address they pasted. This scenario records the HTTP status, the title, and the H1 elements."
+        : "The crawl opens a same-host link found in the header, nav, main, or footer. This scenario records the HTTP status, the title, and the H1 elements.",
+    preconditions: `${PRECONDITIONS} Depth ${page.depth} of ${MAX_DEPTH}. The page cap is ${MAX_PAGES}.`,
+    steps: [`Open ${page.requestedUrl} with GET.`, "Read the HTTP status, the title, and the H1 elements."],
+    testData: `${page.label} — ${page.requestedUrl}`,
+    expected: "The response status is below 400. When the response is HTML, the title is not empty and the document contains exactly one H1.",
     actual: [
       page.note,
       page.status === 0 ? "No HTTP status was returned." : `HTTP ${page.status} in ${page.ms} ms.`,
       `Final address: ${page.finalUrl}.`,
       page.title ? `Title: "${page.title}".` : page.html ? "No title element." : "Response was not HTML.",
+      `H1 count: ${page.h1.length}.`,
+      page.metaDescription ? "Meta description is present." : "No meta description element.",
+      page.canonical ? "Canonical link is present." : "No canonical link.",
+      page.viewport ? "Viewport meta element is present." : "No viewport meta element.",
+      page.lang ? `Language: ${page.lang}.` : "No lang attribute on the html element.",
     ]
       .filter(Boolean)
       .join(" "),
@@ -223,7 +191,6 @@ function controlScenario(number: number, label: string, page: Opened): Scenario 
 }
 
 function missingScenario(number: number, page: Opened): Scenario {
-  const passed = page.status === 404;
   return {
     id: `TC-${String(number).padStart(2, "0")}`,
     name: "Request an unknown path",
@@ -233,8 +200,8 @@ function missingScenario(number: number, page: Opened): Scenario {
     status: page.status,
     ms: page.ms,
     title: page.title,
-    passed,
-    description: "A public visitor requests a path that is not a page on the site. This scenario checks that the response status is 404.",
+    passed: page.status === 404,
+    description: "A public visitor requests a path that is not a page on the host. This scenario checks that the response status is 404.",
     preconditions: PRECONDITIONS,
     steps: [`Open ${page.requestedUrl} with GET.`, "Read the HTTP status."],
     testData: page.requestedUrl,
@@ -249,173 +216,255 @@ function missingScenario(number: number, page: Opened): Scenario {
   };
 }
 
-type DocFacts = { lang: string | null; canonical: string | null; viewport: string | null; robots: string | null; h2: number; h3: number };
-type LinkRow = { control: { label: string; url: string }; page: Opened };
+function buildCategories(
+  pages: Opened[],
+  missing: Opened | null,
+  missingSkipped: boolean,
+  budgetSkips: number,
+  coverageGap: number,
+): Category[] {
+  const home = pages[0];
+  const htmlPages = pages.filter((page) => page.html);
+  const children = pages.slice(1);
 
-function buildCategories(home: Opened, facts: DocFacts, links: LinkRow[], missing: Opened): Category[] {
-  const loadPass = home.status >= 200 && home.status < 400;
-  const titlePass = Boolean(home.title);
-  const h1Pass = home.h1.length === 1;
-  const h1Value =
-    home.h1.length === 0 ? "0 headings." : `${home.h1.length} heading${home.h1.length === 1 ? "" : "s"}. ${home.h1.map((item) => `"${item}"`).join(" ")}`;
-  const metaFindings = [
-    {
-      label: "Description",
-      value: home.metaDescription
-        ? `${home.metaDescription.length} characters. "${clip(home.metaDescription)}"`
-        : "No meta description element.",
-      state: home.metaDescription ? "pass" : "fail",
-    },
-    {
-      label: "Canonical",
-      value: facts.canonical ?? "No canonical link.",
-      state: facts.canonical ? "pass" : "fail",
-    },
-    {
-      label: "Viewport",
-      value: facts.viewport ?? "No viewport meta element.",
-      state: facts.viewport ? "pass" : "fail",
-    },
-    {
-      label: "Language",
-      value: facts.lang ?? "No lang attribute on the html element.",
-      state: facts.lang ? "pass" : "fail",
-    },
-  ] as const;
-  const metaPassed = metaFindings.filter((item) => item.state === "pass").length;
-  const failed = links.filter((row) => linkFailed(row.page));
-  const missingPass = missing.status === 404;
+  const load = scoreMarks(
+    [
+      ...pages.map((page) => (page.status >= 200 && page.status < 400 ? "pass" : "fail") as Mark),
+      ...Array<"skip">(budgetSkips).fill("skip"),
+    ],
+    MAX_PAGES,
+  );
+  const titleMarks: Mark[] = [];
+  for (const page of pages) {
+    if (!page.html) {
+      titleMarks.push("skip", "skip");
+      continue;
+    }
+    titleMarks.push(page.title ? "pass" : "fail", page.h1.length === 1 ? "pass" : "fail");
+  }
+  titleMarks.push(...Array<"skip">(budgetSkips * 2).fill("skip"));
+  const title = scoreMarks(titleMarks, MAX_PAGES * 2);
+
+  const metaMarks: Mark[] = [];
+  for (const page of pages) {
+    if (!page.html) {
+      metaMarks.push("skip", "skip", "skip", "skip");
+      continue;
+    }
+    metaMarks.push(
+      page.metaDescription ? "pass" : "fail",
+      page.canonical ? "pass" : "fail",
+      page.viewport ? "pass" : "fail",
+      page.lang ? "pass" : "fail",
+    );
+  }
+  metaMarks.push(...Array<"skip">(budgetSkips * 4).fill("skip"));
+  const meta = scoreMarks(metaMarks, MAX_PAGES * 4);
+
+  const linkMarks: Mark[] = children.map((page) => (page.status >= 200 && page.status < 400 ? "pass" : "fail"));
+  linkMarks.push(...Array<"skip">(budgetSkips).fill("skip"));
+  if (missingSkipped) linkMarks.push("skip");
+  else if (missing) linkMarks.push(missing.status === 404 ? "pass" : "fail");
+  const links = scoreMarks(linkMarks, MAX_PAGES);
+
+  const autoMarks: Mark[] = [];
+  for (const page of pages) {
+    autoMarks.push(page.status >= 200 && page.status < 400 ? "pass" : "fail");
+    if (!page.html) autoMarks.push("skip", "skip");
+    else autoMarks.push(page.title ? "pass" : "fail", page.h1.length === 1 ? "pass" : "fail");
+  }
+  autoMarks.push(...Array<"skip">(budgetSkips * 3).fill("skip"));
+  if (missingSkipped) autoMarks.push("skip");
+  else if (missing) autoMarks.push(missing.status === 404 ? "pass" : "fail");
+  const automation = scoreMarks(autoMarks, MAX_PAGES * 3 + 1);
+
+  const titlePass = htmlPages.filter((page) => page.title).length;
+  const h1Pass = htmlPages.filter((page) => page.h1.length === 1).length;
+  const described = htmlPages.filter((page) => page.metaDescription).length;
+  const canonical = htmlPages.filter((page) => page.canonical).length;
+  const viewport = htmlPages.filter((page) => page.viewport).length;
+  const lang = htmlPages.filter((page) => page.lang).length;
+  const childFail = children.filter((page) => page.status < 200 || page.status >= 400).length;
+  const statusFail = pages.filter((page) => page.status < 200 || page.status >= 400).length;
 
   return [
-    {
-      id: "load",
-      label: "Load",
-      headline: `HTTP ${home.status} · ${home.ms} ms`,
-      score: loadPass ? 100 : 0,
-      findings: [
-        { label: "HTTP status", value: String(home.status || "none"), state: loadPass ? "pass" : "fail" },
-        { label: "Time", value: `${home.ms} ms`, state: "info" },
-        { label: "Final address", value: home.finalUrl, state: "info" },
-        ...(home.note ? [{ label: "Redirects", value: home.note, state: "info" as const }] : []),
-      ],
-    },
-    {
-      id: "document",
-      label: "Title and headings",
-      headline: `${home.title ? clip(home.title, 80) : "No title"} · ${home.h1.length} H1`,
-      score: Math.round((100 * [titlePass, h1Pass].filter(Boolean).length) / 2),
-      findings: [
-        { label: "Title", value: home.title ? `"${home.title}"` : "No title element.", state: titlePass ? "pass" : "fail" },
-        { label: "H1", value: h1Value, state: h1Pass ? "pass" : "fail" },
-        { label: "H2", value: `${facts.h2} headings`, state: "info" },
-        { label: "H3", value: `${facts.h3} headings`, state: "info" },
-      ],
-    },
-    {
-      id: "meta",
-      label: "Meta",
-      headline: `${metaPassed} of ${metaFindings.length} present`,
-      score: Math.round((100 * metaPassed) / metaFindings.length),
-      findings: [
-        ...metaFindings,
-        { label: "Robots", value: facts.robots ?? "No robots meta element.", state: "info" },
-      ],
-    },
-    {
-      id: "links",
-      label: "Failed links",
-      headline: links.length === 0 ? "None opened" : `${failed.length} of ${links.length} failed`,
-      score: links.length === 0 ? null : Math.round((100 * (links.length - failed.length)) / links.length),
-      findings: [
-        {
-          label: "Opened",
-          value:
-            links.length === 0
-              ? "No header or nav links were opened."
-              : `${failed.length} of ${links.length} opened header and nav links failed.`,
-          state: links.length === 0 ? "info" : failed.length === 0 ? "pass" : "fail",
-        },
-        ...failed.map((row) => ({
-          label: "Link",
-          value:
-            row.page.status === 0
-              ? `${row.page.requestedUrl}. ${row.page.note || "No HTTP status."}`
-              : `${row.page.finalUrl}. HTTP ${row.page.status} in ${row.page.ms} ms.${row.page.html && !row.page.title ? " No title element." : ""}`,
-          state: "fail" as const,
-        })),
-      ],
-    },
-    {
-      id: "missing",
-      label: "404 check",
-      headline: missing.status === 0 ? "No response" : `HTTP ${missing.status}`,
-      score: missingPass ? 100 : 0,
-      findings: [
-        { label: "Requested", value: missing.requestedUrl, state: "info" },
-        {
-          label: "HTTP status",
-          value: missing.status === 0 ? missing.note || "No HTTP status." : String(missing.status),
-          state: missingPass ? "pass" : "fail",
-        },
-        { label: "Time", value: `${missing.ms} ms`, state: "info" },
-        ...(missing.finalUrl !== missing.requestedUrl
-          ? [{ label: "Final address", value: missing.finalUrl, state: "info" as const }]
-          : []),
-      ],
-    },
+    category("load", "Load", load, [
+      {
+        label: "Status",
+        value: `${pages.length - statusFail} below 400. ${statusFail} not below 400.`,
+        state: statusFail ? "fail" : "pass",
+      },
+      {
+        label: "First response",
+        value: home ? `HTTP ${home.status} in ${home.ms} ms.` : "No response.",
+        state: "info",
+      },
+      {
+        label: "Coverage",
+        value: coverageText(pages.length, budgetSkips, coverageGap),
+        state: "info",
+      },
+    ]),
+    category("document", "Title and headings", title, [
+      {
+        label: "Title",
+        value: `${titlePass} of ${htmlPages.length} HTML pages have a title.`,
+        state: titlePass === htmlPages.length && htmlPages.length > 0 ? "pass" : "fail",
+      },
+      {
+        label: "H1",
+        value: `${h1Pass} of ${htmlPages.length} HTML pages have exactly one H1.`,
+        state: h1Pass === htmlPages.length && htmlPages.length > 0 ? "pass" : "fail",
+      },
+      { label: "Not scored", value: "H2 and H3 counts are not part of this score.", state: "info" },
+    ]),
+    category("meta", "Meta", meta, [
+      fieldCount("Description", described, htmlPages.length),
+      fieldCount("Canonical", canonical, htmlPages.length),
+      fieldCount("Viewport", viewport, htmlPages.length),
+      fieldCount("Language", lang, htmlPages.length),
+      {
+        label: "Not scored",
+        value: "A robots meta element is not part of this score.",
+        state: "info",
+      },
+    ]),
+    category("links", "Links", links, [
+      {
+        label: "Discovered pages",
+        value:
+          children.length === 0
+            ? "No same-host page past the submitted URL was opened."
+            : `${children.length - childFail} of ${children.length} opened child pages returned a status below 400.`,
+        state: children.length === 0 ? "info" : childFail ? "fail" : "pass",
+      },
+      {
+        label: "Unknown path",
+        value: missingSkipped
+          ? "The 404 probe did not run."
+          : `The unknown path returned HTTP ${missing?.status ?? 0}.`,
+        state: missingSkipped ? "info" : missing?.status === 404 ? "pass" : "fail",
+      },
+      {
+        label: "Scope",
+        value: `Header, nav, main, and footer on the same host. Depth ${MAX_DEPTH}. Cap ${MAX_PAGES} pages.`,
+        state: "info",
+      },
+    ]),
+    category("automation", "Automation", automation, [
+      {
+        label: "Skeleton",
+        value: `Same-host links from header, nav, main, and footer. GET only. Depth ${MAX_DEPTH}. Cap ${MAX_PAGES} pages.`,
+        state: "info",
+      },
+      {
+        label: "Checks",
+        value: `${automation.passed} passed, ${automation.failed} failed, ${automation.skipped} skipped, ${automation.ran} ran.`,
+        state: automation.failed ? "fail" : "info",
+      },
+      {
+        label: "Recorded",
+        value: "Each opened page records status, title, and H1 count. One unknown path is requested when time remains.",
+        state: "info",
+      },
+    ]),
   ];
 }
 
-function linkFailed(page: Opened): boolean {
-  if (page.status < 200 || page.status >= 400) return true;
-  return page.html && !page.title;
+function fieldCount(label: string, present: number, total: number): Category["findings"][number] {
+  return {
+    label,
+    value: total === 0 ? "No HTML page was opened." : `Present on ${present} of ${total} HTML pages.`,
+    state: total === 0 ? "info" : present === total ? "pass" : "fail",
+  };
 }
 
-function blankOpen(url: string, note: string): Opened {
+function coverageText(opened: number, budgetSkips: number, coverageGap: number): string {
+  const parts = [`Opened ${opened} of ${MAX_PAGES}.`];
+  if (budgetSkips) parts.push(`${budgetSkips} queued pages were not opened before time ran out.`);
+  if (coverageGap) parts.push(`${coverageGap} were not opened because no further same-host page was found within depth ${MAX_DEPTH}.`);
+  return parts.join(" ");
+}
+
+function category(
+  id: Category["id"],
+  label: string,
+  tally: Tally,
+  findings: Category["findings"],
+): Category {
   return {
-    requestedUrl: url,
-    finalUrl: url,
+    id,
+    label,
+    headline: `${tally.passed} passed · ${tally.failed} failed · ${tally.skipped} skipped · ${tally.ran} ran`,
+    score: tally.score,
+    passed: tally.passed,
+    failed: tally.failed,
+    skipped: tally.skipped,
+    ran: tally.ran,
+    findings,
+  };
+}
+
+type Tally = { passed: number; failed: number; skipped: number; ran: number; score: number | null };
+
+function scoreMarks(marks: Mark[], floor: number): Tally {
+  const passed = marks.filter((mark) => mark === "pass").length;
+  const failed = marks.filter((mark) => mark === "fail").length;
+  const explicitSkip = marks.filter((mark) => mark === "skip").length;
+  const ran = passed + failed;
+  const skipped = explicitSkip + Math.max(0, floor - (ran + explicitSkip));
+  const denominator = passed + failed + skipped;
+  return {
+    passed,
+    failed,
+    skipped,
+    ran,
+    score: denominator === 0 ? null : Math.round((100 * passed) / denominator),
+  };
+}
+
+function enqueue(queue: Job[], seen: Set<string>, job: Job) {
+  let key: string;
+  try {
+    key = normalize(job.url);
+  } catch {
+    return;
+  }
+  if (seen.has(key)) return;
+  seen.add(key);
+  queue.push({ ...job, url: key });
+}
+
+function normalize(value: string): string {
+  const url = new URL(value);
+  url.hash = "";
+  if (url.pathname.length > 1 && url.pathname.endsWith("/")) url.pathname = url.pathname.slice(0, -1);
+  url.hostname = url.hostname.toLowerCase();
+  return url.toString();
+}
+
+function failedOpen(job: Job, note: string): Opened & { htmlBody: string } {
+  return {
+    requestedUrl: job.url,
+    finalUrl: job.url,
     status: 0,
     ms: 0,
     title: null,
     h1: [],
     metaDescription: null,
+    canonical: null,
+    viewport: null,
+    lang: null,
+    robots: null,
     html: false,
     note,
+    depth: job.depth,
+    label: job.label,
+    htmlBody: "",
   };
 }
 
-function emptyFacts(): DocFacts {
-  return { lang: null, canonical: null, viewport: null, robots: null, h2: 0, h3: 0 };
-}
-
-function documentFacts(html: string, base: string): DocFacts {
-  const root = parse(html);
-  const canonicalTag = root.querySelectorAll("link").find((el) => (el.getAttribute("rel") || "").toLowerCase() === "canonical");
-  const href = clean(canonicalTag?.getAttribute("href") ?? "");
-  let canonical: string | null = null;
-  if (href) {
-    try {
-      canonical = new URL(href, base).toString();
-    } catch {
-      canonical = href;
-    }
-  }
-  return {
-    lang: clean(root.querySelector("html")?.getAttribute("lang") ?? "") || null,
-    canonical,
-    viewport: metaContent(root, "viewport"),
-    robots: metaContent(root, "robots"),
-    h2: root.querySelectorAll("h2").map((el) => clean(el.text)).filter(Boolean).length,
-    h3: root.querySelectorAll("h3").map((el) => clean(el.text)).filter(Boolean).length,
-  };
-}
-
-function clip(value: string, max = 400): string {
-  return value.length <= max ? value : `${value.slice(0, max)}…`;
-}
-
-function discoverControls(
+function discoverLinks(
   html: string,
   base: string,
   hosts: Set<string>,
@@ -426,11 +475,12 @@ function discoverControls(
     ...root.querySelectorAll("header a"),
     ...root.querySelectorAll("nav a"),
     ...root.querySelectorAll("[role='navigation'] a"),
+    ...root.querySelectorAll("main a"),
+    ...root.querySelectorAll("footer a"),
   ];
   const baseUrl = new URL(base);
   const seen = new Set<string>();
   const found: { label: string; url: string }[] = [];
-
   for (const anchor of anchors) {
     const href = anchor.getAttribute("href")?.trim() ?? "";
     if (!href || href.startsWith("#") || /^(?:mailto|tel|javascript):/i.test(href)) continue;
@@ -448,14 +498,12 @@ function discoverControls(
     if (ASSET_EXT.test(url.pathname)) continue;
     if (isDisallowed(url.pathname, disallow)) continue;
     if (sameDocument(url, baseUrl)) continue;
-    const key = url.toString();
-    if (seen.has(key)) continue;
-    const label = linkLabel(anchor);
-    if (!label) continue;
+    const label = linkLabel(anchor) || "Link";
     if (/^(?:register|sign\s*in|log\s*in)\b/i.test(label)) continue;
+    const key = normalize(url.toString());
+    if (seen.has(key)) continue;
     seen.add(key);
     found.push({ label, url: key });
-    if (found.length >= MAX_CONTROLS) break;
   }
   return found;
 }
@@ -471,11 +519,7 @@ function linkLabel(anchor: HTMLElement): string {
 }
 
 function sameDocument(url: URL, base: URL): boolean {
-  return (
-    url.hostname.toLowerCase() === base.hostname.toLowerCase() &&
-    url.pathname.replace(/\/$/, "") === base.pathname.replace(/\/$/, "") &&
-    url.search === base.search
-  );
+  return normalize(url.toString()) === normalize(base.toString());
 }
 
 async function robotsRules(finalUrl: string, hosts: Set<string>, deadline: number): Promise<string[]> {
@@ -517,21 +561,52 @@ async function openUrl(
     }
     const html = (response.contentType ?? "").toLowerCase().includes("html");
     const root = html ? parse(response.body) : null;
-    const h1 = (root?.querySelectorAll("h1") ?? []).map((el) => clean(el.text)).filter(Boolean);
+    const facts = documentFacts(root, current);
     return {
       requestedUrl: start,
       finalUrl: current,
       status: response.status,
       ms: response.ms,
       title: clean(root?.querySelector("title")?.text ?? "") || null,
-      h1,
+      h1: (root?.querySelectorAll("h1") ?? []).map((el) => clean(el.text)).filter(Boolean),
       metaDescription: metaContent(root, "description"),
+      canonical: facts.canonical,
+      viewport: facts.viewport,
+      lang: facts.lang,
+      robots: facts.robots,
       html,
       note: hops.length > 1 ? `Redirects: ${hops.join(" | ")}.` : null,
+      depth: 0,
+      label: "",
       htmlBody: response.body,
     };
   }
   throw new CrawlError("Stopped after 5 redirects.");
+}
+
+function documentFacts(root: HTMLElement | null, base: string): {
+  canonical: string | null;
+  viewport: string | null;
+  lang: string | null;
+  robots: string | null;
+} {
+  if (!root) return { canonical: null, viewport: null, lang: null, robots: null };
+  const canonicalTag = root.querySelectorAll("link").find((el) => (el.getAttribute("rel") || "").toLowerCase() === "canonical");
+  const href = clean(canonicalTag?.getAttribute("href") ?? "");
+  let canonical: string | null = null;
+  if (href) {
+    try {
+      canonical = new URL(href, base).toString();
+    } catch {
+      canonical = href;
+    }
+  }
+  return {
+    canonical,
+    viewport: metaContent(root, "viewport"),
+    lang: clean(root.querySelector("html")?.getAttribute("lang") ?? "") || null,
+    robots: metaContent(root, "robots"),
+  };
 }
 
 async function requestOnce(url: string, timeoutMs: number, maxBytes: number): Promise<{

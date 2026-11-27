@@ -20,11 +20,12 @@
 body {
   margin: 0;
   min-height: 100vh;
-  background: var(--page);
-  color: var(--ink);
-  font-family: "Noto Sans", Arimo, Arial, sans-serif;
-  font-size: 14px;
-  line-height: 1.45;
+  background: #f5f5f7;
+  color: #1d1d1f;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  font-size: 17px;
+  line-height: 1.47;
+  letter-spacing: -0.01em;
 }
 
 button, input { font: inherit; color: inherit; }
@@ -33,17 +34,17 @@ button, input { font: inherit; color: inherit; }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  max-width: 1040px;
+  gap: 1.5rem;
+  max-width: 1080px;
   margin: 0 auto;
-  padding: 14px 24px 0;
+  padding: 28px 32px 0;
 }
 
 .bar h1 {
   margin: 0;
-  font-size: 22px;
-  font-weight: 500;
-  letter-spacing: 0;
+  font-size: 21px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
 }
 
 .ghost {
@@ -60,9 +61,17 @@ button, input { font: inherit; color: inherit; }
 .ghost:disabled { opacity: 0.55; cursor: wait; }
 
 main {
-  max-width: 1040px;
+  max-width: 1080px;
   margin: 0 auto;
-  padding: 18px 24px 64px;
+  padding: 28px 32px 96px;
+}
+
+.lead {
+  margin: 28px 0 22px;
+  font-size: clamp(40px, 5vw, 56px);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
 }
 
 form label {
@@ -82,11 +91,12 @@ form label {
 .url-row input {
   flex: 1;
   min-width: 0;
-  height: 48px;
-  padding: 0 14px;
-  border: 1px solid var(--line);
-  border-radius: 4px;
-  background: var(--card);
+  height: 56px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
 .url-row input:focus {
@@ -96,11 +106,11 @@ form label {
 }
 
 .url-row button {
-  height: 48px;
-  padding: 0 22px;
+  height: 56px;
+  padding: 0 26px;
   border: 0;
-  border-radius: 4px;
-  background: var(--blue);
+  border-radius: 980px;
+  background: #0071e3;
   color: #fff;
   font-weight: 500;
   cursor: pointer;
@@ -117,20 +127,21 @@ form label {
   font-size: 16px;
 }
 
-.results { margin-top: 22px; }
+.results { margin-top: 36px; }
 
 .gauge-card, .groups {
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 8px;
+  background: #fff;
+  border: 0;
+  border-radius: 22px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
 }
 
 .gauge-card {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-evenly;
-  gap: 8px 12px;
-  padding: 28px 16px 18px;
+  gap: 18px 12px;
+  padding: 40px 20px 28px;
 }
 
 .gauge {
@@ -168,19 +179,38 @@ form label {
 .gauge.none text { fill: var(--muted); }
 
 .gauge figcaption {
-  margin-top: 6px;
-  color: var(--ink);
-  font-size: 14px;
+  margin-top: 8px;
+  color: #1d1d1f;
+  font-size: 15px;
+  font-weight: 600;
 }
 
-.legend {
+.gauge-counts {
+  margin: 4px auto 0;
+  max-width: 11rem;
+  color: #6e6e73;
+  font-size: 12px;
+  line-height: 1.35;
+  font-weight: 400;
+}
+
+.legend, .score-note {
   flex-basis: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 8px;
-  margin: 8px 0 0;
-  color: var(--muted);
+  margin: 10px 0 0;
+  color: #6e6e73;
+  font-size: 13px;
+  text-align: center;
+}
+
+.score-note {
+  display: block;
+  max-width: 36rem;
+  margin: 4px auto 0;
+  line-height: 1.4;
 }
 
 .swatch, .marker { display: inline-block; width: 10px; height: 10px; }
@@ -198,18 +228,18 @@ form label {
 }
 .marker.info { background: #dadce0; border-radius: 50%; }
 
-.groups { margin-top: 16px; overflow: hidden; }
+.groups { margin-top: 28px; overflow: hidden; }
 
 details { border-top: 1px solid var(--line); }
 details:first-child { border-top: 0; }
 
 summary {
   display: grid;
-  grid-template-columns: 16px minmax(8rem, 14rem) 1fr auto 18px;
-  gap: 12px;
+  grid-template-columns: 16px minmax(9rem, 15rem) 1fr auto 18px;
+  gap: 14px;
   align-items: center;
-  min-height: 52px;
-  padding: 10px 16px;
+  min-height: 68px;
+  padding: 14px 22px;
   cursor: pointer;
   list-style: none;
 }
@@ -228,7 +258,7 @@ summary::after {
 
 details[open] summary::after { transform: rotate(-135deg) translate(-2px, -2px); }
 
-.group-label { font-weight: 500; }
+.group-label { font-weight: 600; font-size: 17px; }
 .group-headline { color: var(--muted); overflow-wrap: anywhere; }
 .group-score { font-weight: 500; font-size: 16px; }
 .group-score.good { color: var(--good-ink); }

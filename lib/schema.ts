@@ -7,11 +7,15 @@ export const findingSchema = z.object({
 });
 
 export const categorySchema = z.object({
-  id: z.enum(["load", "document", "meta", "links", "missing"]),
+  id: z.enum(["load", "document", "meta", "links", "automation"]),
   label: z.string().min(1),
   headline: z.string().min(1),
   score: z.number().int().min(0).max(100).nullable(),
-  findings: z.array(findingSchema).min(1).max(20),
+  passed: z.number().int().nonnegative(),
+  failed: z.number().int().nonnegative(),
+  skipped: z.number().int().nonnegative(),
+  ran: z.number().int().nonnegative(),
+  findings: z.array(findingSchema).min(1).max(16),
 });
 
 export type Category = z.infer<typeof categorySchema>;
@@ -48,8 +52,13 @@ export const auditReportSchema = z.object({
     homepageStatus: z.number().int(),
     homepageMs: z.number().int().nonnegative(),
   }),
+  limits: z.object({
+    maxPages: z.number().int().positive(),
+    maxDepth: z.number().int().positive(),
+    opened: z.number().int().nonnegative(),
+  }),
   categories: z.array(categorySchema).length(5),
-  scenarios: z.array(scenarioSchema).min(1).max(24),
+  scenarios: z.array(scenarioSchema).min(1).max(16),
 });
 
 export type AuditReport = z.infer<typeof auditReportSchema>;

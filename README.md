@@ -1,6 +1,6 @@
 # First Pass
 
-Paste a public URL. The page shows circular scores and expandable groups for what this run measured on that URL: load, title and headings, meta, failed header links, and a 404 check. Download report writes the fuller scenarios to a PDF.
+Paste a public URL. The page crawls up to 12 same-host pages, two links deep, and shows circular scores for load, title and headings, meta, links, and automation. A score counts passes, failures, and checks that did not run. Download report writes the executed page list to a PDF.
 
 Nothing is submitted. Checkout, payment, sign-in, and delete addresses are not opened.
 

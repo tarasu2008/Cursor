@@ -76,6 +76,7 @@ export function Auditor() {
         ) : null}
       </header>
       <main>
+        <p className="lead">Check a public site.</p>
         <form
           onSubmit={(event) => {
             event.preventDefault();
@@ -99,7 +100,9 @@ export function Auditor() {
               {pending ? "Analyzing…" : "Analyze"}
             </button>
           </div>
-          <p className="quiet">Public pages only. One fetch of this URL. Nothing is submitted.</p>
+          <p className="quiet">
+            Public pages only. Up to 12 pages, 2 links deep. Nothing is submitted.
+          </p>
           {error ? (
             <p className="error" role="alert">
               {error}
@@ -117,6 +120,10 @@ export function Auditor() {
                 <span className="swatch poor" /> 0–49
                 <span className="swatch ok" /> 50–89
                 <span className="swatch good" /> 90–100
+              </p>
+              <p className="score-note">
+                Opened {report.limits.opened} of {report.limits.maxPages} pages, {report.limits.maxDepth} links deep.
+                A score is passes divided by passes, failures, and checks that did not run.
               </p>
             </div>
             <div className="groups">
@@ -173,6 +180,11 @@ function Gauge({ category }: { category: Category }) {
         </text>
       </svg>
       <figcaption>{category.label}</figcaption>
+      <p className="gauge-counts">
+        {category.passed} pass · {category.failed} fail
+        <br />
+        {category.skipped} skipped · {category.ran} ran
+      </p>
     </figure>
   );
 }
