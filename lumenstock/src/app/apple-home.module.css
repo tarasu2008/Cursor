@@ -1,0 +1,720 @@
+/* Apple-inspired Home Page styling — strictly scoped via CSS Module so other pages stay untouched */
+
+.appleHome {
+  --apple-ink: #1d1d1f;
+  --apple-muted: #6e6e73;
+  --apple-bg-white: #ffffff;
+  --apple-bg-light: #f5f5f7;
+  --apple-bg-dark: #000000;
+  --apple-surface-dark: #111114;
+  --apple-blue: #0071e3;
+  --apple-blue-hover: #0077ed;
+  --apple-blue-link: #0066cc;
+  --apple-blue-dark-link: #2997ff;
+  --apple-font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  font-family: var(--apple-font);
+  color: var(--apple-ink);
+  background: var(--apple-bg-white);
+  overflow-x: clip;
+}
+
+.inner {
+  width: min(1220px, calc(100% - 2.5rem));
+  margin: 0 auto;
+}
+
+/* ==================== 1. FLAGSHIP CINEMA HERO ==================== */
+.hero {
+  position: relative;
+  background: radial-gradient(ellipse 80% 55% at 50% 0%, #1d2438 0%, #07080c 52%, #000000 100%);
+  color: #f5f5f7;
+  padding: clamp(3.5rem, 7vw, 5.5rem) 0 clamp(3rem, 6vw, 4.5rem);
+  text-align: center;
+}
+
+.heroEyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #a1a1a6;
+  margin: 0 0 0.85rem;
+}
+
+.heroDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #2997ff;
+  box-shadow: 0 0 12px rgba(41, 151, 255, 0.8);
+}
+
+.heroTitle {
+  margin: 0 auto;
+  max-width: 18ch;
+  font-size: clamp(2.85rem, 6.4vw, 5rem);
+  font-weight: 600;
+  line-height: 1.04;
+  letter-spacing: -0.04em;
+  background: linear-gradient(180deg, #ffffff 30%, #b7bcc8 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.heroLead {
+  margin: 1.15rem auto 0;
+  max-width: 56ch;
+  font-size: clamp(1.08rem, 1.8vw, 1.35rem);
+  line-height: 1.42;
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  color: #a1a1a6;
+}
+
+.heroSearchWrap {
+  position: relative;
+  z-index: 40;
+  max-width: 660px;
+  margin: 1.9rem auto 0;
+  text-align: left;
+}
+
+.heroSearchWrap :global(.search-shell) {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  padding: 0.35rem 0.38rem 0.35rem 1.25rem;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+}
+
+.heroSearchWrap :global(.search-shell input) {
+  color: #ffffff;
+  font-size: 0.98rem;
+}
+
+.heroSearchWrap :global(.search-shell input::placeholder) {
+  color: rgba(245, 245, 247, 0.56);
+}
+
+.heroSearchWrap :global(.search-shell .btn-primary) {
+  background: var(--apple-blue);
+  color: #ffffff;
+  border-color: transparent;
+  border-radius: 999px;
+  padding: 0.65rem 1.35rem;
+  font-weight: 500;
+}
+
+.heroSearchWrap :global(.search-shell .btn-primary:hover) {
+  background: var(--apple-blue-hover);
+}
+
+.heroActions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  margin-top: 1.45rem;
+}
+
+.applePillPrimary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.72rem 1.45rem;
+  border-radius: 999px;
+  background: var(--apple-blue);
+  color: #ffffff;
+  font-size: 0.96rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.applePillPrimary:hover {
+  background: var(--apple-blue-hover);
+  transform: translateY(-1px);
+}
+
+.applePillOutlineDark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.7rem 1.4rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  color: #f5f5f7;
+  font-size: 0.96rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.applePillOutlineDark:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.48);
+}
+
+.heroStage {
+  position: relative;
+  display: block;
+  margin: clamp(2.2rem, 4.5vw, 3.2rem) auto 0;
+  border-radius: 28px;
+  overflow: hidden;
+  aspect-ratio: 21 / 9;
+  min-height: 290px;
+  max-height: 540px;
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 36px 90px rgba(0, 0, 0, 0.7);
+  background: #111114;
+  text-decoration: none;
+}
+
+.heroStage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.heroStage:hover img {
+  transform: scale(1.03);
+}
+
+.heroStageCaption {
+  position: absolute;
+  left: 1.25rem;
+  right: 1.25rem;
+  bottom: 1.15rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.7rem 1.1rem;
+  border-radius: 16px;
+  background: rgba(15, 16, 20, 0.64);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  color: #f5f5f7;
+  text-align: left;
+}
+
+.heroStageCaption strong {
+  display: block;
+  font-size: 0.96rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.heroStageCaption span {
+  font-size: 0.82rem;
+  color: rgba(245, 245, 247, 0.72);
+}
+
+.heroStageLink {
+  color: #2997ff;
+  font-size: 0.88rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* ==================== BAND SYSTEM ==================== */
+.bandLight {
+  background: var(--apple-bg-light);
+  color: var(--apple-ink);
+  padding: clamp(3.5rem, 6.5vw, 5.5rem) 0;
+}
+
+.bandWhite {
+  background: var(--apple-bg-white);
+  color: var(--apple-ink);
+  padding: clamp(3.5rem, 6.5vw, 5.5rem) 0;
+}
+
+.bandDark {
+  background: var(--apple-bg-dark);
+  color: #f5f5f7;
+  padding: clamp(3.8rem, 7vw, 6rem) 0;
+}
+
+.bandHead {
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto clamp(2rem, 3.8vw, 3rem);
+}
+
+.eyebrow {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--apple-muted);
+  margin: 0 0 0.55rem;
+}
+
+.eyebrowGradient {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin: 0 0 0.55rem;
+  background: linear-gradient(90deg, #60a5fa, #c084fc, #f472b6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.bandTitle {
+  margin: 0;
+  font-size: clamp(2rem, 4.4vw, 3.35rem);
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 1.08;
+}
+
+.bandSub {
+  margin: 0.75rem auto 0;
+  font-size: clamp(1rem, 1.5vw, 1.18rem);
+  line-height: 1.45;
+  color: var(--apple-muted);
+}
+
+.bandDark .bandSub {
+  color: #a1a1a6;
+}
+
+.appleLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 1rem;
+  font-size: 1.02rem;
+  font-weight: 500;
+  color: var(--apple-blue-link);
+  text-decoration: none;
+}
+
+.appleLink:hover {
+  text-decoration: underline;
+}
+
+.bandDark .appleLink {
+  color: var(--apple-blue-dark-link);
+}
+
+/* ==================== BENTO / APPLE EDITORIAL MOSAIC ==================== */
+.bentoGrid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 1.1rem;
+  grid-auto-flow: dense;
+}
+
+.bentoCard {
+  position: relative;
+  display: block;
+  border-radius: 22px;
+  overflow: hidden;
+  background: #e9e9ee;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  text-decoration: none;
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.05);
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease;
+}
+
+.bandDark .bentoCard {
+  background: #141418;
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 18px 46px rgba(0, 0, 0, 0.45);
+}
+
+.bentoCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.12);
+}
+
+.bandDark .bentoCard:hover {
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65);
+}
+
+.bentoCard img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.bentoCard:hover img {
+  transform: scale(1.045);
+}
+
+.bentoOverlay {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: 2.2rem 1.1rem 0.95rem;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.72) 100%);
+  color: #ffffff;
+}
+
+.bentoOverlay h3 {
+  margin: 0;
+  font-size: 0.96rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.25;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.bentoOverlay p {
+  margin: 0.2rem 0 0;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.76);
+}
+
+/* Mixed Apple Bento proportions (8-card Trending grid) */
+.spanHero {
+  grid-column: span 7;
+  aspect-ratio: 16 / 10;
+}
+
+.spanTall {
+  grid-column: span 5;
+  aspect-ratio: 11.4 / 10;
+}
+
+.spanThird {
+  grid-column: span 4;
+  aspect-ratio: 4 / 3;
+}
+
+.spanHalf {
+  grid-column: span 6;
+  aspect-ratio: 16 / 10;
+}
+
+.spanWide {
+  grid-column: span 8;
+  aspect-ratio: 16 / 9;
+}
+
+.spanNarrow {
+  grid-column: span 4;
+  aspect-ratio: 8 / 9;
+}
+
+/* ==================== APPLE TWIN PROMO TILES (WALLPAPERS) ==================== */
+.promoBand {
+  background: #ffffff;
+  padding: 1rem 0 clamp(3rem, 5vw, 4.5rem);
+}
+
+.promoGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.15rem;
+}
+
+.promoTileDark,
+.promoTileLight {
+  position: relative;
+  border-radius: 28px;
+  padding: clamp(2rem, 4vw, 3.1rem) clamp(1.5rem, 3vw, 2.5rem) 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  min-height: 520px;
+}
+
+.promoTileDark {
+  background: radial-gradient(circle at 50% 100%, #1d2538 0%, #090a0e 65%);
+  color: #f5f5f7;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.promoTileLight {
+  background: linear-gradient(180deg, #f5f5f7 0%, #ebebf0 100%);
+  color: var(--apple-ink);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.promoTileDark h2,
+.promoTileLight h2 {
+  margin: 0;
+  font-size: clamp(1.75rem, 3vw, 2.45rem);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.promoTileDark p,
+.promoTileLight p {
+  margin: 0.55rem 0 0;
+  font-size: 1.02rem;
+  color: #a1a1a6;
+  max-width: 34ch;
+}
+
+.promoTileLight p {
+  color: var(--apple-muted);
+}
+
+.promoLinks {
+  display: flex;
+  gap: 1.25rem;
+  margin-top: 0.85rem;
+}
+
+.promoLinks a {
+  font-size: 0.96rem;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.promoTileDark .promoLinks a {
+  color: var(--apple-blue-dark-link);
+}
+
+.promoTileLight .promoLinks a {
+  color: var(--apple-blue-link);
+}
+
+.promoLinks a:hover {
+  text-decoration: underline;
+}
+
+/* Sleek iPhone-style showcase trio */
+.phoneTrio {
+  margin-top: auto;
+  padding-top: 1.8rem;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 0.85rem;
+  width: 100%;
+}
+
+.phoneSide {
+  width: 118px;
+  aspect-ratio: 9 / 19;
+  border-radius: 22px 22px 0 0;
+  overflow: hidden;
+  border: 4px solid #23252c;
+  border-bottom: 0;
+  opacity: 0.78;
+  transform: translateY(20px);
+  transition: transform 0.35s ease, opacity 0.35s ease;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5);
+}
+
+.phoneSide:hover {
+  opacity: 1;
+  transform: translateY(10px);
+}
+
+.phoneMain {
+  position: relative;
+  width: 170px;
+  aspect-ratio: 9 / 19;
+  border-radius: 30px 30px 0 0;
+  overflow: hidden;
+  border: 6px solid #2b2d36;
+  border-bottom: 0;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.75);
+  transition: transform 0.35s ease;
+}
+
+.phoneMain:hover {
+  transform: translateY(-6px);
+}
+
+.phoneMain img,
+.phoneSide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.phoneClock {
+  position: absolute;
+  top: 16px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 1.85rem;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  color: #ffffff;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.45);
+  pointer-events: none;
+}
+
+/* Studio Display frame for Desktop Wallpapers */
+.displayShowcase {
+  margin-top: auto;
+  padding: 2rem 0 2rem;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.displayBezel {
+  width: min(460px, 100%);
+  aspect-ratio: 16 / 10;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 8px solid #16171b;
+  background: #000;
+  box-shadow: 0 24px 55px rgba(0, 0, 0, 0.22);
+  transition: transform 0.35s ease;
+}
+
+.displayBezel:hover {
+  transform: translateY(-4px);
+}
+
+.displayBezel img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.displayStand {
+  width: 84px;
+  height: 36px;
+  background: linear-gradient(180deg, #c7c7cc 0%, #e5e5ea 65%, #aeaeb2 100%);
+  clip-path: polygon(14% 0%, 86% 0%, 100% 100%, 0% 100%);
+}
+
+.displayBase {
+  width: 136px;
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #b8b8be, #e5e5ea, #b8b8be);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.14);
+}
+
+/* ==================== APPLE CATEGORY PILLS & TRUST STRIP ==================== */
+.categoryRail {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.65rem;
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.catPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.58rem 1.12rem;
+  border-radius: 999px;
+  background: #f5f5f7;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: var(--apple-ink);
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.catPill:hover {
+  background: #1d1d1f;
+  color: #ffffff;
+  border-color: #1d1d1f;
+  transform: translateY(-1px);
+}
+
+.trustCard {
+  margin-top: 3rem;
+  padding: clamp(2rem, 4vw, 3rem);
+  border-radius: 28px;
+  background: linear-gradient(135deg, #f5f5f7 0%, #eef2f9 100%);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  text-align: center;
+}
+
+.trustCard h3 {
+  margin: 0;
+  font-size: clamp(1.45rem, 2.8vw, 2rem);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+.trustCard p {
+  margin: 0.65rem auto 1.35rem;
+  max-width: 58ch;
+  color: var(--apple-muted);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 960px) {
+  .promoGrid {
+    grid-template-columns: 1fr;
+  }
+  .spanHero,
+  .spanTall,
+  .spanWide,
+  .spanNarrow,
+  .spanHalf {
+    grid-column: span 6;
+    aspect-ratio: 4 / 3;
+  }
+  .spanThird {
+    grid-column: span 6;
+  }
+}
+
+@media (max-width: 640px) {
+  .inner {
+    width: calc(100% - 1.5rem);
+  }
+  .heroStage {
+    aspect-ratio: 16 / 10;
+    border-radius: 20px;
+  }
+  .heroStageCaption {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+  }
+  .spanHero,
+  .spanTall,
+  .spanThird,
+  .spanHalf,
+  .spanWide,
+  .spanNarrow {
+    grid-column: span 12;
+    aspect-ratio: 4 / 3;
+  }
+  .phoneSide {
+    display: none;
+  }
+}

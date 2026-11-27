@@ -76,7 +76,7 @@ export function SearchForm({
                     onClick={() => setOpen(false)}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={asset.imageUrl} alt="" loading="lazy" />
+                    <img src={asset.imageUrl} alt="" loading="lazy" referrerPolicy="no-referrer" />
                     <span>{asset.title}</span>
                   </Link>
                 ))}
