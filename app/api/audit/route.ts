@@ -2,15 +2,12 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { auditUrl } from "@/lib/crawl";
 import { CrawlError, GuardrailError } from "@/lib/guardrails";
-import { auditReportSchema } from "@/lib/schema";
-import { isDemoHost, sampleReport } from "@/lib/sample-report";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 const bodySchema = z.object({
-  url: z.string().optional(),
-  sample: z.boolean().optional(),
+  url: z.string().min(1),
 });
 
 const recent: number[] = [];
@@ -26,12 +23,7 @@ function limited(): boolean {
 }
 
 export async function GET() {
-  return NextResponse.json(
-    {
-      error: "Send POST { url } to run a live crawl, or POST { sample: true } for the sample report.",
-    },
-    { status: 405 },
-  );
+  return NextResponse.json({ error: "Send POST { url } to open a homepage." }, { status: 405 });
 }
 
 export async function POST(request: Request) {
@@ -44,56 +36,24 @@ export async function POST(request: Request) {
 
   const parsed = bodySchema.safeParse(json);
   if (!parsed.success) {
-    return NextResponse.json({ error: "Send { url: string } or { sample: true }." }, { status: 400 });
-  }
-
-  if (parsed.data.sample) {
-    return NextResponse.json(auditReportSchema.parse(sampleReport(null)));
-  }
-
-  const url = parsed.data.url?.trim();
-  if (!url) {
     return NextResponse.json({ error: "Paste a URL first." }, { status: 400 });
   }
 
   if (limited()) {
     return NextResponse.json(
-      { error: "This demo accepts 8 live crawls a minute. Wait and try again, or open the sample report." },
+      { error: "This demo opens 8 homepages a minute. Wait and try again." },
       { status: 429 },
     );
   }
 
   try {
-    const report = await auditUrl(url);
+    const report = await auditUrl(parsed.data.url);
     return NextResponse.json(report);
   } catch (error) {
     if (error instanceof GuardrailError) {
-      return NextResponse.json(
-        {
-          error: error.message,
-          runStatus: error.status,
-          role: error.role,
-          exactText: error.message,
-          confidence: 1,
-        },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: error.message }, { status: 400 });
     }
-
-    const message = error instanceof Error ? error.message : "The crawl failed before a report could be built.";
-    if (error instanceof CrawlError && isDemoHost(url)) {
-      return NextResponse.json(
-        auditReportSchema.parse(
-          sampleReport(
-            `The live crawl did not finish (${message}). The sample below is not a measurement of the site.`,
-          ),
-        ),
-      );
-    }
-
-    return NextResponse.json(
-      { error: message, runStatus: "OUTAGE", role: "crawler", exactText: message, confidence: 0.5 },
-      { status: error instanceof CrawlError ? 502 : 500 },
-    );
+    const message = error instanceof CrawlError ? error.message : "The homepage could not be opened.";
+    return NextResponse.json({ error: message }, { status: error instanceof CrawlError ? 502 : 500 });
   }
 }

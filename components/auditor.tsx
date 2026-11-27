@@ -1,82 +1,85 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { AuditReport } from "@/lib/schema";
-import { DEMO_URL } from "@/lib/sample-report";
-import { ReportView } from "./report-view";
 
-type Failure = {
-  error: string;
-  runStatus?: string;
-  role?: string;
-  exactText?: string;
-};
+const DEMO_URL = "https://www.seadwellers.com/";
 
 export function Auditor() {
   const [url, setUrl] = useState(DEMO_URL);
-  const [pending, setPending] = useState<"live" | "sample" | null>(null);
+  const [pending, setPending] = useState(false);
+  const [downloading, setDownloading] = useState(false);
   const [report, setReport] = useState<AuditReport | null>(null);
-  const [failure, setFailure] = useState<Failure | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!report) return;
-    document.getElementById("report")?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }, [report]);
-
-  async function run(sample: boolean) {
-    setPending(sample ? "sample" : "live");
-    setFailure(null);
+  async function analyze() {
+    setPending(true);
+    setError(null);
     try {
       const response = await fetch("/api/audit", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify(sample ? { sample: true } : { url }),
+        body: JSON.stringify({ url }),
       });
-      const payload = (await response.json()) as AuditReport | Failure;
-      if (!response.ok || !("findings" in payload)) {
-        const errorPayload = payload as Failure;
+      const payload = (await response.json()) as AuditReport | { error?: string };
+      if (!response.ok || !("scenarios" in payload)) {
         setReport(null);
-        setFailure({
-          error: errorPayload.error || "The audit did not return a report.",
-          runStatus: errorPayload.runStatus,
-          role: errorPayload.role,
-          exactText: errorPayload.exactText,
-        });
+        setError("error" in payload && payload.error ? payload.error : "The homepage could not be opened.");
         return;
       }
       setReport(payload);
     } catch {
       setReport(null);
-      setFailure({ error: "The browser could not reach the audit API." });
+      setError("The audit could not be reached.");
     } finally {
-      setPending(null);
+      setPending(false);
+    }
+  }
+
+  async function download() {
+    if (!report) return;
+    setDownloading(true);
+    try {
+      const response = await fetch("/api/report", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(report),
+      });
+      if (!response.ok) {
+        setError("The report file could not be created.");
+        return;
+      }
+      const blob = await response.blob();
+      const objectUrl = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = objectUrl;
+      link.download = fileName(report.finalUrl);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(objectUrl);
+    } catch {
+      setError("The report file could not be created.");
+    } finally {
+      setDownloading(false);
     }
   }
 
   return (
     <main>
-      <header className="topbar">
-        <a className="mark" href="#analyze">
-          <span>FP</span>
-          First Pass
-        </a>
-        <p>A first QA audit without a Playwright project.</p>
+      <header className="top">
+        <a href="#open">First Pass</a>
       </header>
 
-      <section className="hero" id="analyze">
-        <p className="eyebrow">For small teams and freelancers</p>
-        <h1>Paste a URL. Read the audit the way PageSpeed lays out a result.</h1>
+      <section className="hero" id="open">
+        <h1>Open the homepage.</h1>
         <p className="lede">
-          First Pass fetches the page, a short sample of same-host links, and the on-page signals a
-          senior QA would write down before opening a browser. It does not log in, submit a form, or
-          touch checkout. Core Web Vitals and visual bugs stay marked as not run until a later browser
-          agent exists.
+          Paste an address. First Pass opens that page and the links in its header, then lists what came back.
         </p>
         <form
-          className="url-form"
           onSubmit={(event) => {
             event.preventDefault();
-            void run(false);
+            void analyze();
           }}
         >
           <label htmlFor="site-url">Website URL</label>
@@ -92,70 +95,59 @@ export function Auditor() {
               value={url}
               onChange={(event) => setUrl(event.target.value)}
             />
-            <button type="submit" disabled={pending !== null}>
-              {pending === "live" ? "Analyzing…" : "Analyze"}
+            <button type="submit" disabled={pending}>
+              {pending ? "Opening…" : "Analyze"}
             </button>
           </div>
         </form>
-        <div className="hero-actions">
-          <button type="button" className="ghost" disabled={pending !== null} onClick={() => void run(true)}>
-            {pending === "sample" ? "Loading sample…" : "View the sample report"}
-          </button>
-          <p>The sample is labeled. It is not a measurement of Sea Dwellers.</p>
-        </div>
-        {pending === "live" ? (
-          <ol className="steps" aria-live="polite">
-            <li>Input guardrail: public http(s) only, no checkout or login URL.</li>
-            <li>Fetch crawl: document, robots.txt, sitemap, up to 8 same-host links, one unknown path.</li>
-            <li>Output guardrail: the report must match the schema before it is shown.</li>
-          </ol>
-        ) : null}
-        {failure ? (
-          <div className="banner banner-block" role="alert">
-            <strong>{failure.runStatus ?? "Stopped"}.</strong> {failure.error}
-            {failure.role ? <span> Role: {failure.role}.</span> : null}
-          </div>
+        <p className="quiet">Public pages only. Nothing is submitted.</p>
+        {error ? (
+          <p className="error" role="alert">
+            {error}
+          </p>
         ) : null}
       </section>
 
       {report ? (
-        <div id="report">
-          <ReportView report={report} />
-        </div>
-      ) : (
-        <HomeExplainer />
-      )}
+        <section className="results" aria-live="polite">
+          <div className="scores">
+            <div>
+              <p className="figure">{report.scores.passedPercent}</p>
+              <p className="caption">
+                Passed · {report.scores.passedCount} of {report.scores.total} opened
+              </p>
+            </div>
+            <div>
+              <p className="figure">{report.scores.homepageMs}</p>
+              <p className="caption">Homepage · HTTP {report.scores.homepageStatus}</p>
+            </div>
+          </div>
+          <p className="summary">{report.summary}</p>
+          <button type="button" className="download" onClick={() => void download()} disabled={downloading}>
+            {downloading ? "Preparing…" : "Download report"}
+          </button>
+          <ul className="rows">
+            {report.scenarios.map((scenario) => (
+              <li key={scenario.id}>
+                <span className={scenario.passed ? "mark pass" : "mark fail"} aria-hidden="true" />
+                <span className="name">{scenario.control}</span>
+                <span className="status">{scenario.status || "—"}</span>
+                <span className="time">{scenario.ms ? `${scenario.ms} ms` : ""}</span>
+                <span className="title">{scenario.title ?? scenario.finalUrl}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
     </main>
   );
 }
 
-function HomeExplainer() {
-  return (
-    <section className="explainer">
-      <h2>What a first version can honestly say</h2>
-      <div className="cards">
-        <article>
-          <h3>PageSpeed Insights</h3>
-          <p>
-            One URL. Field data from Chrome users over 28 days, and one Lighthouse lab run. It does
-            not click through a site or hunt broken links.
-          </p>
-        </article>
-        <article>
-          <h3>Semrush Site Audit</h3>
-          <p>
-            A crawler across many pages: indexability, status codes, titles, duplicate content,
-            broken links, and more than 140 checks. It does not open a menu or judge a layout.
-          </p>
-        </article>
-        <article>
-          <h3>This demo</h3>
-          <p>
-            A bounded GET crawl and a report with the same reading order as a QA write-up: what was
-            observed, what was expected, and what was refused. Playwright export comes later.
-          </p>
-        </article>
-      </div>
-    </section>
-  );
+function fileName(url: string): string {
+  try {
+    const host = new URL(url).hostname.replace(/[^a-z0-9.-]/gi, "");
+    return `first-pass-${host || "report"}.pdf`;
+  } catch {
+    return "first-pass-report.pdf";
+  }
 }
