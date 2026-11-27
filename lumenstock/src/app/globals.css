@@ -1508,6 +1508,90 @@ img {
   color: var(--faint);
 }
 
+.footer-legal-links {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.footer-legal-links a {
+  color: var(--muted);
+}
+
+.footer-legal-links a:hover {
+  color: var(--ink);
+  text-decoration: underline;
+}
+
+/* ==================== LEGAL PAGES (/privacy, /terms) ==================== */
+.legal-doc {
+  max-width: 780px;
+  padding: 0.5rem 0 4.5rem;
+  display: grid;
+  gap: 1.5rem;
+}
+
+.legal-doc section {
+  background: var(--bg-soft);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 1.5rem 1.7rem;
+}
+
+.legal-doc h2 {
+  margin: 0 0 0.65rem;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+}
+
+.legal-doc p {
+  margin: 0 0 0.75rem;
+  color: var(--muted);
+  font-size: 0.96rem;
+  line-height: 1.6;
+}
+
+.legal-doc p:last-child {
+  margin-bottom: 0;
+}
+
+.legal-doc ul {
+  margin: 0.35rem 0 0.75rem;
+  padding-left: 1.25rem;
+  display: grid;
+  gap: 0.45rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+.legal-doc strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.legal-doc a {
+  color: var(--accent-link);
+  font-weight: 500;
+}
+
+.legal-doc a:hover {
+  text-decoration: underline;
+}
+
+.legal-doc code {
+  font-size: 0.88em;
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 0.08rem 0.35rem;
+  color: var(--ink);
+}
+
 .empty {
   padding: 3rem 1.25rem;
   text-align: center;

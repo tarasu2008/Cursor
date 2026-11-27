@@ -24,17 +24,22 @@ export const metadata: Metadata = {
   publisher: siteConfig.name,
   category: "photography",
   keywords: [
-    "stock photos",
-    "royalty free images",
-    "stock photography",
-    "HD images",
-    "license images",
-    "Lumenstock",
+    "royalty free stock photos",
+    "HD stock images",
+    "stock photography marketplace",
+    "phone wallpapers HD",
+    "desktop wallpapers 4K",
+    "AI generated stock art",
+    "3D renders stock",
     "commercial stock photos",
+    "Lumenstock",
   ],
   alternates: {
     canonical: "/",
   },
+  verification: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
+    ? { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION }
+    : undefined,
   openGraph: {
     type: "website",
     locale: siteConfig.locale,
@@ -82,6 +87,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     url: siteConfig.url,
     logo: `${siteConfig.url}/icon.svg`,
     description: siteConfig.description,
+    contactPoint: {
+      "@type": "ContactPoint",
+      contactType: "customer support",
+      email: "tarasu2008@gmail.com",
+    },
   };
 
   const siteJsonLd = {

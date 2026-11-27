@@ -24,6 +24,10 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   const q = one(sp.q) || "";
   const category = one(sp.category) || "all";
   const subcategory = one(sp.subcategory) || "all";
+  const type = one(sp.type) || "all";
+  const orientation = one(sp.orientation) || "all";
+  const people = one(sp.people) || "all";
+  const pageParam = Number.parseInt(one(sp.page) || "1", 10);
   const cat = category !== "all" ? getCategory(category) : undefined;
   const sub = subcategory !== "all" ? getSubcategory(subcategory) : undefined;
 
@@ -31,21 +35,50 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   const title = q
     ? `Search ${q}`
     : sub
-      ? `${sub.name} images`
+      ? `${sub.name} HD stock photos`
       : cat
-        ? `${cat.name} stock photos`
-        : "All images";
+        ? `${cat.name} HD stock photos`
+        : "All HD stock images";
   const description = q
-    ? `Royalty-free stock results for ${q} on Lumenstock.`
-    : `Browse ${label} — HD royalty-free photos and illustrations with desktop, tablet, and phone downloads.`;
+    ? `Royalty-free HD stock photo results for ${q} on Lumenstock.`
+    : `Browse ${label} — 50+ royalty-free HD photos and illustrations per category with desktop, tablet, and phone downloads.`;
+
+  const canonicalParams = new URLSearchParams();
+  if (cat) canonicalParams.set("category", cat.id);
+  if (sub) canonicalParams.set("subcategory", sub.id);
+  const canonicalQs = canonicalParams.toString();
+  const canonical = canonicalQs ? `/browse?${canonicalQs}` : "/browse";
+
+  const isFilteredVariant =
+    Boolean(q) ||
+    type !== "all" ||
+    orientation !== "all" ||
+    people !== "all" ||
+    (Number.isFinite(pageParam) && pageParam > 1);
+
+  const previewImage = sub
+    ? `/samples/subcategories/${sub.id}.jpg`
+    : cat
+      ? `/samples/categories/${cat.id}.jpg`
+      : "/samples/categories/nature.jpg";
 
   return {
     title,
     description,
-    alternates: {
-      canonical: `/browse${category !== "all" ? `?category=${category}` : ""}`,
+    alternates: { canonical },
+    robots: isFilteredVariant ? { index: false, follow: true } : { index: true, follow: true },
+    openGraph: {
+      title: `${title} · Lumenstock`,
+      description,
+      url: canonical,
+      images: [{ url: previewImage, width: 1920, height: 1080, alt: title }],
     },
-    openGraph: { title: `${title} · Lumenstock`, description },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} · Lumenstock`,
+      description,
+      images: [previewImage],
+    },
   };
 }
 

@@ -17,17 +17,25 @@ export function SiteFooter() {
             <Link href="/browse">All images</Link>
             <Link href="/categories">Categories</Link>
             <Link href="/pricing">Pricing</Link>
+            <Link href="/roadmap">Studio roadmap</Link>
           </div>
           <div>
-            <h4>Licenses &amp; Studio</h4>
+            <h4>Licenses &amp; Legal</h4>
             <Link href="/pricing#licenses">Standard license</Link>
             <Link href="/pricing#licenses">Enhanced license</Link>
-            <Link href="/roadmap">Studio roadmap</Link>
+            <Link href="/privacy">Privacy Policy</Link>
+            <Link href="/terms">Terms &amp; Conditions</Link>
           </div>
         </div>
         <div className="footer-bottom">
           <span>© {new Date().getFullYear()} Lumenstock. All rights reserved.</span>
-          <span>No stored card details · No auto-renewal · HD royalty-free licensing</span>
+          <span className="footer-legal-links">
+            <Link href="/privacy">Privacy Policy</Link>
+            <span aria-hidden>·</span>
+            <Link href="/terms">Terms &amp; Conditions</Link>
+            <span aria-hidden>·</span>
+            <span>No stored card details · No auto-renewal</span>
+          </span>
         </div>
       </div>
     </footer>

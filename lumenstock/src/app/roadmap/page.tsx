@@ -1,10 +1,24 @@
 import type { Metadata } from "next";
+import { siteConfig } from "@/data/catalog";
 
 export const metadata: Metadata = {
   title: "Studio roadmap",
   description:
-    "See what’s next for Lumenstock — design editor, templates, brand kits, and Canva-style creative tools planned after the stock marketplace.",
+    "See what’s next for Lumenstock — design editor, templates, brand kits, and creative tools built on top of our 11,300+ HD stock library.",
   alternates: { canonical: "/roadmap" },
+  openGraph: {
+    title: "Studio roadmap · Lumenstock",
+    description:
+      "Upcoming creative studio tools built on top of Lumenstock’s 11,300+ HD royalty-free stock catalog.",
+    url: `${siteConfig.url}/roadmap`,
+    images: [{ url: "/samples/categories/workspace.jpg", width: 1920, height: 1080, alt: "Lumenstock Studio Roadmap" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Studio roadmap · Lumenstock",
+    description: "Upcoming creative studio tools on Lumenstock.",
+    images: ["/samples/categories/workspace.jpg"],
+  },
 };
 
 const later = [

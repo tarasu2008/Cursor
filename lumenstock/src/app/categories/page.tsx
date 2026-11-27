@@ -6,18 +6,27 @@ import {
   getAssetCountForCategory,
   getAssetCountForSubcategory,
   getSubcategoriesForParent,
+  siteConfig,
 } from "@/data/catalog";
 
 export const metadata: Metadata = {
   title: "Image categories & subcategories",
   description:
-    "Browse Lumenstock stock photo categories and subcategories — animals, nature, phone wallpapers, desktop wallpapers, and more — with HD samples for each.",
+    "Browse 48 Lumenstock HD stock photo categories and 178 subcategories — 50 HD images each, including phone and desktop wallpapers.",
   alternates: { canonical: "/categories" },
   openGraph: {
     title: "Image categories & subcategories · Lumenstock",
     description:
-      "Explore stock categories with curated subcategory galleries, including phone and desktop wallpapers.",
-    url: "/categories",
+      "Explore 48 stock categories and 178 subcategories with 50 HD images each, plus phone and desktop wallpapers.",
+    url: `${siteConfig.url}/categories`,
+    images: [{ url: "/samples/categories/nature.jpg", width: 1920, height: 1080, alt: "Lumenstock categories" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Image categories & subcategories · Lumenstock",
+    description:
+      "Explore 48 stock categories and 178 subcategories with 50 HD images each on Lumenstock.",
+    images: ["/samples/categories/nature.jpg"],
   },
 };
 
@@ -42,7 +51,12 @@ export default function CategoriesPage() {
       <article key={c.id} className={`category-block${isWallpaper ? " wallpaper-block" : ""}`}>
         <Link href={`/browse?category=${c.id}`} className="category-block-head">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={cover} alt="" className={isPhone ? "phone-cover" : undefined} />
+          <img
+            src={cover}
+            alt={`${c.name} HD stock images`}
+            loading="lazy"
+            className={isPhone ? "phone-cover" : undefined}
+          />
           <div>
             <strong>
               {c.name} <em className="count-pill">{getAssetCountForCategory(c.id)} HD images</em>
@@ -67,7 +81,7 @@ export default function CategoriesPage() {
                 >
                   <div className={isPhone ? "phone-frame" : undefined}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={thumb} alt="" />
+                    <img src={thumb} alt={`${s.name} — ${c.name} HD stock photos`} loading="lazy" />
                     {isPhone && (
                       <div className="phone-frame-chrome" aria-hidden>
                         <span className="phone-frame-time">9:41</span>
@@ -89,8 +103,31 @@ export default function CategoriesPage() {
     );
   };
 
+  const collectionJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "Lumenstock Image Categories & Subcategories",
+    url: `${siteConfig.url}/categories`,
+    description:
+      "48 HD stock image categories and 178 subcategories with 50 unique royalty-free HD visuals each.",
+    mainEntity: {
+      "@type": "ItemList",
+      numberOfItems: categories.length,
+      itemListElement: categories.map((c, idx) => ({
+        "@type": "ListItem",
+        position: idx + 1,
+        name: c.name,
+        url: `${siteConfig.url}/browse?category=${c.id}`,
+      })),
+    },
+  };
+
   return (
     <div className="container">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }}
+      />
       <div className="page-hero">
         <h1>Categories</h1>
         <p>

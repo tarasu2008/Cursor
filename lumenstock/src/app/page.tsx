@@ -171,7 +171,13 @@ export default function HomePage() {
           {heroAsset && (
             <Link href={assetPath(heroAsset)} className={styles.heroStage}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={heroAsset.imageUrl} alt={heroAsset.title} referrerPolicy="no-referrer" />
+              <img
+                src={heroAsset.imageUrl}
+                alt={heroAsset.title}
+                fetchPriority="high"
+                decoding="async"
+                referrerPolicy="no-referrer"
+              />
               <div className={styles.heroStageCaption}>
                 <div>
                   <strong>{heroAsset.title}</strong>

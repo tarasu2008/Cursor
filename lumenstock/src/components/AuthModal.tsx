@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
 import { useAuth, type AuthUser } from "./AuthProvider";
 
@@ -230,7 +231,15 @@ export function AuthModal() {
                     : "Create account"}
             </button>
             <p className="auth-footnote">
-              Passwords are stored hashed for login validation. Card numbers are never saved on Lumenstock.
+              By continuing, you agree to our{" "}
+              <Link href="/terms" onClick={onClose} style={{ color: "var(--accent-link)" }}>
+                Terms &amp; Conditions
+              </Link>{" "}
+              and{" "}
+              <Link href="/privacy" onClick={onClose} style={{ color: "var(--accent-link)" }}>
+                Privacy Policy
+              </Link>
+              . Passwords are stored hashed; card numbers are never saved on Lumenstock.
             </p>
           </form>
         )}

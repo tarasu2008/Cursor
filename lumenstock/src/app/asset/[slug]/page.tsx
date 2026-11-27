@@ -87,16 +87,61 @@ export default async function AssetPage({ params }: Props) {
     description: asset.description,
     contentUrl: absoluteImageUrl(asset.imageUrl),
     url: `${siteConfig.url}${assetPath(asset)}`,
+    encodingFormat: "image/jpeg",
+    representativeOfPage: true,
+    creator: {
+      "@type": "Organization",
+      name: asset.owner,
+    },
     creditText: asset.owner,
+    copyrightNotice: `© ${asset.owner}`,
+    license: `${siteConfig.url}/terms#licenses`,
     acquireLicensePage: `${siteConfig.url}/pricing`,
     keywords: asset.keywords.join(", "),
     width: asset.width,
     height: asset.height,
   };
 
+  const breadcrumbItems = [
+    { "@type": "ListItem", position: 1, name: "Home", item: siteConfig.url },
+    { "@type": "ListItem", position: 2, name: "All images", item: `${siteConfig.url}/browse` },
+  ];
+  if (cats[0]) {
+    breadcrumbItems.push({
+      "@type": "ListItem",
+      position: breadcrumbItems.length + 1,
+      name: cats[0].name,
+      item: `${siteConfig.url}/browse?category=${cats[0].id}`,
+    });
+  }
+  if (sub) {
+    breadcrumbItems.push({
+      "@type": "ListItem",
+      position: breadcrumbItems.length + 1,
+      name: sub.name,
+      item: `${siteConfig.url}/browse?category=${sub.parentId}&subcategory=${sub.id}`,
+    });
+  }
+  breadcrumbItems.push({
+    "@type": "ListItem",
+    position: breadcrumbItems.length + 1,
+    name: asset.title,
+    item: `${siteConfig.url}${assetPath(asset)}`,
+  });
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: breadcrumbItems,
+  };
+
   return (
     <div className="container">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <div className="detail">
         <div className="detail-copy">
           <h1>{asset.title}</h1>
