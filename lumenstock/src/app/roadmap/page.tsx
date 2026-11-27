@@ -70,12 +70,12 @@ export default function RoadmapPage() {
         </div>
         <div className="chip-row">
           {[
-            "Search & filters",
-            "46 categories (26 + 20 extended)",
-            "One HD image per category",
-            "Desktop / tablet / phone sizes",
-            "Asset detail + licenses",
-            "Subscriptions & packs",
+            "Instant search & autocomplete",
+            "48 categories & 178 subcategories",
+            "50 HD images per category & subcategory (11,300 total)",
+            "Desktop / tablet / phone & wallpaper sizes",
+            "Asset detail + crop preview + licenses",
+            "One-time plans & packs (Stripe + Razorpay)",
           ].map((item) => (
             <span key={item} className="chip active">
               {item}

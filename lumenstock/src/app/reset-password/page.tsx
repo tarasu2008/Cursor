@@ -46,7 +46,7 @@ function ResetPasswordForm() {
 
   return (
     <div className="container" style={{ maxWidth: 460, padding: "4rem 1.25rem" }}>
-      <div className="modal-panel" style={{ position: "static", margin: "0 auto" }}>
+      <div className="modal-panel auth-modal-panel" style={{ position: "static", margin: "0 auto" }}>
         <p className="modal-kicker">Lumenstock</p>
         <h1 style={{ margin: "0.25rem 0 0.5rem", fontSize: "1.6rem" }}>Reset your password</h1>
         {!token ? (

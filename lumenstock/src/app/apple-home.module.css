@@ -94,6 +94,12 @@
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
 }
 
+.heroSearchWrap :global(.search-shell:focus-within) {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(41, 151, 255, 0.75);
+  box-shadow: 0 0 0 4px rgba(41, 151, 255, 0.22), 0 16px 40px rgba(0, 0, 0, 0.45);
+}
+
 .heroSearchWrap :global(.search-shell input) {
   color: #ffffff;
   font-size: 0.98rem;
