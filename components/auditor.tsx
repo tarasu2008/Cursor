@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { AuditReport, Category } from "@/lib/schema";
+import type { AuditReport, Category, Scenario } from "@/lib/schema";
 
 const DEMO_URL = "https://www.seadwellers.com/";
 
@@ -130,9 +130,21 @@ export function Auditor() {
             <ol className="scenarios">
               {report.scenarios.map((scenario) => (
                 <li key={scenario.id}>
-                  <span className={scenario.passed ? "pill pass" : "pill fail"}>{scenario.passed ? "Pass" : "Fail"}</span>
-                  <span className="scenario-name">{scenario.name}</span>
-                  <span className="scenario-actual">{scenario.actual}</span>
+                  <details className="scenario">
+                    <summary>
+                      <span className={scenario.passed ? "pill pass" : "pill fail"}>{scenario.passed ? "Pass" : "Fail"}</span>
+                      <span className="scenario-name">{rowTitle(scenario)}</span>
+                      <span className="scenario-actual">{oneLine(scenario.actual)}</span>
+                    </summary>
+                    <div className="scenario-more">
+                      <p>
+                        <span>URL</span> {scenario.finalUrl}
+                      </p>
+                      <p>
+                        <span>Actual</span> {scenario.actual}
+                      </p>
+                    </div>
+                  </details>
                 </li>
               ))}
             </ol>
@@ -190,6 +202,9 @@ function Gauge({ category }: { category: Category }) {
         </text>
       </svg>
       <figcaption>{category.label}</figcaption>
+      <div className="score-bar" aria-hidden="true">
+        <span className={tone} style={{ width: `${category.score ?? 0}%` }} />
+      </div>
       <p className="gauge-counts">
         {category.passed} pass · {category.failed} fail
         <br />
@@ -204,6 +219,28 @@ function band(score: number | null): "good" | "ok" | "poor" | "none" {
   if (score >= 90) return "good";
   if (score >= 50) return "ok";
   return "poor";
+}
+
+function rowTitle(scenario: Scenario): string {
+  const parts = scenario.name.split(":");
+  if (parts.length < 2) return scenario.name.replace(/\bLink\b/g, pathTitle(scenario.requestedUrl));
+  const kind = parts[0]?.trim() || scenario.name;
+  const label = parts.slice(1).join(":").trim();
+  if (label && !/^link$/i.test(label)) return scenario.name;
+  return `${kind}: ${pathTitle(scenario.requestedUrl)}`;
+}
+
+function pathTitle(url: string): string {
+  try {
+    const path = decodeURIComponent(new URL(url).pathname);
+    return path && path !== "/" ? path : "Home";
+  } catch {
+    return "Page";
+  }
+}
+
+function oneLine(value: string): string {
+  return value.replace(/\s+/g, " ").trim();
 }
 
 function fileName(url: string): string {
