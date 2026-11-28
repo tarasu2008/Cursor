@@ -1,4 +1,7 @@
+import AxeBuilder from "@axe-core/playwright";
+import { readFileSync } from "fs";
 import { parse } from "node-html-parser";
+import path from "path";
 import { chromium, type Page } from "playwright-core";
 import { PRECONDITIONS, type Scenario } from "./schema";
 import { allowedHostsFor, assertPublicDns, isForbiddenUrl } from "./guardrails";
@@ -6,6 +9,7 @@ import { isDisallowed, parseRobots } from "./robots";
 
 const CHROME = "/usr/local/bin/google-chrome";
 const USER_AGENT = "QAFirstPass/0.1 (homepage checks; does not submit payment or guest details)";
+const PHONE_AGENT = "Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Mobile Safari/537.36";
 const CAP_MS = 110_000;
 const CAP_SECONDS = 120;
 
@@ -28,6 +32,8 @@ type DomFacts = {
   menu: { found: boolean; opened: boolean; closed: boolean; label: string };
 };
 type FetchResult = { status: number; finalUrl: string; ms: number; title: string | null; note: string | null };
+type AxeHit = { id: string; impact: string; help: string };
+export type AxeSummary = { passes: number; violations: AxeHit[] };
 
 export type CheckViewport = { width: number; height: number };
 
@@ -37,7 +43,7 @@ export const MOBILE_VIEWPORT: CheckViewport = { width: 390, height: 844 };
 export async function runHomepageScenarios(
   startUrl: string,
   viewport: CheckViewport = DESKTOP_VIEWPORT,
-): Promise<{ scenarios: Scenario[]; skipped: number; capSeconds: number }> {
+): Promise<{ scenarios: Scenario[]; skipped: number; capSeconds: number; axe: AxeSummary }> {
   const hosts = allowedHostsFor(new URL(startUrl).hostname);
   const started = Date.now();
   const deadline = started + CAP_MS;
@@ -54,8 +60,11 @@ export async function runHomepageScenarios(
   let menuLinks: LinkFact[] = [];
   let bookingSteps: Step[] = [];
   let loadErrors: string[] = [];
+  let axe: AxeSummary = { passes: 0, violations: [] };
+  const phone = viewport.width <= 500;
   try {
-    const page = await browser.newPage({ userAgent: USER_AGENT, viewport });
+    const context = await browser.newContext({ userAgent: phone ? PHONE_AGENT : USER_AGENT, viewport });
+    const page = await context.newPage();
     page.on("pageerror", (error) => errors.push(error.message));
     page.on("console", (message) => {
       if (message.type() !== "error") return;
@@ -74,15 +83,18 @@ export async function runHomepageScenarios(
     };
     facts = await readDesktop(page);
     loadErrors = [...errors];
+    axe = await readAxe(page);
     const exercised = await exerciseButtons(page, home.finalUrl, deadline);
     buttonSteps = exercised.steps;
     buttonSkipped = exercised.remaining;
     menuLinks = exercised.menuLinks;
     await page.goto(home.finalUrl, { waitUntil: "domcontentloaded", timeout: 20_000 }).catch(() => undefined);
     await page.setViewportSize(viewport);
-    facts.menu = await readPhoneMenu(page);
-    facts.overflow = await readOverflow(page);
-    await page.setViewportSize(viewport);
+    if (phone) {
+      facts.menu = await readPhoneMenu(page);
+      facts.overflow = await readOverflow(page);
+      await page.setViewportSize(viewport);
+    }
     if (!page.url().startsWith(new URL(home.finalUrl).origin)) {
       await page.goto(home.finalUrl, { waitUntil: "domcontentloaded", timeout: 20_000 }).catch(() => undefined);
     } else if (new URL(page.url()).pathname !== new URL(home.finalUrl).pathname) {
@@ -137,7 +149,8 @@ export async function runHomepageScenarios(
     scenarios.push(makeScenario(scenarios.length + 1, name, passed, actual, url, status, ms, home.title));
   };
 
-  add("Homepage status", home.status >= 200 && home.status < 400, `HTTP ${home.status} in ${home.ms} ms.`);
+  add("Homepage status", home.status >= 200 && home.status < 400, `HTTP ${home.status}.`);
+  add("Load time", home.ms > 0, `${home.ms} ms in this browser.`);
   add("Page text", facts.pageText, facts.pageText ? "The page has visible text." : "The page looks blank.");
   add(
     "Visible H1",
@@ -165,17 +178,19 @@ export async function runHomepageScenarios(
   for (const step of buttonSteps) add(step.name, step.passed, step.actual, step.url);
   if (facts.buttons.length === 0) add("Buttons", false, "No visible button was found.");
 
-  add(
-    "Phone menu",
-    facts.menu.found && facts.menu.opened && facts.menu.closed,
-    !facts.menu.found
-      ? "No menu button was visible at 390px."
-      : facts.menu.opened && facts.menu.closed
-        ? `Opened and closed${facts.menu.label ? ` "${facts.menu.label}"` : ""}.`
-        : facts.menu.opened
-          ? "The menu opened and did not close."
-          : "The menu button did not open.",
-  );
+  if (phone) {
+    add(
+      "Phone menu",
+      facts.menu.found && facts.menu.opened && facts.menu.closed,
+      !facts.menu.found
+        ? "No menu button was visible at 390px."
+        : facts.menu.opened && facts.menu.closed
+          ? `Opened and closed${facts.menu.label ? ` "${facts.menu.label}"` : ""}.`
+          : facts.menu.opened
+            ? "The menu opened and did not close."
+            : "The menu button did not open.",
+    );
+  }
   for (const step of bookingSteps) add(step.name, step.passed, step.actual, step.url);
 
   const sameHome = missing.status === 200 && (normalize(missing.finalUrl) === normalize(home.finalUrl) || (missing.title && missing.title === home.title));
@@ -195,9 +210,39 @@ export async function runHomepageScenarios(
     facts.images.missingAlt === 0,
     `${facts.images.checked} in the first view. ${facts.images.missingAlt} missing alt.`,
   );
-  add("Text overflow", facts.overflow === 0, facts.overflow === 0 ? "No primary text overflow at 390px." : `${facts.overflow} text blocks overflow at 390px.`);
+  if (phone) {
+    add("Text overflow", facts.overflow === 0, facts.overflow === 0 ? "No primary text overflow at 390px." : `${facts.overflow} text blocks overflow at 390px.`);
+  }
+  const shown = axe.violations.slice(0, 12);
+  if (shown.length === 0) {
+    add("Accessibility", true, `No axe-core violation at ${viewport.width}px. ${axe.passes} rules passed.`);
+  } else {
+    for (const item of shown) add(`Accessibility: ${item.id}`, false, `${item.impact}. ${clip(item.help, 120)}`);
+    if (axe.violations.length > shown.length) {
+      add("Accessibility", false, `${axe.violations.length} axe-core rules failed at ${viewport.width}px. ${axe.passes} rules passed.`);
+    }
+  }
 
-  return { scenarios, skipped: linkSkipped + buttonSkipped, capSeconds: CAP_SECONDS };
+  return { scenarios, skipped: linkSkipped + buttonSkipped, capSeconds: CAP_SECONDS, axe };
+}
+
+let cachedAxeSource: string | undefined;
+function browserAxeSource(): string {
+  cachedAxeSource ??= readFileSync(path.join(process.cwd(), "node_modules/axe-core/axe.js"), "utf8");
+  return cachedAxeSource;
+}
+
+async function readAxe(page: Page): Promise<AxeSummary> {
+  try {
+    const results = await new AxeBuilder({ page, axeSource: browserAxeSource() }).analyze();
+    return {
+      passes: results.passes.length,
+      violations: results.violations.map((item) => ({ id: item.id, impact: item.impact || "unknown", help: item.help })),
+    };
+  } catch (error) {
+    const help = error instanceof Error ? error.message : "axe-core could not run.";
+    return { passes: 0, violations: [{ id: "axe", impact: "serious", help }] };
+  }
 }
 
 function makeScenario(
@@ -231,6 +276,8 @@ function makeScenario(
 
 function expectedFor(name: string): string {
   if (name === "Homepage status") return "The HTTP status is below 400.";
+  if (name === "Load time") return "The browser recorded how long the homepage took. This is not a Lighthouse score.";
+  if (name === "Accessibility" || name.startsWith("Accessibility:")) return "axe-core reports no violation for this rule on this viewport.";
   if (name === "Visible H1") return "Exactly one H1 is visible.";
   if (name === "Title") return "The title is not empty.";
   if (name === "Meta description") return "A meta description is present.";

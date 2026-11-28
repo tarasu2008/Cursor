@@ -7,7 +7,7 @@ export const findingSchema = z.object({
 });
 
 export const categorySchema = z.object({
-  id: z.enum(["load", "document", "meta", "links", "automation"]),
+  id: z.enum(["performance", "accessibility", "best-practices", "seo"]),
   label: z.string().min(1),
   headline: z.string().min(1),
   score: z.number().int().min(0).max(100).nullable(),
@@ -60,7 +60,7 @@ export const deviceSchema = z.object({
   id: z.enum(["mobile", "desktop"]),
   label: z.string().min(1),
   width: z.number().int().positive(),
-  categories: z.array(categorySchema).length(5),
+  categories: z.array(categorySchema).length(4),
   scenarios: z.array(scenarioSchema).min(1).max(200),
   scores: scoreSchema,
   limits: limitsSchema,
@@ -75,7 +75,7 @@ export const auditReportSchema = z.object({
   summary: z.string().min(1),
   scores: scoreSchema,
   limits: limitsSchema,
-  categories: z.array(categorySchema).length(5),
+  categories: z.array(categorySchema).length(4),
   scenarios: z.array(scenarioSchema).min(1).max(200),
   devices: z.array(deviceSchema).length(2),
 });

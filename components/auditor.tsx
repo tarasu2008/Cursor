@@ -183,7 +183,7 @@ function DevicePanel({ device }: { device: DeviceReport }) {
           <span className="swatch good" /> 90–100
         </p>
         <p className="score-note">
-          {passed} passed and {failed} failed at {device.width}px. Automation counts every check below.
+          {passed} passed and {failed} failed at {device.width}px.
           {device.limits.remaining > 0
             ? ` Stopped at ${Math.round(device.limits.capSeconds / 60)} minutes. ${device.limits.remaining} controls were not opened.`
             : ""}
