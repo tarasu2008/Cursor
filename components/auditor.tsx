@@ -102,7 +102,7 @@ export function Auditor() {
               {pending ? "Analyzing…" : "Analyze"}
             </button>
           </div>
-          <p className="quiet">Public pages only. Mobile and Desktop each stop at about 2 minutes. Checkout is not filled in or paid.</p>
+          <p className="quiet">Public pages only. Mobile and Desktop each include a Lighthouse lab run. Checkout is not filled in or paid.</p>
           {error ? (
             <p className="error" role="alert">
               {error}
@@ -183,7 +183,7 @@ function DevicePanel({ device }: { device: DeviceReport }) {
           <span className="swatch good" /> 90–100
         </p>
         <p className="score-note">
-          {passed} passed and {failed} failed at {device.width}px.
+          Lighthouse lab scores. {passed} passed and {failed} failed in the homepage checks at {device.width}px.
           {device.limits.remaining > 0
             ? ` Stopped at ${Math.round(device.limits.capSeconds / 60)} minutes. ${device.limits.remaining} controls were not opened.`
             : ""}

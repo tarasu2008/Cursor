@@ -61,10 +61,16 @@ export async function runHomepageScenarios(
   let bookingSteps: Step[] = [];
   let loadErrors: string[] = [];
   let axe: AxeSummary = { passes: 0, violations: [] };
+  let heapActual = "No Heap script loaded. Replays, autocapture, funnels, and event definitions are not visible unless the page loads Heap.";
   const phone = viewport.width <= 500;
   try {
     const context = await browser.newContext({ userAgent: phone ? PHONE_AGENT : USER_AGENT, viewport });
     const page = await context.newPage();
+    const heapHosts = new Set<string>();
+    page.on("request", (request) => {
+      const host = heapHost(request.url());
+      if (host) heapHosts.add(host);
+    });
     page.on("pageerror", (error) => errors.push(error.message));
     page.on("console", (message) => {
       if (message.type() !== "error") return;
@@ -82,6 +88,10 @@ export async function runHomepageScenarios(
       note: null,
     };
     facts = await readDesktop(page);
+    const heapLoaded = heapHosts.size > 0 || (await pageHasHeap(page));
+    heapActual = heapLoaded
+      ? "Heap script loaded. Replays, autocapture, funnels, and event definitions stay in Heap and are not read here."
+      : "No Heap script loaded. Replays, autocapture, funnels, and event definitions are not visible unless the page loads Heap.";
     loadErrors = [...errors];
     axe = await readAxe(page);
     const exercised = await exerciseButtons(page, home.finalUrl, deadline);
@@ -205,6 +215,7 @@ export async function runHomepageScenarios(
 
   const uniqueErrors = [...new Set(loadErrors.map((item) => item.replace(/\s+/g, " ").trim()).filter(Boolean))].slice(0, 3);
   add("Console", uniqueErrors.length === 0, uniqueErrors.length === 0 ? "No uncaught error on load." : uniqueErrors[0] || "An error was logged.");
+  add("Heap", true, heapActual);
   add(
     "First-view images",
     facts.images.missingAlt === 0,
@@ -274,6 +285,24 @@ function makeScenario(
   };
 }
 
+function heapHost(url: string): string | null {
+  try {
+    const host = new URL(url).hostname.toLowerCase();
+    if (host === "heapanalytics.com" || host.endsWith(".heapanalytics.com") || host === "heap-api.com" || host.endsWith(".heap-api.com")) return host;
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+async function pageHasHeap(page: Page): Promise<boolean> {
+  return page.evaluate(() => {
+    const scripts = [...document.scripts].map((script) => `${script.src} ${(script.textContent || "").slice(0, 400)}`);
+    const heap = (window as unknown as { heap?: unknown }).heap;
+    return /heap\.load\s*\(|heapanalytics\.com|heap-api\.com/i.test(scripts.join("\n")) || (typeof heap === "object" && heap !== null);
+  });
+}
+
 function expectedFor(name: string): string {
   if (name === "Homepage status") return "The HTTP status is below 400.";
   if (name === "Load time") return "The browser recorded how long the homepage took. This is not a Lighthouse score.";
@@ -290,6 +319,7 @@ function expectedFor(name: string): string {
   if (name === "Text contrast") return "Primary text contrast is at least 4.5:1.";
   if (name === "Unknown path") return "The status is 404 and the response is not the homepage.";
   if (name === "Console") return "Load logs no uncaught error.";
+  if (name === "Heap") return "Record whether the public page loads Heap. Do not read replays, funnels, or event definitions.";
   if (name === "First-view images") return "Each image in the first view has alt text or is decorative.";
   if (name === "Text overflow") return "Primary text does not overflow at 390px.";
   return "The check passes.";

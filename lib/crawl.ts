@@ -1,14 +1,20 @@
 import { auditReportSchema, type AuditReport, type Category, type DeviceReport, type Scenario } from "./schema";
 import { assertPublicDns, parsePublicUrl } from "./guardrails";
 import { DESKTOP_VIEWPORT, MOBILE_VIEWPORT, runHomepageScenarios, type AxeSummary } from "./homepage-checks";
+import { runLighthouseLab, type LabScores } from "./lighthouse-lab";
 
 export async function auditUrl(raw: string): Promise<AuditReport> {
   const start = parsePublicUrl(raw);
   await assertPublicDns(start.hostname);
-  const desktopRun = await runHomepageScenarios(start.toString(), DESKTOP_VIEWPORT);
-  const mobileRun = await runHomepageScenarios(start.toString(), MOBILE_VIEWPORT);
-  const desktop = deviceReport("desktop", "Desktop", DESKTOP_VIEWPORT.width, desktopRun);
-  const mobile = deviceReport("mobile", "Mobile", MOBILE_VIEWPORT.width, mobileRun);
+  const url = start.toString();
+  const [desktopLab, mobileLab] = await Promise.all([
+    labFor(url, "desktop"),
+    labFor(url, "mobile"),
+  ]);
+  const desktopRun = await runHomepageScenarios(url, DESKTOP_VIEWPORT);
+  const mobileRun = await runHomepageScenarios(url, MOBILE_VIEWPORT);
+  const desktop = deviceReport("desktop", "Desktop", DESKTOP_VIEWPORT.width, desktopRun, desktopLab);
+  const mobile = deviceReport("mobile", "Mobile", MOBILE_VIEWPORT.width, mobileRun, mobileLab);
   const home = desktopRun.scenarios.find((item) => item.name === "Homepage status");
   const desktopFailed = desktop.scenarios.filter((item) => !item.passed).length;
   const mobileFailed = mobile.scenarios.filter((item) => !item.passed).length;
@@ -26,13 +32,42 @@ export async function auditUrl(raw: string): Promise<AuditReport> {
   return auditReportSchema.parse(report);
 }
 
+async function labFor(url: string, formFactor: "mobile" | "desktop"): Promise<{ scores: LabScores | null; error: string | null }> {
+  try {
+    return { scores: await runLighthouseLab(url, formFactor), error: null };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Lighthouse lab did not finish.";
+    return { scores: null, error: message };
+  }
+}
+
+function withLab(categories: Category[], lab: { scores: LabScores | null; error: string | null }): Category[] {
+  const scores = lab.scores;
+  const byId: Record<Category["id"], number | null> = {
+    performance: scores?.performance ?? null,
+    accessibility: scores?.accessibility ?? null,
+    "best-practices": scores?.bestPractices ?? null,
+    seo: scores?.seo ?? null,
+  };
+  return categories.map((category) => {
+    const score = byId[category.id];
+    const value = score === null ? lab.error || "Lighthouse lab did not return this score." : `Lighthouse lab score ${score}. Not a Chrome UX Report score.`;
+    return {
+      ...category,
+      score,
+      findings: [{ label: "Lighthouse lab", value, state: "info" as const }, ...category.findings].slice(0, 16),
+    };
+  });
+}
+
 function deviceReport(
   id: DeviceReport["id"],
   label: string,
   width: number,
   run: { scenarios: Scenario[]; skipped: number; capSeconds: number; axe: AxeSummary },
+  lab: { scores: LabScores | null; error: string | null },
 ): DeviceReport {
-  const categories = buildCategories(run.scenarios, run.skipped, run.axe);
+  const categories = withLab(buildCategories(run.scenarios, run.skipped, run.axe), lab);
   const passed = run.scenarios.filter((item) => item.passed).length;
   const failed = run.scenarios.length - passed;
   const home = run.scenarios.find((item) => item.name === "Homepage status");
@@ -71,9 +106,9 @@ function buildCategories(scenarios: Scenario[], skipped: number, axe: AxeSummary
   seoItems.skipped += skipped;
   const axeTally = { passed: axe.passes, failed: axe.violations.length, skipped: 0, ran: axe.passes + axe.violations.length };
   return [
-    category("performance", "Performance", performance, listed(scenarios, (item) => item.name === "Homepage status" || item.name === "Load time", "Measured in this browser. Not a Lighthouse or CrUX score.")),
+    category("performance", "Performance", performance, listed(scenarios, (item) => item.name === "Homepage status" || item.name === "Load time", "Homepage timing from this browser. The circle is the Lighthouse lab score.")),
     category("accessibility", "Accessibility", axeTally, axeFindings(axe)),
-    category("best-practices", "Best Practices", practices, listed(scenarios, (item) => ["Pinch zoom", "First-view images", "Console", "Phone menu", "Text overflow"].includes(item.name), "Zoom, images, console, and phone layout. Not a Lighthouse score.")),
+    category("best-practices", "Best Practices", practices, listed(scenarios, (item) => ["Pinch zoom", "First-view images", "Console", "Phone menu", "Text overflow"].includes(item.name), "Zoom, images, console, and phone layout. The circle is the Lighthouse lab score.")),
     category("seo", "SEO", seoItems, seoFindings(scenarios)),
   ];
 }
@@ -123,7 +158,7 @@ function axeFindings(axe: AxeSummary): Category["findings"] {
   }));
   rows.push({
     label: "axe-core",
-    value: `${axe.passes} rules passed. ${axe.violations.length} failed on this viewport. Not a Lighthouse score.`,
+    value: `${axe.passes} rules passed. ${axe.violations.length} failed on this viewport. The circle is the Lighthouse lab score.`,
     state: axe.violations.length ? "fail" : "pass",
   });
   return rows;
@@ -136,6 +171,6 @@ function seoFindings(scenarios: Scenario[]): Category["findings"] {
   return [
     ...named.map((item) => ({ label: item.name, value: item.actual, state: item.passed ? ("pass" as const) : ("fail" as const) })),
     { label: "Links", value: `${links.length - failed} passed. ${failed} failed.`, state: failed ? "fail" : "pass" },
-    { label: "Scope", value: "Title, meta description, headings, and link status. Not a Lighthouse SEO score.", state: "info" },
+    { label: "Scope", value: "Title, meta description, headings, and link status. The circle is the Lighthouse lab score.", state: "info" },
   ];
 }

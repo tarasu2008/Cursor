@@ -1,6 +1,6 @@
 # First Pass
 
-Paste a public URL. The page shows scores, then every homepage check that ran: status, headings, contrast, navigation, buttons, menu items, and a booking walk that stops at checkout without entering guest or card details. A run stops at about 2 minutes. Download report writes those checks to a PDF.
+Paste a public URL. The page shows Lighthouse lab scores for Mobile and Desktop, then the homepage checks: status, headings, contrast, navigation, buttons, menu items, and a booking walk that stops at checkout without entering guest or card details. Heap is recorded only as whether the page loads a Heap script. Replays, autocapture, funnels, and event definitions are not read. Download report writes those checks to a PDF.
 
 Nothing is paid. Guest details and card details are not entered. Pay, submit payment, and delete are not used. Booking may be opened until the checkout page and stops there.
 
