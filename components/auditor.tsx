@@ -78,7 +78,7 @@ export function Auditor() {
         ) : null}
       </header>
       <main>
-        <p className="lead">Check a public site.</p>
+        <p className="lead">Check your site</p>
         <form
           onSubmit={(event) => {
             event.preventDefault();
@@ -102,7 +102,7 @@ export function Auditor() {
               {pending ? "Analyzing…" : "Analyze"}
             </button>
           </div>
-          <p className="quiet">Public pages only. Mobile and Desktop each include a Lighthouse lab run. Checkout is not filled in or paid.</p>
+          <p className="quiet">Mobile and Desktop scores for Performance, Accessibility, Best Practices, and SEO, plus homepage checks.</p>
           {error ? (
             <p className="error" role="alert">
               {error}
