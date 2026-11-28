@@ -129,26 +129,37 @@ form label {
 
 .results { margin-top: 36px; }
 
-.form-factors {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 18px;
-  align-items: start;
+.device-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.device-tabs button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 132px;
+  height: 44px;
+  padding: 0 12px;
+  border: 0;
+  border-bottom: 3px solid transparent;
+  background: transparent;
+  color: #5f6368;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.device-tabs button svg { width: 22px; height: 22px; }
+
+.device-tabs button[aria-selected="true"] {
+  color: var(--blue);
+  border-bottom-color: var(--blue);
 }
 
 .device { display: grid; gap: 18px; }
-
-.device h2 {
-  flex-basis: 100%;
-  margin: 0 0 4px;
-  font-size: 22px;
-  font-weight: 600;
-  text-align: center;
-}
-
-.device .gauge { width: 96px; }
-.device .gauge svg { width: 78px; height: 78px; }
-.device .gauge-card { padding: 22px 10px 16px; }
 
 .gauge-card, .groups {
   background: #fff;
@@ -318,6 +329,7 @@ form label {
 .groups { margin-top: 28px; overflow: hidden; }
 
 details { border-top: 1px solid var(--line); }
+details:not([open]) > :not(summary) { display: none; }
 details:first-child { border-top: 0; }
 
 summary {
@@ -374,12 +386,6 @@ details[open] summary::after { transform: rotate(-135deg) translate(-2px, -2px);
 .groups li.pass .finding-value { color: var(--good-ink); }
 .groups li.fail .finding-value { color: var(--poor-ink); }
 .groups li.info .finding-value { color: var(--ink); font-weight: 400; }
-
-@media (max-width: 900px) {
-  .form-factors { grid-template-columns: 1fr; }
-  .device .gauge { width: 120px; }
-  .device .gauge svg { width: 96px; height: 96px; }
-}
 
 @media (max-width: 720px) {
   .url-row { flex-direction: column; align-items: stretch; }

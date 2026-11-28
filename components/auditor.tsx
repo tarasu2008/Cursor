@@ -10,6 +10,7 @@ export function Auditor() {
   const [pending, setPending] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [report, setReport] = useState<AuditReport | null>(null);
+  const [deviceId, setDeviceId] = useState<DeviceReport["id"]>("desktop");
   const [error, setError] = useState<string | null>(null);
 
   async function analyze() {
@@ -27,6 +28,7 @@ export function Auditor() {
         setError("error" in payload && payload.error ? payload.error : "The homepage could not be opened.");
         return;
       }
+      setDeviceId("desktop");
       setReport(payload);
     } catch {
       setReport(null);
@@ -108,17 +110,61 @@ export function Auditor() {
           ) : null}
         </form>
 
-        {report ? (
-          <section className="results" aria-live="polite">
-            <div className="form-factors">
-              {report.devices.map((device) => (
-                <DevicePanel key={device.id} device={device} />
-              ))}
-            </div>
-          </section>
-        ) : null}
+        {report ? <Results report={report} deviceId={deviceId} onDevice={setDeviceId} /> : null}
       </main>
     </>
+  );
+}
+
+function Results({
+  report,
+  deviceId,
+  onDevice,
+}: {
+  report: AuditReport;
+  deviceId: DeviceReport["id"];
+  onDevice: (id: DeviceReport["id"]) => void;
+}) {
+  const tabs = [...report.devices].sort((left, right) => Number(left.id === "desktop") - Number(right.id === "desktop"));
+  const selected = report.devices.find((device) => device.id === deviceId) ?? tabs.find((device) => device.id === "desktop") ?? tabs[0];
+  if (!selected) return null;
+  return (
+    <section className="results" aria-live="polite">
+      <div className="device-tabs" role="tablist" aria-label="Form factor">
+        {tabs.map((device) => (
+          <button
+            key={device.id}
+            type="button"
+            role="tab"
+            id={`device-tab-${device.id}`}
+            aria-selected={device.id === selected.id}
+            aria-controls="device-panel"
+            onClick={() => onDevice(device.id)}
+          >
+            <FormIcon id={device.id} />
+            {device.label}
+          </button>
+        ))}
+      </div>
+      <DevicePanel key={selected.id} device={selected} />
+    </section>
+  );
+}
+
+function FormIcon({ id }: { id: DeviceReport["id"] }) {
+  if (id === "mobile") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="7" y="2" width="10" height="20" rx="2" fill="none" stroke="currentColor" strokeWidth="2" />
+        <circle cx="12" cy="18" r="1" fill="currentColor" />
+      </svg>
+    );
+  }
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <rect x="3" y="4" width="18" height="12" rx="1" fill="none" stroke="currentColor" strokeWidth="2" />
+      <path d="M8 20h8M12 16v4" fill="none" stroke="currentColor" strokeWidth="2" />
+    </svg>
   );
 }
 
@@ -126,9 +172,8 @@ function DevicePanel({ device }: { device: DeviceReport }) {
   const failed = device.scenarios.filter((item) => !item.passed).length;
   const passed = device.scenarios.length - failed;
   return (
-    <section className="device" aria-label={device.label}>
+    <section className="device" id="device-panel" role="tabpanel" aria-labelledby={`device-tab-${device.id}`}>
       <div className="gauge-card">
-        <h2>{device.label}</h2>
         {device.categories.map((category) => (
           <Gauge key={category.id} category={category} />
         ))}
@@ -144,7 +189,7 @@ function DevicePanel({ device }: { device: DeviceReport }) {
             : ""}
         </p>
       </div>
-      <details className="homepage-checks" open>
+      <details className="homepage-checks">
         <summary>Homepage checks</summary>
         <ol className="scenarios">
           {device.scenarios.map((scenario) => (
