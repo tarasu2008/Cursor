@@ -106,6 +106,14 @@ export function Auditor() {
             </button>
           </div>
           <p className="quiet">Mobile and Desktop scores for Performance, Accessibility, Best Practices, and SEO, plus homepage checks.</p>
+          {pending ? (
+            <p className="progress" role="status">
+              <span className="progress-track">
+                <span className="progress-fill" />
+              </span>
+              Running Mobile and Desktop scores, then homepage checks.
+            </p>
+          ) : null}
           {error ? (
             <p className="error" role="alert">
               {error}
@@ -213,7 +221,7 @@ function DevicePanel({ device }: { device: DeviceReport }) {
       <details className="homepage-checks">
         <summary>Homepage checks</summary>
         <ol className="scenarios">
-          {device.scenarios.map((scenario) => (
+          {checksFirst(device.scenarios).map((scenario) => (
             <li key={scenario.id}>
               <details className="scenario">
                 <summary>
@@ -297,6 +305,7 @@ function Gauge({ category }: { category: Category }) {
       <div className="score-bar" aria-hidden="true">
         <span className={tone} style={{ width: `${category.score ?? 0}%` }} />
       </div>
+      <p className="gauge-measure">{measures(category.id)}</p>
       <p className="gauge-counts">
         {category.passed} pass · {category.failed} fail
         <br />
@@ -304,6 +313,15 @@ function Gauge({ category }: { category: Category }) {
       </p>
     </figure>
   );
+}
+
+function measures(id: Category["id"]): string {
+  if (id === "performance") return "Lighthouse lab, not our load timing.";
+  return "Lighthouse lab.";
+}
+
+function checksFirst(scenarios: Scenario[]): Scenario[] {
+  return [...scenarios].sort((left, right) => Number(left.passed) - Number(right.passed));
 }
 
 function band(score: number | null): "good" | "ok" | "poor" | "none" {

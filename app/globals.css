@@ -130,6 +130,32 @@ form label {
 
 .quiet { margin: 10px 0 0; color: var(--muted); }
 
+.progress { margin: 14px 0 0; color: var(--ink); font-size: 15px; }
+
+.progress-track {
+  display: block;
+  height: 4px;
+  margin: 0 0 8px;
+  overflow: hidden;
+  background: #e8eaed;
+  border-radius: 99px;
+}
+
+.progress-fill {
+  display: block;
+  width: 40%;
+  height: 100%;
+  background: var(--blue);
+  border-radius: 99px;
+  animation: progress-slide 1.4s ease-in-out infinite;
+}
+
+@keyframes progress-slide {
+  0% { transform: translateX(-20%); }
+  50% { transform: translateX(160%); }
+  100% { transform: translateX(-20%); }
+}
+
 .error {
   margin: 12px 0 0;
   color: var(--poor-ink);
@@ -186,7 +212,7 @@ form label {
 }
 
 .gauge {
-  width: 132px;
+  width: 156px;
   margin: 0;
   text-align: center;
 }
@@ -246,6 +272,13 @@ form label {
 .score-bar span.ok { background: #ffa400; }
 .score-bar span.poor { background: #ff4e42; }
 .score-bar span.none { background: transparent; }
+
+.gauge-measure {
+  margin: 8px 0 0;
+  color: #6e6e73;
+  font-size: 12px;
+  line-height: 1.35;
+}
 
 .gauge-counts {
   margin: 6px auto 0;
