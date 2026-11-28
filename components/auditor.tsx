@@ -127,27 +127,18 @@ export function Auditor() {
                   : ""}
               </p>
             </div>
-            <ol className="scenarios">
-              {report.scenarios.map((scenario) => (
-                <li key={scenario.id}>
-                  <details className="scenario">
-                    <summary>
-                      <span className={scenario.passed ? "pill pass" : "pill fail"}>{scenario.passed ? "Pass" : "Fail"}</span>
-                      <span className="scenario-name">{rowTitle(scenario)}</span>
-                      <span className="scenario-actual">{oneLine(scenario.actual)}</span>
-                    </summary>
-                    <div className="scenario-more">
-                      <p>
-                        <span>URL</span> {scenario.finalUrl}
-                      </p>
-                      <p>
-                        <span>Actual</span> {scenario.actual}
-                      </p>
-                    </div>
-                  </details>
-                </li>
-              ))}
-            </ol>
+            <details className="homepage-checks" open>
+              <summary>Homepage checks</summary>
+              <ol className="scenarios">
+                {report.scenarios.map((scenario) => (
+                  <li key={scenario.id}>
+                    <span className={scenario.passed ? "pill pass" : "pill fail"}>{scenario.passed ? "Pass" : "Fail"}</span>
+                    <span className="scenario-name">{rowTitle(scenario)}</span>
+                    <span className="scenario-actual">{oneLine(scenario.actual)}</span>
+                  </li>
+                ))}
+              </ol>
+            </details>
             <div className="groups">
               {report.categories.map((category) => (
                 <details key={category.id} open={category.score === null || category.score < 90}>
