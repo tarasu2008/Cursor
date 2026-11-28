@@ -24,7 +24,7 @@ The dev server prints the local URL, usually http://127.0.0.1:3000.
 
 ## Tests
 
-Page objects for the homepage, navigation, and the booking walk live in `tests/pages`. The homepage spec covers the same checks as the auditor. `TARGET_URL` chooses the site. When it is unset, the spec uses https://www.seadwellers.com/. A Groq key is optional: without `GROQ_API_KEY`, the LangGraph reasoning node skips the model and `npx playwright test` still runs.
+Page objects for the homepage, navigation, and the booking walk live in `tests/pages`. The homepage spec covers the same checks as the auditor, and scans the submitted URL with axe-core. It does not fill checkout. `TARGET_URL` chooses the site. When it is unset, the spec uses https://www.seadwellers.com/. A Groq key is optional: without `GROQ_API_KEY`, the LangGraph reasoning node skips the model and `npx playwright test` still runs.
 
 ```bash
 cd /agent/repos/qa-audit-site

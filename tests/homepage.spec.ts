@@ -1,3 +1,4 @@
+import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 import { runQaAgent } from "../agent/graph";
 import { BookingPage } from "./pages/booking.page";
@@ -131,6 +132,14 @@ test.describe("homepage", () => {
     const home = new HomePage(page);
     await home.open();
     expect(await home.overflowAt(390)).toBe(0);
+  });
+
+  test("accessibility", async ({ page }) => {
+    const home = new HomePage(page);
+    expect(await home.open()).toBeLessThan(400);
+    const results = await new AxeBuilder({ page }).analyze();
+    const summary = results.violations.map((violation) => `${violation.id} (${violation.impact}): ${violation.help}`).join("\n");
+    expect(results.violations, summary).toEqual([]);
   });
 });
 
