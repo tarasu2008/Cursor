@@ -154,6 +154,14 @@ function Results({
   );
 }
 
+function PointerIcon() {
+  return (
+    <svg className="row-pointer" viewBox="0 0 24 24" aria-hidden="true">
+      <path fill="currentColor" d="M7 3.2v12.1l2.7-2.4 2.6 5.1 2.2-1.1-2.6-5 4-.4L7 3.2z" />
+    </svg>
+  );
+}
+
 function Mark() {
   return (
     <svg className="mark" viewBox="0 0 32 32" aria-hidden="true">
@@ -212,6 +220,7 @@ function DevicePanel({ device }: { device: DeviceReport }) {
                   <span className={scenario.passed ? "pill pass" : "pill fail"}>{scenario.passed ? "Pass" : "Fail"}</span>
                   <span className="scenario-name">{rowTitle(scenario)}</span>
                   <span className="scenario-actual">{oneLine(scenario.actual)}</span>
+                  <PointerIcon />
                 </summary>
                 <dl className="scenario-detail">
                   <div>

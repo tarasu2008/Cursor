@@ -323,9 +323,23 @@ form label {
 
 .scenario > summary {
   grid-template-columns: 4.5rem minmax(8rem, 16rem) 1fr 18px;
-  align-items: baseline;
-  min-height: 0;
+  align-items: center;
+  min-height: 52px;
+  cursor: pointer;
 }
+
+.scenario > summary::after { content: none; }
+
+.row-pointer {
+  width: 16px;
+  height: 16px;
+  grid-column: 4;
+  grid-row: 1;
+  justify-self: end;
+  color: var(--blue);
+}
+
+.scenario:has(.pill.fail) .row-pointer { color: var(--poor-ink); }
 
 .scenario-detail {
   display: grid;
@@ -427,6 +441,7 @@ details[open] summary::after { transform: rotate(-135deg) translate(-2px, -2px);
 @media (max-width: 720px) {
   .url-row { flex-direction: column; align-items: stretch; }
   .scenario > summary { grid-template-columns: 4.5rem 1fr 18px; }
+  .row-pointer { grid-column: 3; }
   .scenario-actual { grid-column: 2; white-space: normal; }
   .scenario-detail { padding-right: 22px; }
   .scenario-detail div { grid-template-columns: 1fr; gap: 2px; }
