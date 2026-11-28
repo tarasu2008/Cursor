@@ -30,6 +30,28 @@ type DomFacts = {
   images: { checked: number; missingAlt: number };
   overflow: number;
   menu: { found: boolean; opened: boolean; closed: boolean; label: string };
+  seo: PageSeo;
+};
+type PageSeo = {
+  canonical: string;
+  robots: string;
+  lang: string;
+  charset: string;
+  openGraph: { title: boolean; description: boolean; image: boolean };
+  twitterCard: string;
+  schemaTypes: string[];
+  schemaBroken: boolean;
+  favicon: boolean;
+  words: number;
+  h2: number;
+  iframes: number;
+  deprecated: number;
+  httpResources: number;
+  analytics: string[];
+  social: string[];
+  doctype: string;
+  imageCount: number;
+  imageAltMissing: number;
 };
 type FetchResult = { status: number; finalUrl: string; ms: number; title: string | null; note: string | null };
 type AxeHit = { id: string; impact: string; help: string };
@@ -62,6 +84,8 @@ export async function runHomepageScenarios(
   let loadErrors: string[] = [];
   let axe: AxeSummary = { passes: 0, violations: [] };
   let heapActual = "No Heap script loaded. Replays, autocapture, funnels, and event definitions are not visible unless the page loads Heap.";
+  let docEncoding = "";
+  let docHsts = false;
   const phone = viewport.width <= 500;
   try {
     const context = await browser.newContext({ userAgent: phone ? PHONE_AGENT : USER_AGENT, viewport });
@@ -80,6 +104,9 @@ export async function runHomepageScenarios(
     });
     const response = await page.goto(startUrl, { waitUntil: "domcontentloaded", timeout: 20_000 });
     await page.waitForLoadState("load", { timeout: 8_000 }).catch(() => undefined);
+    const headers = response?.headers() ?? {};
+    docEncoding = headers["content-encoding"] || "";
+    docHsts = Boolean(headers["strict-transport-security"]);
     home = {
       status: response?.status() ?? 0,
       finalUrl: page.url(),
@@ -116,7 +143,9 @@ export async function runHomepageScenarios(
   }
   if (!facts) throw new Error(home.note || "The homepage could not be opened.");
 
-  const disallow = await robotsDisallow(home.finalUrl);
+  const robotsFile = await readRobotsFile(home.finalUrl);
+  const disallow = robotsFile.disallow;
+  const sitemap = await readSitemap(home.finalUrl, robotsFile.sitemaps);
   const queued = [
     ...uniqueLinks(facts.nav, hosts, disallow).map((link) => ({ ...link, kind: "Nav" as const })),
     ...uniqueLinks(menuLinks, hosts, disallow).map((link) => ({ ...link, kind: "Menu" as const })),
@@ -173,6 +202,73 @@ export async function runHomepageScenarios(
     Boolean(facts.description.trim()),
     facts.description.trim() ? `${facts.description.trim().length} characters.` : "No meta description.",
   );
+  const titleLength = facts.title.trim().length;
+  add("Title length", titleLength >= 30 && titleLength <= 65, titleLength ? `${titleLength} characters.` : "No title element.");
+  const descriptionLength = facts.description.trim().length;
+  add(
+    "Meta description length",
+    descriptionLength >= 50 && descriptionLength <= 160,
+    descriptionLength ? `${descriptionLength} characters.` : "No meta description.",
+  );
+  add("Headings", facts.seo.h2 > 0, facts.seo.h2 === 0 ? "No visible H2." : `${facts.seo.h2} visible H2.`);
+  add("Content length", facts.seo.words >= 200, `${facts.seo.words} words of visible text.`);
+  add("Canonical", Boolean(facts.seo.canonical), facts.seo.canonical ? facts.seo.canonical : "No canonical link.");
+  add("HTML language", Boolean(facts.seo.lang), facts.seo.lang ? `lang="${facts.seo.lang}".` : "No lang on the html element.");
+  add(
+    "Schema",
+    facts.seo.schemaTypes.length > 0,
+    facts.seo.schemaTypes.length
+      ? `JSON-LD types: ${facts.seo.schemaTypes.slice(0, 6).join(", ")}.`
+      : facts.seo.schemaBroken
+        ? "JSON-LD could not be read."
+        : "No JSON-LD schema.",
+  );
+  add(
+    "Image alt",
+    facts.seo.imageAltMissing === 0,
+    facts.seo.imageCount === 0 ? "No images." : `${facts.seo.imageCount} images. ${facts.seo.imageAltMissing} missing alt.`,
+  );
+  add(
+    "Analytics",
+    facts.seo.analytics.length > 0,
+    facts.seo.analytics.length ? facts.seo.analytics.join(", ") + "." : "No Google tag or Meta pixel script was found.",
+  );
+  add("Indexing", !/noindex/i.test(facts.seo.robots), facts.seo.robots ? facts.seo.robots : "No robots meta. The page is not marked noindex.");
+  add(
+    "Robots.txt",
+    robotsFile.status === 200 && !robotsFile.note,
+    robotsFile.note || `HTTP ${robotsFile.status}.`,
+    new URL("/robots.txt", home.finalUrl).toString(),
+    robotsFile.status,
+  );
+  add(
+    "XML sitemap",
+    sitemap.status === 200 && !sitemap.note,
+    sitemap.note || `HTTP ${sitemap.status}.`,
+    sitemap.url,
+    sitemap.status,
+  );
+  add("HTTPS", home.finalUrl.startsWith("https:"), home.finalUrl.startsWith("https:") ? "The homepage is HTTPS." : "The homepage is not HTTPS.");
+  add(
+    "Mixed content",
+    facts.seo.httpResources === 0,
+    facts.seo.httpResources === 0 ? "No HTTP images, scripts, or frames on this page." : `${facts.seo.httpResources} HTTP resources on an HTTPS page.`,
+  );
+  add("HSTS", docHsts, docHsts ? "Strict-Transport-Security is set." : "No Strict-Transport-Security header on the homepage response.");
+  add(
+    "Compression",
+    /gzip|br/i.test(docEncoding),
+    docEncoding ? `content-encoding: ${docEncoding}.` : "No content-encoding header on the homepage response.",
+  );
+  const graph = [facts.seo.openGraph.title ? "title" : "", facts.seo.openGraph.description ? "description" : "", facts.seo.openGraph.image ? "image" : ""].filter(Boolean);
+  add("Open Graph", facts.seo.openGraph.title && facts.seo.openGraph.description, graph.length ? `Present: ${graph.join(", ")}.` : "No Open Graph title or description.");
+  add("Twitter card", Boolean(facts.seo.twitterCard), facts.seo.twitterCard ? `twitter:card=${facts.seo.twitterCard}.` : "No twitter:card tag.");
+  add("Social profiles", facts.seo.social.length > 0, facts.seo.social.length ? facts.seo.social.join(", ") + "." : "No Facebook, Instagram, YouTube, LinkedIn, or X link.");
+  add("Device width", /width\s*=\s*device-width/i.test(facts.viewport), facts.viewport ? facts.viewport : "No viewport meta.");
+  add("Favicon", facts.seo.favicon, facts.seo.favicon ? "A favicon link is present." : "No favicon link.");
+  add("Frames", facts.seo.iframes === 0, facts.seo.iframes === 0 ? "No iframe." : `${facts.seo.iframes} iframe${facts.seo.iframes === 1 ? "" : "s"}.`);
+  add("Deprecated HTML", facts.seo.deprecated === 0, facts.seo.deprecated === 0 ? "No font, center, or marquee tags." : `${facts.seo.deprecated} deprecated tags.`);
+  add("Doctype", facts.seo.doctype.toLowerCase() === "html", facts.seo.doctype ? `doctype ${facts.seo.doctype}.` : "No doctype.");
   const zoomOff = zoomDisabled(facts.viewport);
   add("Pinch zoom", !zoomOff, zoomOff ? "The viewport disables pinch zoom." : "The viewport does not disable pinch zoom.");
   add(
@@ -310,6 +406,30 @@ function expectedFor(name: string): string {
   if (name === "Visible H1") return "Exactly one H1 is visible.";
   if (name === "Title") return "The title is not empty.";
   if (name === "Meta description") return "A meta description is present.";
+  if (name === "Title length") return "The title is 30 to 65 characters.";
+  if (name === "Meta description length") return "The meta description is 50 to 160 characters.";
+  if (name === "Headings") return "At least one H2 is visible.";
+  if (name === "Content length") return "Visible text is at least 200 words.";
+  if (name === "Canonical") return "A canonical link is present.";
+  if (name === "HTML language") return "The html element has a lang value.";
+  if (name === "Schema") return "A JSON-LD block names a schema type.";
+  if (name === "Image alt") return "Every image has alt text or is marked decorative.";
+  if (name === "Analytics") return "A Google tag or Meta pixel script is present. This is not traffic data.";
+  if (name === "Indexing") return "The page is not marked noindex.";
+  if (name === "Robots.txt") return "robots.txt returns text, not an HTML page.";
+  if (name === "XML sitemap") return "An XML sitemap on this host returns HTTP 200.";
+  if (name === "HTTPS") return "The homepage is served over HTTPS.";
+  if (name === "Mixed content") return "The page does not load HTTP images, scripts, or frames.";
+  if (name === "HSTS") return "The homepage response sends Strict-Transport-Security.";
+  if (name === "Compression") return "The homepage response is gzip or Brotli compressed.";
+  if (name === "Open Graph") return "Open Graph title and description are present.";
+  if (name === "Twitter card") return "A twitter:card tag is present.";
+  if (name === "Social profiles") return "The page links to at least one public social profile.";
+  if (name === "Device width") return "The viewport sets width to device-width.";
+  if (name === "Favicon") return "A favicon link is present.";
+  if (name === "Frames") return "The page has no iframe.";
+  if (name === "Deprecated HTML") return "The page does not use font, center, or marquee.";
+  if (name === "Doctype") return "The document uses the HTML doctype.";
   if (name === "Pinch zoom") return "The viewport does not disable pinch zoom.";
   if (name.startsWith("Nav:") || name.startsWith("Footer:") || name.startsWith("Menu:") || name.startsWith("Main:")) return "The link returns a status below 400.";
   if (name.startsWith("Button:")) return "The control is visible. Payment and guest details are not submitted.";
@@ -358,6 +478,95 @@ async function readDesktop(page: Page): Promise<DomFacts> {
         .map((el) => ({ label: labelOf(el) || "Link", url: abs(el.getAttribute("href") || "") }))
         .filter((link) => link.url);
     const h1 = [...document.querySelectorAll("h1")].filter(visible).map((el) => clean((el as HTMLElement).innerText)).filter(Boolean);
+    const readPageSeo = () => {
+      const meta = (selector: string) => clean(document.querySelector(selector)?.getAttribute("content"));
+      const schemaTypes: string[] = [];
+      let schemaBroken = false;
+      for (const script of document.querySelectorAll('script[type="application/ld+json"]')) {
+        try {
+          const data = JSON.parse(script.textContent || "");
+          const collect = (node: unknown) => {
+            if (!node || typeof node !== "object") return;
+            if (Array.isArray(node)) {
+              node.forEach(collect);
+              return;
+            }
+            const record = node as { "@type"?: unknown; "@graph"?: unknown };
+            const type = record["@type"];
+            if (typeof type === "string") schemaTypes.push(type);
+            if (Array.isArray(type)) type.forEach((item) => typeof item === "string" && schemaTypes.push(item));
+            if (Array.isArray(record["@graph"])) record["@graph"].forEach(collect);
+          };
+          collect(data);
+        } catch {
+          schemaBroken = true;
+        }
+      }
+      const blob = [...document.scripts].map((script) => `${script.src} ${(script.textContent || "").slice(0, 500)}`).join("\n");
+      const analytics = [
+        /googletagmanager\.com|google-analytics\.com|gtag\(/i.test(blob) ? "Google tag" : "",
+        /fbq\(|connect\.facebook\.net/i.test(blob) ? "Meta pixel" : "",
+      ].filter(Boolean);
+      const socialNames: Array<[string, string]> = [
+        ["facebook.com", "Facebook"],
+        ["instagram.com", "Instagram"],
+        ["youtube.com", "YouTube"],
+        ["linkedin.com", "LinkedIn"],
+        ["twitter.com", "X"],
+        ["x.com", "X"],
+      ];
+      const social = new Set<string>();
+      for (const anchor of document.querySelectorAll("a[href]")) {
+        let host = "";
+        try {
+          host = new URL(anchor.getAttribute("href") || "", location.href).hostname.toLowerCase();
+        } catch {
+          continue;
+        }
+        for (const [needle, name] of socialNames) {
+          if (host === needle || host.endsWith(`.${needle}`)) social.add(name);
+        }
+      }
+      const allImages = [...document.querySelectorAll("img")];
+      const imageAltMissing = allImages.filter((img) => {
+        const alt = img.getAttribute("alt");
+        const role = (img.getAttribute("role") || "").toLowerCase();
+        if (role === "presentation" || role === "none" || img.getAttribute("aria-hidden") === "true") return false;
+        return alt === null;
+      }).length;
+      let httpResources = 0;
+      if (location.protocol === "https:") {
+        for (const el of document.querySelectorAll("img, script, iframe, video, audio, source, link")) {
+          const url = el.getAttribute("src") || (el.tagName === "LINK" ? el.getAttribute("href") : "") || "";
+          if (url.startsWith("http://")) httpResources += 1;
+        }
+      }
+      return {
+        canonical: clean(document.querySelector('link[rel="canonical" i]')?.getAttribute("href")),
+        robots: meta('meta[name="robots" i]'),
+        lang: document.documentElement.lang || "",
+        charset: document.characterSet || "",
+        openGraph: {
+          title: Boolean(meta('meta[property="og:title" i]')),
+          description: Boolean(meta('meta[property="og:description" i]')),
+          image: Boolean(meta('meta[property="og:image" i]')),
+        },
+        twitterCard: meta('meta[name="twitter:card" i]'),
+        schemaTypes: [...new Set(schemaTypes)].slice(0, 8),
+        schemaBroken,
+        favicon: Boolean(document.querySelector('link[rel~="icon" i], link[rel="apple-touch-icon" i]')),
+        words: clean(document.body.innerText).split(" ").filter(Boolean).length,
+        h2: [...document.querySelectorAll("h2")].filter(visible).length,
+        iframes: document.querySelectorAll("iframe").length,
+        deprecated: document.querySelectorAll("font, center, marquee").length,
+        httpResources,
+        analytics,
+        social: [...social],
+        doctype: document.doctype?.name || "",
+        imageCount: allImages.length,
+        imageAltMissing,
+      };
+    };
     const description = clean(document.querySelector('meta[name="description" i]')?.getAttribute("content"));
     const viewport = clean(document.querySelector('meta[name="viewport" i]')?.getAttribute("content"));
     const kindOf = (label: string): ButtonFact["kind"] => {
@@ -433,6 +642,7 @@ async function readDesktop(page: Page): Promise<DomFacts> {
       images: { checked: images.length, missingAlt },
       overflow: 0,
       menu: { found: false, opened: false, closed: false, label: "" },
+      seo: readPageSeo(),
     };
   });
 }
@@ -811,17 +1021,57 @@ async function followGet(start: string, hosts: Set<string>): Promise<FetchResult
   }
 }
 
-async function robotsDisallow(finalUrl: string): Promise<string[]> {
+async function readRobotsFile(finalUrl: string): Promise<{ status: number; disallow: string[]; sitemaps: string[]; note: string | null }> {
   try {
     const response = await fetch(new URL("/robots.txt", finalUrl), {
       headers: { "user-agent": USER_AGENT },
       signal: AbortSignal.timeout(5_000),
+      redirect: "follow",
     });
-    if (!response.ok) return [];
-    return parseRobots(await response.text()).disallow;
-  } catch {
-    return [];
+    const body = await response.text();
+    const html = /<html[\s>]/i.test(body.slice(0, 800));
+    const parsed = parseRobots(body);
+    return {
+      status: response.status,
+      disallow: response.ok && !html ? parsed.disallow : [],
+      sitemaps: response.ok && !html ? parsed.sitemaps : [],
+      note: response.ok ? (html ? "The response looks like HTML, not a robots.txt file." : null) : `HTTP ${response.status}.`,
+    };
+  } catch (error) {
+    return { status: 0, disallow: [], sitemaps: [], note: error instanceof Error ? error.message : "robots.txt could not be read." };
   }
+}
+
+async function readSitemap(finalUrl: string, listed: string[]): Promise<{ status: number; url: string; note: string | null }> {
+  const origin = new URL(finalUrl).origin;
+  const candidates = [...listed, new URL("/sitemap.xml", origin).toString()];
+  const seen = new Set<string>();
+  for (const candidate of candidates) {
+    let target: URL;
+    try {
+      target = new URL(candidate, origin);
+    } catch {
+      continue;
+    }
+    if (target.origin !== origin || seen.has(target.toString()) || isForbiddenUrl(target)) continue;
+    seen.add(target.toString());
+    if (seen.size > 2) break;
+    try {
+      const response = await fetch(target, {
+        method: "GET",
+        redirect: "follow",
+        signal: AbortSignal.timeout(8_000),
+        headers: { "user-agent": USER_AGENT, accept: "application/xml,text/xml,text/plain,*/*" },
+      });
+      const head = await response.text().then((body) => body.slice(0, 1500));
+      const xml = /<(urlset|sitemapindex)\b/i.test(head);
+      if (response.ok && xml) return { status: response.status, url: target.toString(), note: null };
+    } catch {
+      continue;
+    }
+  }
+  const fallback = [...seen][0] || new URL("/sitemap.xml", origin).toString();
+  return { status: 0, url: fallback, note: "No XML sitemap on this host returned HTTP 200." };
 }
 
 function zoomDisabled(viewport: string): boolean {

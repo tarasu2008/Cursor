@@ -218,41 +218,51 @@ function DevicePanel({ device }: { device: DeviceReport }) {
             : ""}
         </p>
       </div>
-      <details className="homepage-checks">
-        <summary>Homepage checks</summary>
-        <ol className="scenarios">
-          {checksFirst(device.scenarios).map((scenario) => (
-            <li key={scenario.id}>
-              <details className="scenario">
-                <summary>
-                  <span className={scenario.passed ? "pill pass" : "pill fail"}>{scenario.passed ? "Pass" : "Fail"}</span>
-                  <span className="scenario-name">{rowTitle(scenario)}</span>
-                  <span className="scenario-actual">{oneLine(scenario.actual)}</span>
-                  <PointerIcon />
-                </summary>
-                <dl className="scenario-detail">
-                  <div>
-                    <dt>URL</dt>
-                    <dd>{scenario.finalUrl}</dd>
-                  </div>
-                  <div>
-                    <dt>Expected</dt>
-                    <dd>{oneLine(scenario.expected)}</dd>
-                  </div>
-                  <div>
-                    <dt>Actual</dt>
-                    <dd>{oneLine(scenario.actual)}</dd>
-                  </div>
-                  <div>
-                    <dt>Status</dt>
-                    <dd>{scenario.passed ? "Pass" : "Fail"}{scenario.status > 0 ? ` · HTTP ${scenario.status}` : ""}</dd>
-                  </div>
-                </dl>
-              </details>
-            </li>
-          ))}
-        </ol>
-      </details>
+      <section className="check-groups" aria-label="Homepage checks">
+        <h2>Homepage checks</h2>
+        {checkGroups(device.scenarios).map((group) => (
+          <details key={group.label} className="check-group">
+            <summary>
+              <span className="group-label">{group.label}</span>
+              <span className="group-headline">
+                {group.failed} failed · {group.passed} passed
+              </span>
+            </summary>
+            <ol className="scenarios">
+              {group.items.map((scenario) => (
+                <li key={scenario.id}>
+                  <details className="scenario">
+                    <summary>
+                      <span className={scenario.passed ? "pill pass" : "pill fail"}>{scenario.passed ? "Pass" : "Fail"}</span>
+                      <span className="scenario-name">{rowTitle(scenario)}</span>
+                      <span className="scenario-actual">{oneLine(scenario.actual)}</span>
+                      <PointerIcon />
+                    </summary>
+                    <dl className="scenario-detail">
+                      <div>
+                        <dt>URL</dt>
+                        <dd>{scenario.finalUrl}</dd>
+                      </div>
+                      <div>
+                        <dt>Expected</dt>
+                        <dd>{oneLine(scenario.expected)}</dd>
+                      </div>
+                      <div>
+                        <dt>Actual</dt>
+                        <dd>{oneLine(scenario.actual)}</dd>
+                      </div>
+                      <div>
+                        <dt>Status</dt>
+                        <dd>{scenario.passed ? "Pass" : "Fail"}{scenario.status > 0 ? ` · HTTP ${scenario.status}` : ""}</dd>
+                      </div>
+                    </dl>
+                  </details>
+                </li>
+              ))}
+            </ol>
+          </details>
+        ))}
+      </section>
       <div className="groups">
         {device.categories.map((category) => (
           <details key={category.id} open={category.score === null || category.score < 90}>
@@ -322,6 +332,34 @@ function measures(id: Category["id"]): string {
 
 function checksFirst(scenarios: Scenario[]): Scenario[] {
   return [...scenarios].sort((left, right) => Number(left.passed) - Number(right.passed));
+}
+
+const CHECK_GROUPS: Array<{ label: string; match: (name: string) => boolean }> = [
+  { label: "SEO", match: (name) => ["Title", "Title length", "Meta description", "Meta description length", "Visible H1", "Headings", "Page text", "Content length", "Canonical", "HTML language", "Schema", "Image alt", "Analytics", "Heap"].includes(name) },
+  { label: "Indexing", match: (name) => ["Indexing", "Robots.txt", "XML sitemap", "Unknown path"].includes(name) },
+  { label: "Links", match: (name) => /^(Nav|Footer|Main|Menu):/.test(name) },
+  { label: "Usability", match: (name) => ["Pinch zoom", "Device width", "Phone menu", "Text overflow", "Text contrast", "Favicon", "Frames", "Deprecated HTML", "Doctype", "First-view images"].includes(name) },
+  { label: "Performance", match: (name) => ["Homepage status", "Load time", "Compression", "Console"].includes(name) },
+  { label: "Social", match: (name) => ["Open Graph", "Twitter card", "Social profiles"].includes(name) },
+  { label: "Security", match: (name) => ["HTTPS", "Mixed content", "HSTS"].includes(name) },
+  { label: "Accessibility", match: (name) => name === "Accessibility" || name.startsWith("Accessibility:") },
+  { label: "Actions", match: (name) => name === "Buttons" || name.startsWith("Button:") || name.startsWith("Booking") },
+];
+
+function checkGroups(scenarios: Scenario[]): Array<{ label: string; items: Scenario[]; failed: number; passed: number }> {
+  const used = new Set<string>();
+  const groups = CHECK_GROUPS.map((group) => {
+    const items = checksFirst(scenarios.filter((item) => group.match(item.name)));
+    for (const item of items) used.add(item.id);
+    const failed = items.filter((item) => !item.passed).length;
+    return { label: group.label, items, failed, passed: items.length - failed };
+  }).filter((group) => group.items.length > 0);
+  const rest = checksFirst(scenarios.filter((item) => !used.has(item.id)));
+  if (rest.length > 0) {
+    const failed = rest.filter((item) => !item.passed).length;
+    groups.push({ label: "Other", items: rest, failed, passed: rest.length - failed });
+  }
+  return [...groups.filter((group) => group.failed > 0), ...groups.filter((group) => group.failed === 0)];
 }
 
 function band(score: number | null): "good" | "ok" | "poor" | "none" {

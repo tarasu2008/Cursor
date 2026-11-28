@@ -323,8 +323,21 @@ form label {
 }
 .marker.info { background: #dadce0; border-radius: 50%; }
 
-.homepage-checks {
+.check-groups {
+  display: grid;
+  gap: 12px;
   margin: 28px 0 0;
+}
+
+.check-groups h2 {
+  margin: 0 4px;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.homepage-checks,
+.check-group {
+  margin: 0;
   background: #fff;
   border: 0;
   border-radius: 22px;
@@ -332,15 +345,18 @@ form label {
   overflow: hidden;
 }
 
-.homepage-checks > summary {
+.homepage-checks > summary,
+.check-group > summary {
   display: flex;
   align-items: center;
+  gap: 14px;
   min-height: 64px;
   font-size: 17px;
   font-weight: 600;
 }
 
-.homepage-checks > summary::after { margin-left: auto; }
+.homepage-checks > summary::after,
+.check-group > summary::after { margin-left: auto; }
 
 .scenarios {
   list-style: none;
