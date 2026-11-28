@@ -41,10 +41,19 @@ button, input { font: inherit; color: inherit; }
 }
 
 .bar h1 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   margin: 0;
   font-size: 21px;
   font-weight: 600;
   letter-spacing: -0.02em;
+}
+
+.mark {
+  width: 28px;
+  height: 28px;
+  flex: none;
 }
 
 .ghost {

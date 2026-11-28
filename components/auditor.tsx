@@ -70,7 +70,10 @@ export function Auditor() {
   return (
     <>
       <header className="bar">
-        <h1>First Pass</h1>
+        <h1 className="brand">
+          <Mark />
+          First Pass
+        </h1>
         {report ? (
           <button type="button" className="ghost" onClick={() => void download()} disabled={downloading}>
             {downloading ? "Preparing…" : "Download report"}
@@ -148,6 +151,16 @@ function Results({
       </div>
       <DevicePanel key={selected.id} device={selected} />
     </section>
+  );
+}
+
+function Mark() {
+  return (
+    <svg className="mark" viewBox="0 0 32 32" aria-hidden="true">
+      <rect width="32" height="32" rx="9" fill="#1a73e8" />
+      <path d="M8 16.5h10.5" fill="none" stroke="#fff" strokeWidth="2.4" strokeLinecap="round" />
+      <path d="M16 11.5 21.2 16.5 16 21.5" fill="none" stroke="#fff" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
   );
 }
 
