@@ -194,9 +194,31 @@ function DevicePanel({ device }: { device: DeviceReport }) {
         <ol className="scenarios">
           {device.scenarios.map((scenario) => (
             <li key={scenario.id}>
-              <span className={scenario.passed ? "pill pass" : "pill fail"}>{scenario.passed ? "Pass" : "Fail"}</span>
-              <span className="scenario-name">{rowTitle(scenario)}</span>
-              <span className="scenario-actual">{oneLine(scenario.actual)}</span>
+              <details className="scenario">
+                <summary>
+                  <span className={scenario.passed ? "pill pass" : "pill fail"}>{scenario.passed ? "Pass" : "Fail"}</span>
+                  <span className="scenario-name">{rowTitle(scenario)}</span>
+                  <span className="scenario-actual">{oneLine(scenario.actual)}</span>
+                </summary>
+                <dl className="scenario-detail">
+                  <div>
+                    <dt>URL</dt>
+                    <dd>{scenario.finalUrl}</dd>
+                  </div>
+                  <div>
+                    <dt>Expected</dt>
+                    <dd>{oneLine(scenario.expected)}</dd>
+                  </div>
+                  <div>
+                    <dt>Actual</dt>
+                    <dd>{oneLine(scenario.actual)}</dd>
+                  </div>
+                  <div>
+                    <dt>Status</dt>
+                    <dd>{scenario.passed ? "Pass" : "Fail"}{scenario.status > 0 ? ` · HTTP ${scenario.status}` : ""}</dd>
+                  </div>
+                </dl>
+              </details>
             </li>
           ))}
         </ol>
