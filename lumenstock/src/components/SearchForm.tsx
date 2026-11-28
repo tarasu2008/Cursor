@@ -40,6 +40,8 @@ export function SearchForm({
     router.push(`/browse?${params.toString()}`);
   }
 
+  const showSuggestions = open && deferredQ.length >= 2;
+
   return (
     <div className={`search-wrap${compact ? " compact" : ""}`} ref={wrapRef}>
       <form className="search-shell" onSubmit={onSubmit} role="search" autoComplete="off">
@@ -51,16 +53,18 @@ export function SearchForm({
           }}
           onFocus={() => setOpen(true)}
           placeholder={compact ? "Search images…" : "Search cricket, Diwali, workspace, aerial…"}
+          role="combobox"
           aria-label="Search images"
           aria-autocomplete="list"
-          aria-controls={listId}
+          aria-expanded={showSuggestions}
+          aria-controls={showSuggestions ? listId : undefined}
         />
         <button className="btn btn-primary" type="submit">
           Search
         </button>
       </form>
 
-      {open && deferredQ.length >= 2 && (
+      {showSuggestions && (
         <div className="search-suggest" id={listId} role="listbox" aria-label="Matching images">
           {suggestions.length === 0 ? (
             <p className="search-suggest-empty">No images match “{deferredQ}”.</p>
