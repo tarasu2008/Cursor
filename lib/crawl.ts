@@ -1,20 +1,46 @@
-import { auditReportSchema, type AuditReport, type Category, type Scenario } from "./schema";
+import { auditReportSchema, type AuditReport, type Category, type DeviceReport, type Scenario } from "./schema";
 import { assertPublicDns, parsePublicUrl } from "./guardrails";
-import { runHomepageScenarios } from "./homepage-checks";
+import { DESKTOP_VIEWPORT, MOBILE_VIEWPORT, runHomepageScenarios } from "./homepage-checks";
 
 export async function auditUrl(raw: string): Promise<AuditReport> {
   const start = parsePublicUrl(raw);
   await assertPublicDns(start.hostname);
-  const { scenarios, skipped, capSeconds } = await runHomepageScenarios(start.toString());
-  const home = scenarios.find((item) => item.name === "Homepage status");
-  const categories = buildCategories(scenarios, skipped);
-  const automation = categories.find((item) => item.id === "automation");
-  const failed = scenarios.filter((item) => !item.passed).length;
+  const desktopRun = await runHomepageScenarios(start.toString(), DESKTOP_VIEWPORT);
+  const mobileRun = await runHomepageScenarios(start.toString(), MOBILE_VIEWPORT);
+  const desktop = deviceReport("desktop", "Desktop", DESKTOP_VIEWPORT.width, desktopRun);
+  const mobile = deviceReport("mobile", "Mobile", MOBILE_VIEWPORT.width, mobileRun);
+  const home = desktopRun.scenarios.find((item) => item.name === "Homepage status");
+  const desktopFailed = desktop.scenarios.filter((item) => !item.passed).length;
+  const mobileFailed = mobile.scenarios.filter((item) => !item.passed).length;
   const report: AuditReport = {
     requestedUrl: start.toString(),
     finalUrl: home?.finalUrl || start.toString(),
     fetchedAt: new Date().toISOString(),
-    summary: `${scenarios.length} homepage checks ran. ${failed} failed.${skipped > 0 ? ` ${skipped} controls were not opened before the ${Math.round(capSeconds / 60)} minute cap.` : ""}`,
+    summary: `Desktop ran ${desktop.scenarios.length} homepage checks. ${desktopFailed} failed. Mobile ran ${mobile.scenarios.length} homepage checks. ${mobileFailed} failed.`,
+    scores: desktop.scores,
+    limits: desktop.limits,
+    categories: desktop.categories,
+    scenarios: desktop.scenarios,
+    devices: [mobile, desktop],
+  };
+  return auditReportSchema.parse(report);
+}
+
+function deviceReport(
+  id: DeviceReport["id"],
+  label: string,
+  width: number,
+  run: { scenarios: Scenario[]; skipped: number; capSeconds: number },
+): DeviceReport {
+  const categories = buildCategories(run.scenarios, run.skipped);
+  const automation = categories.find((item) => item.id === "automation");
+  const home = run.scenarios.find((item) => item.name === "Homepage status");
+  return {
+    id,
+    label,
+    width,
+    categories,
+    scenarios: run.scenarios,
     scores: {
       passedPercent: automation?.score ?? 0,
       passedCount: automation?.passed ?? 0,
@@ -22,11 +48,8 @@ export async function auditUrl(raw: string): Promise<AuditReport> {
       homepageStatus: home?.status ?? 0,
       homepageMs: home?.ms ?? 0,
     },
-    limits: { maxPages: scenarios.length, maxDepth: 1, opened: scenarios.length, capSeconds, remaining: skipped },
-    categories,
-    scenarios,
+    limits: { maxPages: run.scenarios.length, maxDepth: 1, opened: run.scenarios.length, capSeconds: run.capSeconds, remaining: run.skipped },
   };
-  return auditReportSchema.parse(report);
 }
 
 function buildCategories(scenarios: Scenario[], skipped: number): Category[] {
@@ -49,7 +72,7 @@ function buildCategories(scenarios: Scenario[], skipped: number): Category[] {
   const automation = group(scenarios, () => true);
   automation.skipped += skipped;
   return [
-    category("load", "Load", load, "The homepage HTTP status."),
+    category("load", "Load test", load, "The page-load check: the homepage HTTP status."),
     category("document", "Title and headings", document, "A title, one visible H1, readable text, and contrast."),
     category("meta", "Meta", meta, "Meta description and pinch zoom."),
     category("links", "Links", links, "Navigation, buttons, menu items, and the booking walk."),

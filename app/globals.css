@@ -129,6 +129,27 @@ form label {
 
 .results { margin-top: 36px; }
 
+.form-factors {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  align-items: start;
+}
+
+.device { display: grid; gap: 18px; }
+
+.device h2 {
+  flex-basis: 100%;
+  margin: 0 0 4px;
+  font-size: 22px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.device .gauge { width: 96px; }
+.device .gauge svg { width: 78px; height: 78px; }
+.device .gauge-card { padding: 22px 10px 16px; }
+
 .gauge-card, .groups {
   background: #fff;
   border: 0;
@@ -353,6 +374,12 @@ details[open] summary::after { transform: rotate(-135deg) translate(-2px, -2px);
 .groups li.pass .finding-value { color: var(--good-ink); }
 .groups li.fail .finding-value { color: var(--poor-ink); }
 .groups li.info .finding-value { color: var(--ink); font-weight: 400; }
+
+@media (max-width: 900px) {
+  .form-factors { grid-template-columns: 1fr; }
+  .device .gauge { width: 120px; }
+  .device .gauge svg { width: 96px; height: 96px; }
+}
 
 @media (max-width: 720px) {
   .url-row { flex-direction: column; align-items: stretch; }

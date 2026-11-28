@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { AuditReport, Category, Scenario } from "@/lib/schema";
+import type { AuditReport, Category, DeviceReport, Scenario } from "@/lib/schema";
 
 const DEMO_URL = "https://www.seadwellers.com/";
 
@@ -100,7 +100,7 @@ export function Auditor() {
               {pending ? "Analyzing…" : "Analyze"}
             </button>
           </div>
-          <p className="quiet">Public pages only. A run stops at about 2 minutes. Checkout is not filled in or paid.</p>
+          <p className="quiet">Public pages only. Mobile and Desktop each stop at about 2 minutes. Checkout is not filled in or paid.</p>
           {error ? (
             <p className="error" role="alert">
               {error}
@@ -110,62 +110,74 @@ export function Auditor() {
 
         {report ? (
           <section className="results" aria-live="polite">
-            <div className="gauge-card">
-              {report.categories.map((category) => (
-                <Gauge key={category.id} category={category} />
-              ))}
-              <p className="legend">
-                <span className="swatch poor" /> 0–49
-                <span className="swatch ok" /> 50–89
-                <span className="swatch good" /> 90–100
-              </p>
-              <p className="score-note">
-                {report.scenarios.filter((item) => item.passed).length} passed and{" "}
-                {report.scenarios.filter((item) => !item.passed).length} failed. Automation counts every check below.
-                {report.limits.remaining > 0
-                  ? ` Stopped at ${Math.round(report.limits.capSeconds / 60)} minutes. ${report.limits.remaining} controls were not opened.`
-                  : ""}
-              </p>
-            </div>
-            <details className="homepage-checks" open>
-              <summary>Homepage checks</summary>
-              <ol className="scenarios">
-                {report.scenarios.map((scenario) => (
-                  <li key={scenario.id}>
-                    <span className={scenario.passed ? "pill pass" : "pill fail"}>{scenario.passed ? "Pass" : "Fail"}</span>
-                    <span className="scenario-name">{rowTitle(scenario)}</span>
-                    <span className="scenario-actual">{oneLine(scenario.actual)}</span>
-                  </li>
-                ))}
-              </ol>
-            </details>
-            <div className="groups">
-              {report.categories.map((category) => (
-                <details key={category.id} open={category.score === null || category.score < 90}>
-                  <summary>
-                    <i className={`marker ${band(category.score)}`} aria-hidden="true" />
-                    <span className="group-label">{category.label}</span>
-                    <span className="group-headline">{category.headline}</span>
-                    <span className={`group-score ${band(category.score)}`}>
-                      {category.score === null ? "–" : category.score}
-                    </span>
-                  </summary>
-                  <ul>
-                    {category.findings.map((finding, index) => (
-                      <li key={`${category.id}-${index}`} className={finding.state}>
-                        <i className={`marker ${finding.state === "pass" ? "good" : finding.state === "fail" ? "poor" : "info"}`} aria-hidden="true" />
-                        <span className="finding-label">{finding.label}</span>
-                        <span className="finding-value">{finding.value}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </details>
+            <div className="form-factors">
+              {report.devices.map((device) => (
+                <DevicePanel key={device.id} device={device} />
               ))}
             </div>
           </section>
         ) : null}
       </main>
     </>
+  );
+}
+
+function DevicePanel({ device }: { device: DeviceReport }) {
+  const failed = device.scenarios.filter((item) => !item.passed).length;
+  const passed = device.scenarios.length - failed;
+  return (
+    <section className="device" aria-label={device.label}>
+      <div className="gauge-card">
+        <h2>{device.label}</h2>
+        {device.categories.map((category) => (
+          <Gauge key={category.id} category={category} />
+        ))}
+        <p className="legend">
+          <span className="swatch poor" /> 0–49
+          <span className="swatch ok" /> 50–89
+          <span className="swatch good" /> 90–100
+        </p>
+        <p className="score-note">
+          {passed} passed and {failed} failed at {device.width}px. Automation counts every check below.
+          {device.limits.remaining > 0
+            ? ` Stopped at ${Math.round(device.limits.capSeconds / 60)} minutes. ${device.limits.remaining} controls were not opened.`
+            : ""}
+        </p>
+      </div>
+      <details className="homepage-checks" open>
+        <summary>Homepage checks</summary>
+        <ol className="scenarios">
+          {device.scenarios.map((scenario) => (
+            <li key={scenario.id}>
+              <span className={scenario.passed ? "pill pass" : "pill fail"}>{scenario.passed ? "Pass" : "Fail"}</span>
+              <span className="scenario-name">{rowTitle(scenario)}</span>
+              <span className="scenario-actual">{oneLine(scenario.actual)}</span>
+            </li>
+          ))}
+        </ol>
+      </details>
+      <div className="groups">
+        {device.categories.map((category) => (
+          <details key={category.id} open={category.score === null || category.score < 90}>
+            <summary>
+              <i className={`marker ${band(category.score)}`} aria-hidden="true" />
+              <span className="group-label">{category.label}</span>
+              <span className="group-headline">{category.headline}</span>
+              <span className={`group-score ${band(category.score)}`}>{category.score === null ? "–" : category.score}</span>
+            </summary>
+            <ul>
+              {category.findings.map((finding, index) => (
+                <li key={`${category.id}-${index}`} className={finding.state}>
+                  <i className={`marker ${finding.state === "pass" ? "good" : finding.state === "fail" ? "poor" : "info"}`} aria-hidden="true" />
+                  <span className="finding-label">{finding.label}</span>
+                  <span className="finding-value">{finding.value}</span>
+                </li>
+              ))}
+            </ul>
+          </details>
+        ))}
+      </div>
+    </section>
   );
 }
 

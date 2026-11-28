@@ -40,27 +40,44 @@ export const scenarioSchema = z.object({
 
 export type Scenario = z.infer<typeof scenarioSchema>;
 
+const scoreSchema = z.object({
+  passedPercent: z.number().int().min(0).max(100),
+  passedCount: z.number().int().nonnegative(),
+  total: z.number().int().positive(),
+  homepageStatus: z.number().int(),
+  homepageMs: z.number().int().nonnegative(),
+});
+
+const limitsSchema = z.object({
+  maxPages: z.number().int().positive(),
+  maxDepth: z.number().int().positive(),
+  opened: z.number().int().nonnegative(),
+  capSeconds: z.number().int().positive(),
+  remaining: z.number().int().nonnegative(),
+});
+
+export const deviceSchema = z.object({
+  id: z.enum(["mobile", "desktop"]),
+  label: z.string().min(1),
+  width: z.number().int().positive(),
+  categories: z.array(categorySchema).length(5),
+  scenarios: z.array(scenarioSchema).min(1).max(200),
+  scores: scoreSchema,
+  limits: limitsSchema,
+});
+
+export type DeviceReport = z.infer<typeof deviceSchema>;
+
 export const auditReportSchema = z.object({
   requestedUrl: z.string().min(1),
   finalUrl: z.string().min(1),
   fetchedAt: z.string().min(1),
   summary: z.string().min(1),
-  scores: z.object({
-    passedPercent: z.number().int().min(0).max(100),
-    passedCount: z.number().int().nonnegative(),
-    total: z.number().int().positive(),
-    homepageStatus: z.number().int(),
-    homepageMs: z.number().int().nonnegative(),
-  }),
-  limits: z.object({
-    maxPages: z.number().int().positive(),
-    maxDepth: z.number().int().positive(),
-    opened: z.number().int().nonnegative(),
-    capSeconds: z.number().int().positive(),
-    remaining: z.number().int().nonnegative(),
-  }),
+  scores: scoreSchema,
+  limits: limitsSchema,
   categories: z.array(categorySchema).length(5),
   scenarios: z.array(scenarioSchema).min(1).max(200),
+  devices: z.array(deviceSchema).length(2),
 });
 
 export type AuditReport = z.infer<typeof auditReportSchema>;

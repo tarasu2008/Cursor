@@ -29,7 +29,15 @@ type DomFacts = {
 };
 type FetchResult = { status: number; finalUrl: string; ms: number; title: string | null; note: string | null };
 
-export async function runHomepageScenarios(startUrl: string): Promise<{ scenarios: Scenario[]; skipped: number; capSeconds: number }> {
+export type CheckViewport = { width: number; height: number };
+
+export const DESKTOP_VIEWPORT: CheckViewport = { width: 1280, height: 900 };
+export const MOBILE_VIEWPORT: CheckViewport = { width: 390, height: 844 };
+
+export async function runHomepageScenarios(
+  startUrl: string,
+  viewport: CheckViewport = DESKTOP_VIEWPORT,
+): Promise<{ scenarios: Scenario[]; skipped: number; capSeconds: number }> {
   const hosts = allowedHostsFor(new URL(startUrl).hostname);
   const started = Date.now();
   const deadline = started + CAP_MS;
@@ -47,7 +55,7 @@ export async function runHomepageScenarios(startUrl: string): Promise<{ scenario
   let bookingSteps: Step[] = [];
   let loadErrors: string[] = [];
   try {
-    const page = await browser.newPage({ userAgent: USER_AGENT, viewport: { width: 1280, height: 900 } });
+    const page = await browser.newPage({ userAgent: USER_AGENT, viewport });
     page.on("pageerror", (error) => errors.push(error.message));
     page.on("console", (message) => {
       if (message.type() !== "error") return;
@@ -71,16 +79,16 @@ export async function runHomepageScenarios(startUrl: string): Promise<{ scenario
     buttonSkipped = exercised.remaining;
     menuLinks = exercised.menuLinks;
     await page.goto(home.finalUrl, { waitUntil: "domcontentloaded", timeout: 20_000 }).catch(() => undefined);
-    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.setViewportSize(viewport);
     facts.menu = await readPhoneMenu(page);
     facts.overflow = await readOverflow(page);
-    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.setViewportSize(viewport);
     if (!page.url().startsWith(new URL(home.finalUrl).origin)) {
       await page.goto(home.finalUrl, { waitUntil: "domcontentloaded", timeout: 20_000 }).catch(() => undefined);
     } else if (new URL(page.url()).pathname !== new URL(home.finalUrl).pathname) {
       await page.goto(home.finalUrl, { waitUntil: "domcontentloaded", timeout: 20_000 }).catch(() => undefined);
     }
-    bookingSteps = await walkBooking(page, home.finalUrl, deadline);
+    bookingSteps = await walkBooking(page, home.finalUrl, deadline, viewport);
   } finally {
     await browser.close();
   }
@@ -535,11 +543,11 @@ async function clickLabeled(page: Page, label: string): Promise<boolean> {
   }, label);
 }
 
-async function walkBooking(page: Page, homeUrl: string, deadline: number): Promise<Step[]> {
+async function walkBooking(page: Page, homeUrl: string, deadline: number, viewport: CheckViewport): Promise<Step[]> {
   if (new URL(page.url()).pathname !== new URL(homeUrl).pathname) {
     await page.goto(homeUrl, { waitUntil: "domcontentloaded", timeout: 20_000 }).catch(() => undefined);
   }
-  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.setViewportSize(viewport);
   const steps: Step[] = [];
   const book = await clickBooking(page, "book");
   if (!book) {

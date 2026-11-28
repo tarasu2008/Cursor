@@ -30,23 +30,26 @@ export function renderReportPdf(report: AuditReport): Promise<Buffer> {
     doc.text(safe(when));
     doc.moveDown(0.8);
     doc.font(FONT).fontSize(12).fillColor("#1d1d1f").text(safe(report.summary), { lineGap: 3 });
-    doc.moveDown(0.4);
-    doc
-      .font(FONT)
-      .fontSize(11)
-      .fillColor("#6e6e73")
-      .text(
-        report.categories
-          .map(
-            (item) =>
-              `${item.label} ${item.score === null ? "not scored" : item.score} (${item.passed} passed, ${item.failed} failed, ${item.skipped} skipped, ${item.ran} ran)`,
-          )
-          .join(". "),
-      );
-    doc.moveDown(0.3);
-    doc.font(FONT).fontSize(11).fillColor("#6e6e73").text("The scenarios below are the requests this run made.");
+    for (const device of report.devices) {
+      doc.moveDown(0.8);
+      doc.font(FONT_BOLD).fontSize(16).fillColor("#1d1d1f").text(safe(device.label));
+      doc.moveDown(0.3);
+      doc
+        .font(FONT)
+        .fontSize(11)
+        .fillColor("#6e6e73")
+        .text(
+          device.categories
+            .map(
+              (item) =>
+                `${item.label} ${item.score === null ? "not scored" : item.score} (${item.passed} passed, ${item.failed} failed, ${item.skipped} skipped, ${item.ran} ran)`,
+            )
+            .join(". "),
+        );
+      doc.moveDown(0.3);
+      doc.font(FONT).fontSize(11).fillColor("#6e6e73").text("The scenarios below are the requests this run made.");
 
-    for (const scenario of report.scenarios) {
+      for (const scenario of device.scenarios) {
       doc.moveDown(1.2);
       if (doc.y > 680) doc.addPage();
       doc
@@ -66,6 +69,7 @@ export function renderReportPdf(report: AuditReport): Promise<Buffer> {
       section(doc, "Test data", scenario.testData);
       section(doc, "Expected result", scenario.expected);
       section(doc, "Actual result", scenario.actual);
+      }
     }
 
     doc.end();
